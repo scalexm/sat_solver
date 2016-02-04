@@ -69,13 +69,8 @@ namespace expr {
         return a.op_left == b.op_left && a.op_right == b.op_right;
     }
 
-    template<class T, class U>
-    inline bool operator ==(const logical_binary<T> &, const logical_binary<U> &) {
-        return false;
-    }
-
     template<class T>
-    inline logical_expr make_expr(T exp) {
+    inline logical_expr make(T exp) {
         return logical_expr { exp };
     }
 }
@@ -85,64 +80,34 @@ namespace expr {
 
 namespace expr { namespace detail {
     template<class T>
-    inline void print_connector(std::ostream &) {
+    inline std::string connector_string() {
+        return "?";
     }
 
     template<>
-    inline void print_connector<and_tag>(std::ostream & stream) {
-        stream << " /\\ ";
+    inline std::string connector_string<and_tag>() {
+        return "/\\";
     }
 
     template<>
-    inline void print_connector<or_tag>(std::ostream & stream) {
-        stream << " \\/ ";
+    inline std::string connector_string<or_tag>() {
+        return "\\/";
     }
 
     template<>
-    inline void print_connector<xor_tag>(std::ostream & stream) {
-        stream << " X ";
+    inline std::string connector_string<xor_tag>() {
+        return " X ";
     }
 
     template<>
-    inline void print_connector<impl_tag>(std::ostream & stream) {
-        stream << " => ";
+    inline std::string connector_string<impl_tag>() {
+        return " => ";
     }
 
     template<>
-    inline void print_connector<eq_tag>(std::ostream & stream) {
-        stream << " <=> ";
+    inline std::string connector_string<eq_tag>() {
+        return " <=> ";
     }
-
-    class print_visitor : boost::static_visitor<> {
-    private:
-        std::ostream & m_stream;
-
-    public:
-        print_visitor(std::ostream & stream) : m_stream(stream) { }
-
-        std::ostream & operator ()(const none &) const {
-            return m_stream << "[none]";
-        }
-
-        template<class T>
-        std::ostream & operator ()(const logical_binary<T> & exp) const {
-            m_stream << "(";
-            boost::apply_visitor(print_visitor { m_stream }, exp.op_left);
-            print_connector<T>(m_stream);
-            boost::apply_visitor(print_visitor { m_stream }, exp.op_right);
-            return m_stream << ")";
-        }
-
-        std::ostream & operator ()(const variable & v) const {
-            return m_stream << v;
-        }
-
-        std::ostream & operator ()(const logical_not & exp) const {
-            m_stream << "~(";
-            boost::apply_visitor(print_visitor { m_stream }, exp.op);
-            return m_stream << ")";
-        }
-    };
 
     template<class T>
     inline bool eval_connector(bool, bool) {
@@ -213,8 +178,18 @@ namespace expr {
 
     expr_result parse(const std::string &);
 
-    inline std::ostream & operator <<(std::ostream & stream, const expr::logical_expr & exp) {
-        return boost::apply_visitor(expr::detail::print_visitor { stream }, exp);
+    inline std::ostream & operator <<(std::ostream & stream, const none &) {
+        return stream << "[none]";
+    }
+
+    inline std::ostream & operator <<(std::ostream & stream, const logical_not & exp) {
+        return stream << "~" << exp.op;
+    }
+
+    template<class T>
+    inline std::ostream & operator <<(std::ostream & stream, const logical_binary<T> & exp) {
+        return stream << "(" << exp.op_left << detail::connector_string<T>()
+            << exp.op_right << ")";
     }
 }
 

@@ -6,9 +6,9 @@
 //  Copyright © 2016 scalexm. All rights reserved.
 //
 
+#include "../expr/logical_expr.hpp"
 #include <catch/catch.hpp>
 #include <iostream>
-#include "../expr/logical_expr.hpp"
 
 expr::logical_expr unwrap(expr::expr_result res) {
     if (auto err = boost::get<std::string>(&res))
@@ -19,17 +19,147 @@ expr::logical_expr unwrap(expr::expr_result res) {
 TEST_CASE("Testing logical expressions", "[logical_expr]") {
     auto exp = expr::logical_expr { expr::none { } };
 
-    SECTION("parsing some logical expressions" ) {
+    SECTION("parsing basic logical expressions" ) {
         exp = unwrap(expr::parse("3"));
-        REQUIRE(exp == expr::make_expr(3));
+        REQUIRE(exp == expr::make(3));
+
+        exp = unwrap(expr::parse("~3"));
+        REQUIRE(exp == expr::make(expr::logical_not { expr::make(3) }));
 
         exp = unwrap(expr::parse("3 \\/ 5"));
-        REQUIRE(exp == expr::make_expr(
+        REQUIRE(exp == expr::make(
             expr::logical_or {
-                expr::make_expr(3),
-                expr::make_expr(5)
+                expr::make(3),
+                expr::make(5)
             }
         ));
 
+        exp = unwrap(expr::parse("3 /\\ 5"));
+        REQUIRE(exp == expr::make(
+            expr::logical_and {
+                expr::make(3),
+                expr::make(5)
+            }
+        ));
+
+        exp = unwrap(expr::parse("3 X 5"));
+        REQUIRE(exp == expr::make(
+            expr::logical_xor {
+                expr::make(3),
+                expr::make(5)
+            }
+        ));
+
+        exp = unwrap(expr::parse("3 => 5"));
+        REQUIRE(exp == expr::make(
+            expr::logical_impl {
+                expr::make(3),
+                expr::make(5)
+            }
+        ));
+
+        exp = unwrap(expr::parse("3 <=> 5"));
+        REQUIRE(exp == expr::make(
+            expr::logical_eq {
+                expr::make(3),
+                expr::make(5)
+            }
+        ));
+
+        exp = unwrap(expr::parse("(3 <=> 5)"));
+        REQUIRE(exp == expr::make(
+            expr::logical_eq {
+                expr::make(3),
+                expr::make(5)
+            }
+        ));
+    }
+
+    SECTION("testing priority and left associativity") {
+        exp = unwrap(expr::parse("3 /\\ 5 /\\6 \\/ 7"));
+        REQUIRE(exp == expr::make(
+            expr::logical_or {
+                expr::make(expr::logical_and {
+                    expr::make(expr::logical_and {
+                        expr::make(3),
+                        expr::make(5),
+                    }),
+                    expr::make(6)
+                }),
+                expr::make(7)
+            }
+        ));
+
+        exp = unwrap(expr::parse("3 => 5 <=> 6 \\/ ~7 \\/ 8 X 9"));
+        REQUIRE(exp == expr::make(
+            expr::logical_eq {
+                expr::logical_impl {
+                    expr::make(3),
+                    expr::make(5)
+                },
+                expr::logical_xor {
+                    expr::make(expr::logical_or {
+                        expr::make(expr::logical_or {
+                            expr::make(6),
+                            expr::make(expr::logical_not { expr::make(7) })
+                        }),
+                        expr::make(8),
+                    }),
+                    expr::make(9)
+                }
+            }
+        ));
+    }
+
+    SECTION("testing evaluation") {
+        exp = unwrap(expr::parse("3"));
+        REQUIRE(!expr::eval(exp, { { 3, false } }));
+        REQUIRE(expr::eval(exp, { { 3, true } }));
+
+        exp = unwrap(expr::parse("~3"));
+        REQUIRE(expr::eval(exp, { { 3, false } }));
+        REQUIRE(!expr::eval(exp, { { 3, true } }));
+
+        exp = unwrap(expr::parse("3 /\\ ~3"));
+        REQUIRE(!expr::eval(exp, { { 3, false } }));
+        REQUIRE(!expr::eval(exp, { { 3, true } }));
+
+        exp = unwrap(expr::parse("3 \\/ ~3"));
+        REQUIRE(expr::eval(exp, { { 3, false } }));
+        REQUIRE(expr::eval(exp, { { 3, true } }));
+
+        exp = unwrap(expr::parse("3 /\\ 5"));
+        REQUIRE(!expr::eval(exp, { { 3, false }, { 5, false } }));
+        REQUIRE(!expr::eval(exp, { { 3, false }, { 5, true } }));
+        REQUIRE(!expr::eval(exp, { { 3, true }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, true }, { 5, true } }));
+
+        exp = unwrap(expr::parse("3 \\/ 5"));
+        REQUIRE(!expr::eval(exp, { { 3, false }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, false }, { 5, true } }));
+        REQUIRE(expr::eval(exp, { { 3, true }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, true }, { 5, true } }));
+
+        exp = unwrap(expr::parse("3 X 5"));
+        REQUIRE(!expr::eval(exp, { { 3, false }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, false }, { 5, true } }));
+        REQUIRE(expr::eval(exp, { { 3, true }, { 5, false } }));
+        REQUIRE(!expr::eval(exp, { { 3, true }, { 5, true } }));
+
+        exp = unwrap(expr::parse("3 => 5"));
+        REQUIRE(expr::eval(exp, { { 3, false }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, false }, { 5, true } }));
+        REQUIRE(!expr::eval(exp, { { 3, true }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, true }, { 5, true } }));
+
+        exp = unwrap(expr::parse("3 <=> 5"));
+        REQUIRE(expr::eval(exp, { { 3, false }, { 5, false } }));
+        REQUIRE(!expr::eval(exp, { { 3, false }, { 5, true } }));
+        REQUIRE(!expr::eval(exp, { { 3, true }, { 5, false } }));
+        REQUIRE(expr::eval(exp, { { 3, true }, { 5, true } }));
+
+        exp = unwrap(expr::parse("(3 X 5) /\\ (6 => ~(7 <=> 3 \\/ 5))"));
+        REQUIRE(expr::eval(exp, { { 3, false }, { 5, true }, { 6, true }, { 7, false } }));
+        REQUIRE(!expr::eval(exp, { { 3, false }, { 5, true }, { 6, true }, { 7, true } }));
     }
 }

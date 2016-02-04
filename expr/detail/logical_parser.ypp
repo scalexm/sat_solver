@@ -33,12 +33,12 @@
 %define api.token.prefix {TOK_}
 %token
     END 0 "end of file"
+    NOT "~"
     AND "/\\"
     OR "\\/"
     XOR "X"
     IMPL "=>"
     EQ "<=>"
-    NOT "~"
     LPAREN "("
     RPAREN ")"
     ERROR "error"
@@ -47,7 +47,10 @@
 %token <int> VARIABLE "variable"
 %type <expr::logical_expr> exp
 
-%left AND OR XOR IMPL EQ
+// defines left associativity AND priority (ordering is important)
+%left IMPL EQ
+%left OR XOR AND
+%left NOT
 
 %%
 %start unit;
