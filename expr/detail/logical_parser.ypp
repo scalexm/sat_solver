@@ -1,0 +1,70 @@
+/*
+ *  detail/logical_parser.ypp
+ *  expr
+ *
+ *  Created by Alexandre Martin on 03/02/2016.
+ *  Copyright © 2016 scalexm. All rights reserved.
+ *
+ */
+
+%skeleton "lalr1.cc"
+%require "3.0.4"
+%defines
+%define api.namespace { expr::detail }
+%define parser_class_name { logical_parser }
+
+%define api.token.constructor
+%define api.value.type variant
+
+%code requires {
+    namespace expr { namespace detail {
+        class logical_driver;
+    } }
+}
+
+%param { expr::detail::logical_driver & driver }
+%locations
+%define parse.error verbose
+
+%{
+#include "logical_driver.hpp"
+%}
+
+%define api.token.prefix {TOK_}
+%token
+    END 0 "end of file"
+    AND "/\\"
+    OR "\\/"
+    XOR "X"
+    IMPL "=>"
+    EQ "<=>"
+    NOT "~"
+    LPAREN "("
+    RPAREN ")"
+    ERROR "error"
+;
+
+%token <int> VARIABLE "variable"
+%type <expr::logical_expr> exp
+
+%left AND OR XOR IMPL EQ
+
+%%
+%start unit;
+unit: exp { driver.set_root(std::move($1)); };
+
+exp:
+  ERROR { YYABORT; }
+| VARIABLE { $$ = expr::logical_expr { std::move($1) }; };
+| LPAREN exp RPAREN { $$ = std::move($2); }
+| exp AND exp { $$ = expr::logical_and { std::move($1), std::move($3) }; }
+| exp OR exp { $$ = expr::logical_or { std::move($1), std::move($3) }; }
+| exp XOR exp { $$ = expr::logical_xor { std::move($1), std::move($3) }; }
+| exp IMPL exp { $$ = expr::logical_impl { std::move($1), std::move($3) }; }
+| exp EQ exp { $$ = expr::logical_eq { std::move($1), std::move($3) }; }
+| NOT exp { $$ = expr::logical_not { std::move($2) }; }
+%%
+
+void expr::detail::logical_parser::error(const location_type & l, const std::string & m) {
+    driver.error(l, m);
+}
