@@ -8,10 +8,19 @@
  */
 
 #include "detail/logical_driver.hpp"
+#include "detail/logical_expr.hpp"
 
 namespace expr {
+    bool eval(const logical_expr & exp, const valuation & val) {
+        return boost::apply_visitor(detail::eval_visitor { val }, exp);
+    }
+
     expr_result parse(const std::string & str) {
         detail::logical_driver driver;
         return driver.parse(str);
+    }
+
+    logical_expr simplify(logical_expr exp) {
+        return boost::apply_visitor(detail::simplify_visitor { }, exp);
     }
 }

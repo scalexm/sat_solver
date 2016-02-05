@@ -48,8 +48,10 @@
 %type <expr::logical_expr> exp
 
 // defines left associativity AND priority (ordering is important)
-%left IMPL EQ
-%left OR XOR AND
+%left EQ
+%left IMPL
+%left OR XOR
+%left AND
 %left NOT
 
 %%

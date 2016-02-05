@@ -17,11 +17,25 @@
 namespace expr {
     using valuation = std::unordered_map<int, bool>;
 
-    struct and_tag { };
-    struct or_tag { };
-    struct xor_tag { };
-    struct impl_tag { };
-    struct eq_tag { };
+    struct and_tag {
+        constexpr static const char * text = "/\\";
+    };
+
+    struct or_tag {
+        constexpr static const char * text = "\\/";
+    };
+
+    struct xor_tag {
+        constexpr static const char * text = "X";
+    };
+
+    struct impl_tag {
+        constexpr static const char * text = "=>";
+    };
+
+    struct eq_tag {
+        constexpr static const char * text = "<=>";
+    };
 
     struct none { };
     using variable = int;
@@ -75,121 +89,22 @@ namespace expr {
     }
 }
 
-
-/* --- detail --- */
-
-namespace expr { namespace detail {
-    template<class T>
-    inline std::string connector_string() {
-        return "?";
-    }
-
-    template<>
-    inline std::string connector_string<and_tag>() {
-        return "/\\";
-    }
-
-    template<>
-    inline std::string connector_string<or_tag>() {
-        return "\\/";
-    }
-
-    template<>
-    inline std::string connector_string<xor_tag>() {
-        return " X ";
-    }
-
-    template<>
-    inline std::string connector_string<impl_tag>() {
-        return " => ";
-    }
-
-    template<>
-    inline std::string connector_string<eq_tag>() {
-        return " <=> ";
-    }
-
-    template<class T>
-    inline bool eval_connector(bool, bool) {
-        return false;
-    }
-
-    template<>
-    inline bool eval_connector<and_tag>(bool a, bool b) {
-        return a && b;
-    }
-
-    template<>
-    inline bool eval_connector<or_tag>(bool a, bool b) {
-        return a || b;
-    }
-
-    template<>
-    inline bool eval_connector<xor_tag>(bool a, bool b) {
-        return (a && !b) || (!a && b);
-    }
-
-    template<>
-    inline bool eval_connector<impl_tag>(bool a, bool b) {
-        return !a || b;
-    }
-
-    template<>
-    inline bool eval_connector<eq_tag>(bool a, bool b) {
-        return (!a || b) && (!b || a);
-    }
-
-    class eval_visitor : boost::static_visitor<bool> {
-    private:
-        const valuation & m_val;
-
-    public:
-        eval_visitor(const valuation & val) : m_val (val) { }
-
-        bool operator ()(const none &) const {
-            return true;
-        }
-
-        template<class T>
-        bool operator ()(const logical_binary<T> & exp) const {
-            return eval_connector<T>(
-                boost::apply_visitor(eval_visitor { m_val }, exp.op_left),
-                boost::apply_visitor(eval_visitor { m_val }, exp.op_right)
-            );
-        }
-
-        bool operator ()(const variable & v) const {
-            auto it = m_val.find(v);
-            if (it == m_val.end())
-                return false;
-            return it->second;
-        }
-        
-        bool operator ()(const logical_not & exp) const {
-            return !boost::apply_visitor(eval_visitor { m_val }, exp.op);
-        }
-    };
-} }
-
 namespace expr {
-    inline bool eval(const logical_expr & exp, const valuation & val) {
-        return boost::apply_visitor(detail::eval_visitor { val }, exp);
-    }
-
+    bool eval(const logical_expr &, const valuation &);
     expr_result parse(const std::string &);
+    logical_expr simplify(logical_expr);
 
     inline std::ostream & operator <<(std::ostream & stream, const none &) {
         return stream << "[none]";
     }
 
     inline std::ostream & operator <<(std::ostream & stream, const logical_not & exp) {
-        return stream << "~" << exp.op;
+        return stream << "~(" << exp.op <<")";
     }
 
     template<class T>
     inline std::ostream & operator <<(std::ostream & stream, const logical_binary<T> & exp) {
-        return stream << "(" << exp.op_left << detail::connector_string<T>()
-            << exp.op_right << ")";
+        return stream << "(" << exp.op_left << " " << T::text << " " << exp.op_right << ")";
     }
 }
 
