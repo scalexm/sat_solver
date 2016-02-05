@@ -17,6 +17,9 @@
 namespace expr {
     using valuation = std::unordered_map<int, bool>;
 
+    /*
+        tags for the template struct logical_binary: each tag identifies a binary logical operator
+    */
     struct and_tag {
         constexpr static const char * text = "/\\";
     };
@@ -59,6 +62,10 @@ namespace expr {
         boost::recursive_wrapper<logical_eq>
     >;
 
+    /*
+        used as a result of expr::parse: expr_result is either a logical_expr (success)
+        or a string (error)
+    */
     using expr_result = boost::variant<logical_expr, std::string>;
 
     template<class T>
@@ -83,29 +90,28 @@ namespace expr {
         return a.op_left == b.op_left && a.op_right == b.op_right;
     }
 
-    template<class T>
-    inline logical_expr make(T exp) {
-        return logical_expr { exp };
-    }
-}
-
-namespace expr {
-    bool eval(const logical_expr &, const valuation &);
-    expr_result parse(const std::string &);
-    logical_expr simplify(logical_expr);
-
     inline std::ostream & operator <<(std::ostream & stream, const none &) {
         return stream << "[none]";
     }
 
     inline std::ostream & operator <<(std::ostream & stream, const logical_not & exp) {
-        return stream << "~(" << exp.op <<")";
+        return stream << "~(" << exp.op << ")";
     }
 
     template<class T>
     inline std::ostream & operator <<(std::ostream & stream, const logical_binary<T> & exp) {
         return stream << "(" << exp.op_left << " " << T::text << " " << exp.op_right << ")";
     }
+
+    // helper function for convenience
+    template<class T>
+    inline logical_expr make(T exp) {
+        return logical_expr { exp };
+    }
+
+    bool eval(const logical_expr &, const valuation &);
+    expr_result parse(const std::string &);
+    logical_expr simplify(logical_expr);
 }
 
 #endif

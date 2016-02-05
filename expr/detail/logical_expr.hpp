@@ -43,7 +43,7 @@ namespace expr { namespace detail {
         return (!a || b) && (!b || a);
     }
 
-    class eval_visitor : boost::static_visitor<bool> {
+    class eval_visitor : public boost::static_visitor<bool> {
     private:
         const valuation & m_val;
 
@@ -74,7 +74,7 @@ namespace expr { namespace detail {
         }
     };
 
-    class simplify_visitor : boost::static_visitor<logical_expr> {
+    class simplify_visitor : public boost::static_visitor<logical_expr> {
     public:
         logical_expr operator ()(none & exp) const {
             return std::move(exp);
@@ -93,9 +93,9 @@ namespace expr { namespace detail {
 
         logical_expr operator ()(logical_not & exp) const {
             exp.op = boost::apply_visitor(simplify_visitor { }, exp.op);
-            if (auto v = boost::get<int>(&exp.op)) {
+            if (auto v = boost::get<int>(&exp.op)) { // ~v is -v
                 return make(-*v);
-            } else if (auto e = boost::get<logical_not>(&exp.op)) {
+            } else if (auto e = boost::get<logical_not>(&exp.op)) { // ~~F is F
                 return std::move(e->op);
             }
             return std::move(exp);

@@ -18,6 +18,10 @@ namespace expr { namespace detail {
         return std::move(m_root);
     }
 
+    /*
+        if an error occurs, we want to use the string part of expr_result
+        as a return value for parse()
+    */
     void logical_driver::error(const location & l, const std::string & m) {
         std::ostringstream ss;
         ss << l << ": " << m;

@@ -56,10 +56,10 @@
 
 %%
 %start unit;
-unit: exp { driver.set_root(std::move($1)); };
+unit: exp { driver.set_root(std::move($1)); }; // give back the result to the driver
 
 exp:
-  ERROR { YYABORT; }
+  ERROR { YYABORT; } // used when an invalid character is encountered
 | VARIABLE { $$ = expr::logical_expr { std::move($1) }; };
 | LPAREN exp RPAREN { $$ = std::move($2); }
 | exp AND exp { $$ = expr::logical_and { std::move($1), std::move($3) }; }
@@ -70,6 +70,9 @@ exp:
 | NOT exp { $$ = expr::logical_not { std::move($2) }; }
 %%
 
+/*
+    report errors to the driver
+*/
 void expr::detail::logical_parser::error(const location_type & l, const std::string & m) {
     driver.error(l, m);
 }

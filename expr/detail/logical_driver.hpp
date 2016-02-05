@@ -29,6 +29,9 @@ namespace expr { namespace detail {
         expr_result parse(const std::string &);
         void error(const location &, const std::string &);
 
+        /*
+            will be called by the parser after having computed the result
+        */
         void set_root(logical_expr root) {
             m_root = expr_result { std::move(root) };
         }
