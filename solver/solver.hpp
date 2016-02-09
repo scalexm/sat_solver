@@ -46,6 +46,12 @@ private:
 public:
     solver(std::vector<std::unordered_set<int>>);
     std::unordered_map<int, bool> solve();
+
+    bool satisfiable() {
+        if (m_remaining_clauses > 0)
+            solve();
+        return m_remaining_clauses != -1;
+    }
 };
 
 #endif
