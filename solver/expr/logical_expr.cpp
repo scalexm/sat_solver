@@ -1,6 +1,6 @@
 /*
- *  logical_expr.cpp
- *  expr
+ *  expr/logical_expr.cpp
+ *  solver
  *
  *  Created by Alexandre Martin on 03/02/2016.
  *  Copyright © 2016 scalexm. All rights reserved.

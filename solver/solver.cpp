@@ -1,5 +1,5 @@
 //
-//  instance.cpp
+//  solver.cpp
 //  solver
 //
 //  Created by Alexandre Martin on 07/02/2016.

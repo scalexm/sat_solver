@@ -1,4 +1,2 @@
-sat_solver.xcworkspace
-tests.xcodeproj
-expr.xcodeproj
-solver.xcodeproj
+*.xcworkspace
+*.xcodeproj

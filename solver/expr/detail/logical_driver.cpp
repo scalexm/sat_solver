@@ -1,6 +1,6 @@
 /*
- *  detail/logical_driver.cpp
- *  expr
+ *  expr/detail/logical_driver.cpp
+ *  solver
  *
  *  Created by Alexandre Martin on 03/02/2016.
  *  Copyright © 2016 scalexm. All rights reserved.
