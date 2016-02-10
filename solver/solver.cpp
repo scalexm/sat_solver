@@ -10,24 +10,24 @@
 #include <cstdlib>
 #include <iostream>
 
-#define DEBUG
-
 solver::solver(std::vector<std::unordered_set<int>> clauses) {
     for (auto i = 0; i < clauses.size(); ++i) {
         for (auto && l : clauses[i]) {
-            m_remaining_variables.emplace(std::abs(l));
-            m_occurences[l].emplace(i);
+            m_remaining_variables.emplace(std::abs(l)); // to keep track of variables we haven't tried yet
+            m_occurences[l].emplace(i); // to know in O(1) in which clauses each litteral appear
         }
         m_clauses.emplace_back(std::move(clauses[i]));
     }
-    m_remaining_clauses = m_clauses.size();
+    m_remaining_clauses = m_clauses.size(); // the total number of clauses not yet satisfied
 }
 
 bool solver::step(detail::litteral lit) {
+    // adding lit to our valuation stack and removing |lit| from the remaining variables
     int value = lit.value();
     m_valuation.emplace_back(std::move(lit));
     m_remaining_variables.erase(m_remaining_variables.find(std::abs(value)));
 
+    // we mark all clauses containing lit as satisfied
     for (auto && c : m_occurences[value]) {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
@@ -38,6 +38,7 @@ bool solver::step(detail::litteral lit) {
         m_clauses[c].satisfy(value);
     }
 
+    // we remove -lit from other clauses
     for (auto && c : m_occurences[-value]) {
 #ifdef DEBUG
         std::cout << "removing " << (-value) << " from clause " << c << std::endl;
@@ -51,10 +52,12 @@ bool solver::step(detail::litteral lit) {
 }
 
 int solver::backtrack() {
+    // removing the head of our valuation stack, and pushing it back to the remaining variables
     auto value = m_valuation.back().value();
     m_valuation.pop_back();
     m_remaining_variables.emplace(std::abs(value));
 
+    // clauses previously statisfied by a step with lit are now unsatisfied
     for (auto && c : m_occurences[value]) {
         if (m_clauses[c].is_satisfied() != value)
             continue;
@@ -65,6 +68,7 @@ int solver::backtrack() {
         m_clauses[c].satisfy(0);
     }
 
+    // we add back -lit to corresponding clauses
     for (auto && c : m_occurences[-value]) {
 #ifdef DEBUG
         std::cout << "adding back " << (-value) << "to clause " << c << std::endl;
@@ -75,7 +79,7 @@ int solver::backtrack() {
     return value;
 }
 
-std::unordered_map<int, bool> solver::solve() {
+std::map<int, bool> solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { };
 
@@ -84,6 +88,8 @@ std::unordered_map<int, bool> solver::solve() {
 
     while (m_remaining_clauses > 0) {
         if (!found) {
+            /* we start by searching a necessary truth */
+
             for (auto && c : m_clauses) {
                 if (c.is_satisfied() != 0)
                     continue;
@@ -100,6 +106,8 @@ std::unordered_map<int, bool> solver::solve() {
         }
 
         if (!found) {
+            /* if we haven't found any, we make a guess */
+
             if (m_remaining_variables.empty()) {
 #ifdef DEBUG
                 std::cout << "empty clause" << std::endl;
@@ -115,6 +123,7 @@ std::unordered_map<int, bool> solver::solve() {
             found = true;
         }
 
+        /* we now try to deduce from our litteral set to true */
         if (!step(std::move(lit))) {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
@@ -132,11 +141,14 @@ std::unordered_map<int, bool> solver::solve() {
             std::cout << "forcing " << -value << std::endl;
 #endif
             lit = detail::litteral { -value, true };
-        } else
+        } else // no conflict encountered, we can search for a new litteral
             found = false;
     }
 
-    std::unordered_map<int, bool> result;
+
+    /* compute a mapping int -> bool out of our valuation stack */
+
+    std::map<int, bool> result;
     for (auto && v : m_valuation)
         result.emplace(std::abs(v.value()), v.value() > 0);
     for (auto && v : m_remaining_variables)

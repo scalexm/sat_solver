@@ -10,7 +10,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "solver.hpp"
+#include <boost/algorithm/string.hpp>
+#include "../solver/solver.hpp"
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
@@ -23,6 +24,7 @@ solver parse(std::ifstream & file) {
     std::vector<std::unordered_set<int>> res;
 
     while (std::getline(file, line)) {
+        boost::algorithm::trim(line);
         ++line_number;
         if(!line.empty() && line[0] == 'c')
             continue;
@@ -32,6 +34,7 @@ solver parse(std::ifstream & file) {
                     << MAKE_WARNING(line_number, "redefinition of header ignored")
                     << std::endl;
             }
+            header = true;
 
             std::string str1, str2;
             std::istringstream ss { line };
@@ -73,6 +76,12 @@ solver parse(std::ifstream & file) {
 }
 
 int main(int argc, char ** argv) {
+    solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
+    auto val = s.solve();
+    for (auto && v: val)
+        std::cout << v.first << " = " << std::boolalpha << v.second << "; ";
+    std::cout << std::endl;
+
     if (argc < 2) {
         std::cerr << "no input" << std::endl;
         return 1;
@@ -89,8 +98,15 @@ int main(int argc, char ** argv) {
             return 1;
         }
 
-        if (parse(f).satisfiable())
+        auto solver = parse(f);
+        auto valuation = solver.solve();
+        if (solver.satisfiable()) {
             std::cout << "s SATISFIABLE" << std::endl;
+            for (auto && v : valuation) {
+                std::cout << (v.second ? v.first : -v.first) << " ";
+            }
+            std::cout << "0" << std::endl;
+        }
         else
             std::cout << "s UNSATISFIABLE" << std::endl;
     }

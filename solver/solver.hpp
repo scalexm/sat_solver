@@ -9,10 +9,11 @@
 #ifndef SOLVER_HPP
 #define SOLVER_HPP
 
-#include "clause.hpp"
+#include "detail/clause.hpp"
 #include <vector>
 #include <unordered_map>
 #include <list>
+#include <map>
 
 class solver;
 
@@ -45,7 +46,7 @@ private:
     int backtrack();
 public:
     solver(std::vector<std::unordered_set<int>>);
-    std::unordered_map<int, bool> solve();
+    std::map<int, bool> solve();
 
     bool satisfiable() {
         if (m_remaining_clauses > 0)

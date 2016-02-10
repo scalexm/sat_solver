@@ -6,7 +6,7 @@
 //  Copyright © 2016 scalexm. All rights reserved.
 //
 
-#include "../expr/logical_expr.hpp"
+#include "../solver/expr/logical_expr.hpp"
 #include <catch/catch.hpp>
 #include <sstream>
 #include <iostream>
