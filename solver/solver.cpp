@@ -79,7 +79,7 @@ int solver::backtrack() {
     return value;
 }
 
-std::map<int, bool> solver::solve() {
+std::unordered_map<int, bool> solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { };
 
@@ -148,7 +148,7 @@ std::map<int, bool> solver::solve() {
 
     /* compute a mapping int -> bool out of our valuation stack */
 
-    std::map<int, bool> result;
+    std::unordered_map<int, bool> result;
     for (auto && v : m_valuation)
         result.emplace(std::abs(v.value()), v.value() > 0);
     for (auto && v : m_remaining_variables)

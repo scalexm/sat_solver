@@ -13,6 +13,8 @@
 #include <boost/variant.hpp>
 #include <ostream>
 #include <unordered_map>
+#include <vector>
+#include <unordered_set>
 
 namespace expr {
     using valuation = std::unordered_map<int, bool>;
@@ -112,6 +114,7 @@ namespace expr {
     bool eval(const logical_expr &, const valuation &);
     expr_result parse(const std::string &);
     logical_expr simplify(logical_expr);
+    logical_expr cnf_to_expr(std::vector<std::unordered_set<int>>);
 }
 
 #endif

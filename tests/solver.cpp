@@ -7,3 +7,30 @@
 //
 
 
+#include "../solver/solver.hpp"
+#include "../solver/expr/logical_expr.hpp"
+#include <catch/catch.hpp>
+
+TEST_CASE("Testing SAT solver in CNF mode", "[solver]") {
+    SECTION("satisfying basic CNF formulas") {
+        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
+        REQUIRE(s.satisfiable());
+
+        s = solver { { { -1, 2, 3 }, { 1 }, { -2, 3 }, { -2, -3 }, { 2, 3 }, { 2, -3 } } };
+        REQUIRE(!s.satisfiable());
+    }
+
+    SECTION("calling `solve` two times", "[solver]") {
+        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
+        REQUIRE(s.solve() == s.solve());
+    }
+
+    SECTION("testing valuations returned from solver", "[solver]") {
+        std::vector<std::unordered_set<int>> cnf = {
+            { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 }
+        };
+
+        solver s { cnf };
+        REQUIRE(expr::eval(expr::cnf_to_expr(cnf), s.solve()));
+    }
+}

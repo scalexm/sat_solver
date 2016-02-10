@@ -63,10 +63,10 @@ namespace expr { namespace detail {
         }
 
         bool operator ()(const variable & v) const {
-            auto it = m_val.find(v);
+            auto it = m_val.find(std::abs(v));
             if (it == m_val.end())
                 return false;
-            return it->second;
+            return v > 0 ? it->second : !it->second;
         }
         
         bool operator ()(const logical_not & exp) const {
