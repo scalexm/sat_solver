@@ -76,12 +76,6 @@ solver parse(std::ifstream & file) {
 }
 
 int main(int argc, char ** argv) {
-    solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
-    auto val = s.solve();
-    for (auto && v: val)
-        std::cout << v.first << " = " << std::boolalpha << v.second << "; ";
-    std::cout << std::endl;
-
     if (argc < 2) {
         std::cerr << "no input" << std::endl;
         return 1;

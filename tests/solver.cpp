@@ -10,6 +10,7 @@
 #include "../solver/solver.hpp"
 #include "../solver/expr/logical_expr.hpp"
 #include <catch/catch.hpp>
+#include <iostream>
 
 TEST_CASE("Testing SAT solver in CNF mode", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
@@ -18,14 +19,20 @@ TEST_CASE("Testing SAT solver in CNF mode", "[solver]") {
 
         s = solver { { { -1, 2, 3 }, { 1 }, { -2, 3 }, { -2, -3 }, { 2, 3 }, { 2, -3 } } };
         REQUIRE(!s.satisfiable());
+
+        s = solver { { } };
+        REQUIRE(s.satisfiable());
+
+        s = solver { { { 1, -2 }, { } } };
+        REQUIRE(!s.satisfiable());
     }
 
-    SECTION("calling `solve` two times", "[solver]") {
+    SECTION("calling `solve` two times") {
         solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
         REQUIRE(s.solve() == s.solve());
     }
 
-    SECTION("testing valuations returned from solver", "[solver]") {
+    SECTION("testing valuations returned from solver") {
         std::vector<std::unordered_set<int>> cnf = {
             { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 }
         };

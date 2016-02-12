@@ -24,12 +24,12 @@ namespace expr {
         return boost::apply_visitor(detail::simplify_visitor { }, exp);
     }
 
-    logical_expr cnf_to_expr(std::vector<std::unordered_set<int>> clauses) {
-        if (clauses.empty())
+    logical_expr cnf_to_expr(std::vector<std::unordered_set<int>> cnf) {
+        if (cnf.empty())
             return none { };
 
         auto exp = make(none { });
-        for (auto && c : clauses) {
+        for (auto && c : cnf) {
             if (c.empty())
                 continue;
 

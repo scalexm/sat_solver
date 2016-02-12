@@ -44,7 +44,7 @@ bool solver::step(detail::litteral lit) {
         std::cout << "removing " << (-value) << " from clause " << c << std::endl;
 #endif
         m_clauses[c].remove(-value);
-        if (m_clauses.empty())
+        if (m_clauses[c].empty())
             return false;
     }
 
@@ -109,13 +109,12 @@ std::unordered_map<int, bool> solver::solve() {
             /* if we haven't found any, we make a guess */
 
             if (m_remaining_variables.empty()) {
+                m_remaining_clauses = -1;
 #ifdef DEBUG
                 std::cout << "empty clause" << std::endl;
 #endif
-                m_remaining_clauses = -1;
                 return { };
             }
-
 #ifdef DEBUG
             std::cout << "guessing " << *m_remaining_variables.begin() << std::endl;
 #endif
