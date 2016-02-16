@@ -115,7 +115,7 @@ std::unordered_map<int, bool> solver::solve() {
 #ifdef DDEBUG
                 std::cout << "empty clause" << std::endl;
 #endif
-                return { };
+                return { { } };
             }
 #ifdef DDEBUG
             std::cout << "guessing " << *m_remaining_variables.begin() << std::endl;
@@ -134,7 +134,7 @@ std::unordered_map<int, bool> solver::solve() {
 
             if (m_valuation.empty()) {
                 m_remaining_clauses = -1;
-                return { };
+                return { { } };
             }
 
             auto value = backtrack();
