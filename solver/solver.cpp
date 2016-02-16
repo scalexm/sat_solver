@@ -83,7 +83,7 @@ int solver::backtrack() {
 
 std::unordered_map<int, bool> solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
-        return { };
+        return { { } };
 
     auto found = false;
     detail::litteral lit;
