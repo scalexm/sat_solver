@@ -10,10 +10,12 @@
 #include <cstdlib>
 #include <iostream>
 
-//#define DDEBUG
-
 solver::solver(cnf clauses) {
     for (auto i = 0; i < clauses.size(); ++i) {
+        if (clauses[i].empty()) {
+            m_remaining_clauses = -1;
+            return;
+        }
         for (auto && l : clauses[i]) {
             m_remaining_variables.emplace(std::abs(l)); // to keep track of variables we haven't tried yet
             m_occurences[l].emplace(i); // to know in O(1) in which clauses each litteral appear
@@ -33,7 +35,7 @@ bool solver::step(detail::litteral lit) {
     for (auto && c : m_occurences[value]) {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
-#ifdef DDEBUG
+#ifdef DEBUG
         std::cout << "removing clause " << c << std::endl;
 #endif
         --m_remaining_clauses;
@@ -42,7 +44,7 @@ bool solver::step(detail::litteral lit) {
 
     // we remove -lit from other clauses
     for (auto && c : m_occurences[-value]) {
-#ifdef DDEBUG
+#ifdef DEBUG
         std::cout << "removing " << (-value) << " from clause " << c << std::endl;
 #endif
         m_clauses[c].remove(-value);
@@ -63,7 +65,7 @@ int solver::backtrack() {
     for (auto && c : m_occurences[value]) {
         if (m_clauses[c].is_satisfied() != value)
             continue;
-#ifdef DDEBUG
+#ifdef DEBUG
         std::cout << "adding back clause " << c << std::endl;
 #endif
         ++m_remaining_clauses;
@@ -72,7 +74,7 @@ int solver::backtrack() {
 
     // we add back -lit to corresponding clauses
     for (auto && c : m_occurences[-value]) {
-#ifdef DDEBUG
+#ifdef DEBUG
         std::cout << "adding back " << (-value) << " to clause " << c << std::endl;
 #endif
         m_clauses[c].add(-value);
@@ -89,6 +91,13 @@ valuation solver::solve() {
     detail::litteral lit;
 
     while (m_remaining_clauses > 0) {
+#ifdef DEBUG
+        auto not_satisfied_count = 0;
+        for (auto && c : m_clauses)
+            if (c.is_satisfied() == 0)
+                ++not_satisfied_count;
+#endif
+
         if (!found) {
             /* we start by searching a necessary truth */
 
@@ -97,7 +106,7 @@ valuation solver::solve() {
                     continue;
                 else if (c.litterals().size() == 1) {
                     auto value = *c.litterals().begin();
-#ifdef DDEBUG
+#ifdef DEBUG
                     std::cout << "forcing " << value << std::endl;
 #endif
                     lit = detail::litteral { value, true };
@@ -107,17 +116,13 @@ valuation solver::solve() {
             }
         }
 
+#ifdef DEBUG
+        std::cout << "remaining clauses: " << not_satisfied_count << std::endl;
+#endif
+
         if (!found) {
             /* if we haven't found any, we make a guess */
-
-            if (m_remaining_variables.empty()) {
-                m_remaining_clauses = -1;
-#ifdef DDEBUG
-                std::cout << "empty clause" << std::endl;
-#endif
-                return { { } };
-            }
-#ifdef DDEBUG
+#ifdef DEBUG
             std::cout << "guessing " << *m_remaining_variables.begin() << std::endl;
 #endif
             lit = detail::litteral { *m_remaining_variables.begin(), false };
@@ -126,7 +131,7 @@ valuation solver::solve() {
 
         /* we now try to deduce from our litteral set to true */
         if (!step(std::move(lit))) {
-#ifdef DDEBUG
+#ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
             while (!m_valuation.empty() && m_valuation.back().forced())
@@ -138,7 +143,7 @@ valuation solver::solve() {
             }
 
             auto value = backtrack();
-#ifdef DDEBUG
+#ifdef DEBUG
             std::cout << "forcing " << -value << std::endl;
 #endif
             lit = detail::litteral { -value, true };

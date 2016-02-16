@@ -244,12 +244,4 @@ TEST_CASE("Testing operations on logical expressions", "[logical_expr]") {
         exp = unwrap(expr::parse("3 /\\ ~(~(5 => 8))"));
         REQUIRE(expr::simplify(std::move(exp)) == unwrap(expr::parse("3 /\\ (5 => 8)")));
     }
-
-    SECTION("testing conversion from cnf") {
-        exp = unwrap(expr::parse("3 /\\ 5"));
-        REQUIRE(exp == expr::cnf_to_expr({ { 3 }, { 5 } }));
-
-        exp = unwrap(expr::parse("(3 \\/ -2) /\\ 2 /\\ (1 \\/ 2 \\/ -3)"));
-        REQUIRE(exp == expr::cnf_to_expr({ { 3, -2 }, { 2 }, { 1, 2, -3 } }));
-    }
 }
