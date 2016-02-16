@@ -1,5 +1,5 @@
 IDIR = ./include
-CPP = clang++
+CPP = g++
 CXXFLAGS = -std=c++11 -I$(IDIR) 
 LEX=flex
 LIBLEX=-lfl
@@ -8,7 +8,7 @@ YACC=bison
 
 all : detail resol ./tests/tests
 
-resol: ./solver/solver.cpp ./sat/main.cpp  ./solver/expr/tseitin.cpp ./solver/expr/logical_expr.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/*.c
+resol: ./solver/solver.cpp ./sat/main.cpp  ./solver/expr/tseitin.cpp ./solver/expr/logical_expr.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/y.tab.c
 	$(CPP) $(CXXFLAGS) -o $@ $^
 
 ./tests/tests: ./solver/solver.cpp ./solver/expr/*.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/*.c ./tests/*.cpp
