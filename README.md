@@ -1,9 +1,10 @@
 #A C++ SAT solver
 
-* pour compiler, lancer `make`
-* pour exécuter les tests unitaires, lancer `./tests/tests`
-* pour utiliser le solveur en mode CNF, lancer `./resol file.cnf`
-* pour utiliser le solveur en mode convivial, lancer `./resol -tseitin file.for`
+* pour compiler, exécuter `make`
+* pour compiler avec les messages de debug, exécuter `make debug`
+* pour exécuter les tests unitaires, exécuter `./tests/tests`
+* pour utiliser le solveur en mode CNF, exécuter `./resol file.cnf`
+* pour utiliser le solveur en mode convivial, exécuter `./resol -tseitin file.for`
 
 ## Fonctionnalités
 * solveur utilisant l'algorithme DPLL pour satisfaire des formules sous forme CNF
