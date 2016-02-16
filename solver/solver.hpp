@@ -9,6 +9,7 @@
 #ifndef SOLVER_HPP
 #define SOLVER_HPP
 
+#include "cnf.hpp"
 #include "detail/clause.hpp"
 #include <vector>
 #include <unordered_map>
@@ -44,7 +45,7 @@ private:
     bool step(detail::litteral lit);
     int backtrack();
 public:
-    solver(std::vector<std::unordered_set<int>>);
+    solver(cnf);
     std::unordered_map<int, bool> solve();
 
     bool satisfiable() {

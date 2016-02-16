@@ -12,6 +12,8 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
+cnf factor_to_sat(long long int);
+
 TEST_CASE("Testing SAT solver in CNF mode", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
         solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
@@ -33,11 +35,16 @@ TEST_CASE("Testing SAT solver in CNF mode", "[solver]") {
     }
 
     SECTION("testing valuations returned from solver") {
-        std::vector<std::unordered_set<int>> cnf = {
+        cnf c = {
             { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 }
         };
 
-        solver s { cnf };
-        REQUIRE(expr::eval(expr::cnf_to_expr(cnf), s.solve()));
+        solver s { c };
+        REQUIRE(expr::eval(expr::cnf_to_expr(c), s.solve()));
+    }
+
+    SECTION("testing some lol") {
+        auto c = factor_to_sat(7);
+        solver s { c };
     }
 }
