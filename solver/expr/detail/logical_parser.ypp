@@ -42,12 +42,14 @@
     LPAREN "("
     RPAREN ")"
     ERROR "error"
+    NEW_LINE "new line"
 ;
 
 %token <int> VARIABLE "variable"
 %type <expr::logical_expr> exp
 
 // defines left associativity AND priority (ordering is important)
+%left NEW_LINE
 %left EQ
 %left IMPL
 %left OR XOR
@@ -63,6 +65,7 @@ exp:
 | VARIABLE { $$ = expr::logical_expr { std::move($1) }; };
 | LPAREN exp RPAREN { $$ = std::move($2); }
 | exp AND exp { $$ = expr::logical_and { std::move($1), std::move($3) }; }
+| exp NEW_LINE exp { $$ = expr::logical_and { std::move($1), std::move($3) }; }
 | exp OR exp { $$ = expr::logical_or { std::move($1), std::move($3) }; }
 | exp XOR exp { $$ = expr::logical_xor { std::move($1), std::move($3) }; }
 | exp IMPL exp { $$ = expr::logical_impl { std::move($1), std::move($3) }; }

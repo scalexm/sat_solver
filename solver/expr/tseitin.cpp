@@ -9,6 +9,7 @@
 
 #include "tseitin.hpp"
 #include "detail/tseitin.hpp"
+#include <list>
 
 namespace expr {
     std::pair<cnf, variable> tseitin_transform(const logical_expr & ex) {
@@ -20,7 +21,7 @@ namespace expr {
             simple_ex
         );
 
-        auto lowest_fresh = current_variable;
+        auto lowest_fresh = current_variable + 1;
 
         auto tv = detail::tseitin_visitor { current_variable, result };
         current_variable = boost::apply_visitor(tv, ex);
@@ -29,9 +30,15 @@ namespace expr {
     }
 
     valuation remove_trailing_variables(valuation val, variable v) {
-        for (auto && p : val)
+        std::list<variable> to_remove;
+        for (auto && p : val) {
             if (p.first >= v)
-                val.erase(p.first);
+                to_remove.emplace_back(p.first);
+        }
+
+        for (auto && p : to_remove)
+            val.erase(p);
+
         return val;
     }
 }

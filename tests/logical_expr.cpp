@@ -82,7 +82,7 @@ TEST_CASE("Testing logical expressions parser", "[logical_expr]") {
     }
     
     SECTION("testing that line return is a conjunction") {
-        exp = unwrap(expr::parse("(3 \\/ 5) \n (6 \\/ 7) \n 2"));
+        exp = unwrap(expr::parse("3 \\/ 5 \n 6 \\/ 7 \n 2"));
         REQUIRE(exp == expr::make(
             expr::logical_and {
                 expr::make(expr::logical_and {

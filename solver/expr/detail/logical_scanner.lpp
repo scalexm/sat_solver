@@ -34,7 +34,7 @@
 %}
 
 [ \t]+ loc.step();
-[\n] loc.lines(yyleng); loc.step(); return expr::detail::logical_parser::make_AND(loc);
+[\n] loc.lines(yyleng); loc.step(); return expr::detail::logical_parser::make_NEW_LINE(loc);
 "(" return expr::detail::logical_parser::make_LPAREN(loc);
 ")" return expr::detail::logical_parser::make_RPAREN(loc);
 "/\\" return expr::detail::logical_parser::make_AND(loc);
