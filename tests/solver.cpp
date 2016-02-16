@@ -6,7 +6,6 @@
 //  Copyright © 2016 scalexm. All rights reserved.
 //
 
-
 #include "../solver/solver.hpp"
 #include "../solver/expr/logical_expr.hpp"
 #include <catch/catch.hpp>
@@ -14,7 +13,7 @@
 
 cnf factor_to_sat(long long int);
 
-TEST_CASE("Testing SAT solver in CNF mode", "[solver]") {
+TEST_CASE("Testing SAT solver", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
         solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
         REQUIRE(s.satisfiable());

@@ -8,7 +8,9 @@
  */
 
  #include "logical_expr.hpp"
+ #include <utility>
 
 namespace expr {
-    cnf tseitin_transform(logical_expr &);
+    std::pair<cnf, variable> tseitin_transform(const logical_expr &);
+    valuation remove_trailing_variables(valuation, variable);
 }

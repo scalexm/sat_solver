@@ -46,7 +46,7 @@ private:
     int backtrack();
 public:
     solver(cnf);
-    std::unordered_map<int, bool> solve();
+    valuation solve();
 
     bool satisfiable() {
         if (m_remaining_clauses > 0)

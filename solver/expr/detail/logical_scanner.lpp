@@ -43,7 +43,7 @@
 "<=>" return expr::detail::logical_parser::make_EQ(loc);
 "X" return expr::detail::logical_parser::make_XOR(loc);
 "~" return expr::detail::logical_parser::make_NOT(loc);
--?[0-9]+ return expr::detail::logical_parser::make_VARIABLE(std::stoi(yytext), loc);
+-?[1-9][0-9]* return expr::detail::logical_parser::make_VARIABLE(std::stoi(yytext), loc);
 . driver.error(loc, "invalid character"); return expr::detail::logical_parser::make_ERROR(loc);
 <<EOF>> return expr::detail::logical_parser::make_END(loc);
 %%

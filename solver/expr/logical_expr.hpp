@@ -18,8 +18,6 @@
 #include <unordered_set>
 
 namespace expr {
-    using valuation = std::unordered_map<int, bool>;
-
     /*
         tags for the template struct logical_binary: each tag identifies a binary logical operator
     */
@@ -115,7 +113,7 @@ namespace expr {
     bool eval(const logical_expr &, const valuation &);
     expr_result parse(const std::string &);
     logical_expr simplify(logical_expr);
-    logical_expr cnf_to_expr(cnf);
+    logical_expr cnf_to_expr(const cnf &);
 }
 
 #endif

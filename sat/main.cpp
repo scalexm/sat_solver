@@ -6,12 +6,13 @@
 //  Copyright © 2016 scalexm. All rights reserved.
 //
 
+#include "../solver/solver.hpp"
+#include "../solver/expr/tseitin.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
-#include "../solver/solver.hpp"
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
@@ -75,6 +76,12 @@ solver parse(std::ifstream & file) {
     return solver { std::move(res) };
 }
 
+void trim_expr(std::string & exp) {
+    boost::algorithm::trim(exp);
+    if (boost::algorithm::ends_with(exp, " 0"))
+        boost::algorithm::erase_tail(exp, 2);
+}
+
 int main(int argc, char ** argv) {
     if (argc < 2) {
         std::cerr << "no input" << std::endl;
@@ -84,7 +91,37 @@ int main(int argc, char ** argv) {
             std::cerr << "no input" << std::endl;
             return 1;
         }
-        // TODO
+
+        std::ifstream f { argv[2] };
+        if (!f) {
+            std::cerr << "file not found" << std::endl;
+            return 1;
+        }
+
+        std::ostringstream ss;
+        ss << f.rdbuf();
+        auto exp = ss.str();
+        trim_expr(exp);
+
+        auto res = expr::parse(exp);
+        if (auto err = boost::get<std::string>(&res)) {
+            std::cerr << *err << std::endl;
+            return 1;
+        }
+
+        auto tseitin = expr::tseitin_transform(*boost::get<expr::logical_expr>(&res));
+        solver s { std::move(tseitin.first) };
+        auto valuation = expr::remove_trailing_variables(s.solve(), tseitin.second);
+
+        if (s.satisfiable()) {
+            std::cout << "s SATISFIABLE" << std::endl;
+            for (auto && v : valuation) {
+                std::cout << (v.second ? v.first : -v.first) << " ";
+            }
+            std::cout << "0" << std::endl;
+        }
+        else
+            std::cout << "s UNSATISFIABLE" << std::endl;
     } else {
         std::ifstream f { argv[1] };
         if (!f) {
@@ -92,9 +129,10 @@ int main(int argc, char ** argv) {
             return 1;
         }
 
-        auto solver = parse(f);
-        auto valuation = solver.solve();
-        if (solver.satisfiable()) {
+        auto s = parse(f);
+        auto valuation = s.solve();
+
+        if (s.satisfiable()) {
             std::cout << "s SATISFIABLE" << std::endl;
             for (auto && v : valuation) {
                 std::cout << (v.second ? v.first : -v.first) << " ";

@@ -11,7 +11,9 @@
 
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 using cnf = std::vector<std::unordered_set<int>>;
+using valuation = std::unordered_map<int, bool>;
 
 #endif

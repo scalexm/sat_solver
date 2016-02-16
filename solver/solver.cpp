@@ -81,7 +81,7 @@ int solver::backtrack() {
     return value;
 }
 
-std::unordered_map<int, bool> solver::solve() {
+valuation solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { { } };
 

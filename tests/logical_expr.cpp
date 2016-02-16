@@ -75,6 +75,11 @@ TEST_CASE("Testing logical expressions parser", "[logical_expr]") {
             }
         ));
     }
+
+    SECTION("testing that 0 is not recognized") {
+        auto res = expr::parse("7 => 0 /\\ 2");
+        REQUIRE(boost::get<std::string>(&res) != nullptr);
+    }
     
     SECTION("testing that line return is a conjunction") {
         exp = unwrap(expr::parse("(3 \\/ 5) \n (6 \\/ 7) \n 2"));

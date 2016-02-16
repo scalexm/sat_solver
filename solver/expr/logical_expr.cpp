@@ -24,7 +24,7 @@ namespace expr {
         return boost::apply_visitor(detail::simplify_visitor { }, exp);
     }
 
-    logical_expr cnf_to_expr(std::vector<std::unordered_set<int>> cnf) {
+    logical_expr cnf_to_expr(const cnf & cnf) {
         if (cnf.empty())
             return none { };
 
