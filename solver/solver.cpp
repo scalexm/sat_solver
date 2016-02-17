@@ -133,40 +133,6 @@ valuation solver::solve() {
                     found = true;
                     break;
                 }
-                else {
-                    for (auto && v : m_remaining_variables) {
-                        bool appear_0 = false;
-                        bool appear_1 = false;
-                        for (auto && c2 : m_clauses) {
-                            if(c2.is_satisfied() != 0)
-                                continue;
-                            if (c2.litterals().find(v)!= c2.litterals().end()) {
-                                appear_1 = true;
-                            }
-                            if (c2.litterals().find(-v) != c2.litterals().end()) {
-                                appear_0 = true;
-                            }
-                            if (appear_0 && appear_1)
-                                break;
-                        }
-                        if (appear_0 && !appear_1) {
-#ifdef DEBUG
-                            std::cout << "forcing " << -v << std::endl;
-#endif
-                            lit = detail::litteral { -v, true};
-                            found = true;
-                            break;
-                        }
-                        if (!appear_0 && appear_1) {
-#ifdef DEBUG
-                            std::cout << "forcing " << v << std::endl;
-#endif
-                            lit = detail::litteral { v, true};
-                            found = true;
-                            break;
-                        }
-                    }
-                }
             }
         }
 
