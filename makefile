@@ -1,6 +1,6 @@
 IDIR = ./include
 CPP = g++
-CXXFLAGS = -std=c++11 -I$(IDIR)
+CXXFLAGS = -std=c++11 -I$(IDIR) -O2
 DEBUG = -DDEBUG
 LEX=flex
 LIBLEX=-lfl
