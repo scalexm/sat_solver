@@ -7,10 +7,10 @@
 //
 
 #include "../solver/solver.hpp"
-#include <iostream>
 #include <cmath>
 #include <cassert>
 #include <catch/catch.hpp>
+#include <random>
 
 cnf encode(const std::vector<int> & bits, long long int n) {
     auto l = bits.size();
@@ -48,29 +48,20 @@ cnf equality(const std::vector<int> & bits_r, const std::vector<int> & bits_p) {
     return f;
 }
 
-cnf equality_times2(const std::vector<int> & bits_r, const std::vector<int> & bits_p) {
+cnf equality_pow2_or_zero(const std::vector<int> & bits_r, const std::vector<int> & bits_p, int pow, int b) {
     auto l = bits_r.size();
     assert(l == bits_p.size());
     cnf f;
 
-    f.push_back({ -bits_r[0] });
-    for (auto i = 1; i < l; ++i) {
-        f.push_back({ bits_r[i], -bits_p[i - 1] });
-        f.push_back({ -bits_r[i], bits_p[i - 1] });
+    for (auto i = 0; i < pow; ++i) {
+        f.push_back({ -bits_r[i] });
+        f.push_back({ -b, -bits_p[l - 1 - i] });
     }
 
-    return f;
-}
-
-cnf equality_or_zero(const std::vector<int> & bits_r, const std::vector<int> & bits_p, int b) {
-    auto l = bits_r.size();
-    assert(l == bits_p.size());
-    cnf f;
-
-    for (auto i = 0; i < l; ++i) {
+    for (auto i = pow; i < l; ++i) {
         f.push_back({ b, -bits_r[i] });
-        f.push_back({ bits_p[i], -bits_r[i] });
-        f.push_back({ bits_r[i], -b, -bits_p[i] });
+        f.push_back({ bits_r[i], -b, -bits_p[i - pow] });
+        f.push_back({ -bits_r[i], bits_p[i - pow] });
     }
 
     return f;
@@ -123,65 +114,82 @@ cnf encode_to_cnf(long long int n) {
     return encode(p, n);
 }
 
-cnf equality_to_cnf(int l) {
+cnf equation_to_cnf(int l, int x, int y) {
     auto start = 1;
-    std::vector<int> p, q;
-    std::tie(p, start) = make_bits(l, start);
+    std::vector<int> r, p, q ,c;
     std::tie(q, start) = make_bits(l, start);
-    return equality(p, q);
+    std::tie(p, start) = make_bits(l, start);
+    std::tie(r, start) = make_bits(l, start);
+    std::tie(c, start) = make_bits(l + 1, start);
+
+    auto cnf = equality_sum(r, p, q, c);
+    auto cnff = encode(r, x);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    cnff = encode(p, y);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    return cnf;
 }
 
-cnf equality_times2_to_cnf(int l) {
+cnf check_pow2_or_zero_to_cnf(int l, int x, int y, int pow, bool b) {
     auto start = 1;
-    std::vector<int> p, q;
+    std::vector<int> r, p;
+    std::tie(r, start) = make_bits(l, start);
     std::tie(p, start) = make_bits(l, start);
-    std::tie(q, start) = make_bits(l, start);
-    return equality_times2(p, q);
+
+    auto cnf = equality_pow2_or_zero(r, p, pow, start);
+    auto cnff = encode(r, x);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    cnff = encode(p, y);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    cnf.push_back({ b ? start : -start });
+    return cnf;
 }
 
-cnf equality_sum_to_cnf(int l) {
+cnf check_sum_to_cnf(int l, int x, int y, int z) {
     auto start = 1;
-    std::vector<int> r, p, q, c;
+    std::vector<int> r, p, q ,c;
     std::tie(r, start) = make_bits(l, start);
     std::tie(p, start) = make_bits(l, start);
     std::tie(q, start) = make_bits(l, start);
     std::tie(c, start) = make_bits(l + 1, start);
 
-    return equality_sum(r, p, q, c);
+    auto cnf = equality_sum(r, p, q, c);
+    auto cnff = encode(r, x);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    cnff = encode(p, y);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    cnff = encode(q, z);
+    cnf.insert(cnf.end(), cnff.begin(), cnff.end());
+    return cnf;
+
 }
 
-cnf factor_to_sat(long long int n) {
+cnf factor_to_cnf(long long int n) {
     auto l = std::floor(std::log2(n)) + 1;
     auto start = 1;
 
-    std::vector<std::vector<int>> s(l), m(l), r(l);
     std::vector<int> p, q;
+    std::vector<std::vector<int>> s(l), r(l);
 
     std::tie(p, start) = make_bits(l, start);
     std::tie(q, start) = make_bits(l, start);
-    std::tie(s[0], start) = make_bits(l, start);
-
-    auto cnf = equality(s[0], p);
-    for (auto i = 1; i < l; ++i) {
+    for (auto i = 0; i < l; ++i)
         std::tie(s[i], start) = make_bits(l, start);
-        auto cnff = equality_times2(s[i], s[i - 1]);
-        cnf.insert(cnf.end(), cnff.begin(), cnff.end());
-    }
+    for (auto i = 0; i < l; ++i)
+        std::tie(r[i], start) = make_bits(l, start);
 
+    cnf cnf;
     for (auto i = 0; i < l; ++i) {
-        std::tie(m[i], start) = make_bits(l, start);
-        auto cnff = equality_or_zero(m[i], s[i], q[i]);
+        auto cnff = equality_pow2_or_zero(s[i], p, i, q[i]);
         cnf.insert(cnf.end(), cnff.begin(), cnff.end());
     }
 
-    std::tie(r[0], start) = make_bits(l, start);
-    auto cnff = equality(r[0], m[0]);
+    auto cnff = equality(r[0], s[0]);
     cnf.insert(cnf.end(), cnff.begin(), cnff.end());
     for (auto i = 1; i < l; ++i) {
         std::vector<int> c;
         std::tie(c, start) = make_bits(l + 1, start);
-        std::tie(r[i], start) = make_bits(l, start);
-        cnff = equality_sum(r[i], r[i - 1], m[i], c);
+        cnff = equality_sum(r[i], r[i - 1], s[i], c);
         cnf.insert(cnf.end(), cnff.begin(), cnff.end());
     }
 
@@ -190,7 +198,7 @@ cnf factor_to_sat(long long int n) {
 
     cnff = encode_not_equal(p, 1);
     cnf.insert(cnf.end(), cnff.begin(), cnff.end());
-    cnff = encode_not_equal(p, n);
+    cnff = encode_not_equal(q, 1);
     cnf.insert(cnf.end(), cnff.begin(), cnff.end());
 
     return cnf;
@@ -206,50 +214,87 @@ long long int val_to_number(const std::unordered_map<int, bool> & val, int begin
     return number;
 }
 
-TEST_CASE("Testing SAT factor encoder") {
+bool is_prime(long long int number) {
+	for (int i = 2; i < number; ++i) {
+		if (number % i == 0)
+			return false;
+	}
+	return true;	
+}
+
+
+TEST_CASE("Testing arithmetic operations encoder") {
     SECTION("testing encode") {
-        auto cnf = encode_to_cnf(2347862);
-        solver s { cnf };
+        solver s { encode_to_cnf(2347862) };
         auto val = s.solve();
         REQUIRE(val_to_number(val, 1, val.size() + 1) == 2347862);
 
-        cnf = encode_to_cnf(982478);
-        s = solver { cnf };
+        s = solver { encode_to_cnf(982478) };
         val = s.solve();
         REQUIRE(val_to_number(val, 1, val.size() + 1) == 982478);
     }
 
-    SECTION("testing encode not equal") {
+    SECTION("testing equality pow2") {
+        solver s { check_pow2_or_zero_to_cnf(4, 0, 3, 3, false) };
+        REQUIRE(s.satisfiable());
+
+        s = solver { check_pow2_or_zero_to_cnf(4, 8, 2, 3, false) };
+        REQUIRE(!s.satisfiable());
+
+        s = solver { check_pow2_or_zero_to_cnf(4, 8, 1, 3, true) };
+        REQUIRE(s.satisfiable());
     }
 
-    SECTION("testing equality") {
-        auto cnf = equality_to_cnf(10);
-        solver s { cnf };
-        auto val = s.solve();
-        REQUIRE(val_to_number(val, 1, 10) == val_to_number(val, 11, 20));
+    SECTION("testing sum") {
+        solver s { check_sum_to_cnf(10, 20, 10, 10) };
+        REQUIRE(s.satisfiable());
 
-        cnf = equality_to_cnf(20);
-        s = solver { cnf };
+        s = solver { check_sum_to_cnf(10, 20, 8, 9) };
+        REQUIRE(!s.satisfiable());
+
+        s = solver { check_sum_to_cnf(4, 10, 5, 5) };
+        REQUIRE(s.satisfiable());
+
+        s = solver { check_sum_to_cnf(4, 10, 13, 13) };
+        REQUIRE(!s.satisfiable());
+    }
+
+    SECTION("solving more specific equations") {
+        solver s { equation_to_cnf(10, 30, 20) };
+        auto val = s.solve();
+        REQUIRE(val_to_number(val, 1, 10) + 20 == 30);
+
+        s = solver { equation_to_cnf(20, 243243, 123123) };
         val = s.solve();
-        REQUIRE(val_to_number(val, 1, 20) == val_to_number(val, 21, 40));
+        REQUIRE(val_to_number(val, 1, 20) + 123123 == 243243);
+    }
+}
+
+TEST_CASE("Testing factor to SAT encoder", "[factor][solver][.]") {
+    SECTION("factoring numbers from 2 to 1000") {
+        for (auto i = 2; i <= 1000; ++i) {
+            solver s { factor_to_cnf(i) };
+            if (is_prime(i))
+                REQUIRE(!s.satisfiable());
+            else {
+                auto val = s.solve();
+                auto l = std::floor(std::log2(i)) + 1;
+                REQUIRE(val_to_number(val, 1, l) * val_to_number(val, l + 1, 2 * l) == i);
+            }
+        }
     }
 
-    SECTION("testing equality times two") {
-        auto cnf = equality_times2_to_cnf(10);
-        solver s { cnf };
-        auto val = s.solve();
-        REQUIRE(val_to_number(val, 1, 10) == 2 * val_to_number(val, 11, 20));
-
-        cnf = equality_times2_to_cnf(20);
-        s = solver { cnf };
-        val = s.solve();
-        REQUIRE(val_to_number(val, 1, 20) == 2 * val_to_number(val, 21, 40));
-    }
-
-    SECTION("testing equality sum") {
-        auto cnf = equality_sum_to_cnf(10);
-        solver s { cnf };
-        auto val = s.solve();
-        REQUIRE(val_to_number(val, 1, 10) == val_to_number(val, 11, 20) + val_to_number(val, 21, 30));
+    SECTION("factoring random numbers") {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        for (auto i = 0; i < 10; ++i) {
+            std::uniform_int_distribution<> dis(100, 10000);
+            auto x = dis(gen), y = dis(gen);
+            auto n = x * y;
+            solver s { factor_to_cnf(n) };
+            auto val = s.solve();
+            auto l = std::floor(std::log2(n)) + 1;
+            REQUIRE(val_to_number(val, 1, l) * val_to_number(val, l + 1, 2 * l) == n);
+        }
     }
 }

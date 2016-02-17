@@ -11,7 +11,7 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
-cnf factor_to_sat(long long int);
+//cnf factor_to_sat(long long int);
 
 TEST_CASE("Testing SAT solver", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
@@ -40,10 +40,5 @@ TEST_CASE("Testing SAT solver", "[solver]") {
 
         solver s { c };
         REQUIRE(expr::eval(expr::cnf_to_expr(c), s.solve()));
-    }
-
-    SECTION("testing some lol") {
-        auto c = factor_to_sat(7);
-        solver s { c };
     }
 }
