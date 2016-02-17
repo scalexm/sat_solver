@@ -12,7 +12,7 @@
 
 expr::logical_expr unwrap(expr::expr_result);
 
-TEST_CASE("Testing tseitin transform", "[logical_expr]") {
+TEST_CASE("Testing tseitin transform", "[logical_expr][solver]") {
     auto exp = unwrap(expr::parse("(3 X 5) /\\ (6 => ~(7 <=> 3 \\/ 5))"));
     auto tseitin = expr::tseitin_transform(exp);
 
