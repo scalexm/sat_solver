@@ -3,7 +3,7 @@
 * pour compiler, exécuter `make`
 * pour compiler avec les messages de debug, exécuter `make debug`
 * pour exécuter les tests unitaires par défaut, exécuter `./bin/tests`
-* pour exécuter les tests unitaires relatifs à la factorisation de nombres, exécuter `./bin/tests [factor]`
+* pour exécuter les tests unitaires relatifs à la factorisation d'entiers, exécuter `./bin/tests [factor]` (peut prendre une dizaine de secondes)
 * pour générer un problème SAT sous forme CNF encodant la factorisation d'un entier, exécuter `./bin/tests --gen nombre_sur_64_bits <output_name>` (le paramètre `output_name` est facultatif)
 * pour utiliser le solveur en mode CNF, exécuter `./bin/resol file.cnf`
 * pour utiliser le solveur en mode convivial, exécuter `./bin/resol -tseitin file.for`

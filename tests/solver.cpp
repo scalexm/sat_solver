@@ -11,8 +11,6 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
-//cnf factor_to_sat(long long int);
-
 TEST_CASE("Testing SAT solver", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
         solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
