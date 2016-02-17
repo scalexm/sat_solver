@@ -10,7 +10,27 @@
 #include <cstdlib>
 #include <iostream>
 
+cnf remove_tautologies(const cnf & formula) {
+    cnf ret;
+    for(auto && clause : formula) {
+        bool to_add = true;
+        if (clause.empty()) {
+            ret.push_back(std::unordered_set<int>());
+        }
+        for(auto && x : clause) {
+            if (clause.find(-x) != clause.end()) {
+                to_add = false;
+                break;
+            }
+        }
+        if (to_add)
+            ret.push_back(clause);
+    }
+    return ret;
+}
+
 solver::solver(cnf clauses) {
+    clauses = remove_tautologies(clauses);
     for (auto i = 0; i < clauses.size(); ++i) {
         if (clauses[i].empty()) {
             m_remaining_clauses = -1;
@@ -112,6 +132,40 @@ valuation solver::solve() {
                     lit = detail::litteral { value, true };
                     found = true;
                     break;
+                }
+                else {
+                    for (auto && v : m_remaining_variables) {
+                        bool appear_0 = false;
+                        bool appear_1 = false;
+                        for (auto && c2 : m_clauses) {
+                            if(c2.is_satisfied() != 0)
+                                continue;
+                            if (c2.litterals().find(v)!= c2.litterals().end()) {
+                                appear_1 = true;
+                            }
+                            if (c2.litterals().find(-v) != c2.litterals().end()) {
+                                appear_0 = true;
+                            }
+                            if (appear_0 && appear_1)
+                                break;
+                        }
+                        if (appear_0 && !appear_1) {
+#ifdef DEBUG
+                            std::cout << "forcing " << -v << std::endl;
+#endif
+                            lit = detail::litteral { -v, true};
+                            found = true;
+                            break;
+                        }
+                        if (!appear_0 && appear_1) {
+#ifdef DEBUG
+                            std::cout << "forcing " << v << std::endl;
+#endif
+                            lit = detail::litteral { v, true};
+                            found = true;
+                            break;
+                        }
+                    }
                 }
             }
         }

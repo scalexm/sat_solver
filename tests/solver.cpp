@@ -24,7 +24,7 @@ TEST_CASE("Testing SAT solver", "[solver]") {
         s = solver { { } };
         REQUIRE(s.satisfiable());
 
-        s = solver { { { 1, -2 }, { { } } } };
+        s = solver { { { 1, -2 }, { } } };
         REQUIRE(!s.satisfiable());
     }
 

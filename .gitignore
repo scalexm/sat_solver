@@ -2,3 +2,9 @@
 *.xcodeproj
 dpll
 resol
+./tests/tests
+./expr/detail/*.hh
+./expr/detail/logical_scanner.tab.cpp
+./expr/detail/y.tab.c
+./expr/detail/y.tab.h
+./bin
