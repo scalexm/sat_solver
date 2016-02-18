@@ -215,9 +215,9 @@ long long int val_to_number(const std::unordered_map<int, bool> & val, int begin
 }
 
 bool is_prime(long long int number) {
-	for (int i = 2; i < number; ++i) {
-		if (number % i == 0)
-			return false;
+    for (int i = 2; i < number; ++i) {
+        if (number % i == 0)
+            return false;
 	}
 	return true;	
 }
