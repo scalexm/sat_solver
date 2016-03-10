@@ -36,3 +36,11 @@ composés et sont satisfiables.
 * Le dossier `tests` contient les tests unitaires du projet. Ce sont surtout des tests servant à vérifier le bon fonctionnement de plusieurs cas particuliers. Il permet aussi de générer automatiquement des problèmes associés à la factorisation de nombres entiers (sur 64 bits seulement pour l'instant, cf `factor.cpp` et `gen_tests.cpp`) pour tester le solveur plus en profondeur et pour pouvoir faire du profiling.
 
 * Le dossier `sat` contient le code de l'interface en ligne de commande.
+
+## Répartition du travail
+
+* parsing des expressions logiques: Alexandre
+* transformation de Tseitin: Nicolas
+* tests unitaires: Alexandre
+* DPLL: Alexandre et Nicolas
+* prétraitement de l'entrée: Nicolas

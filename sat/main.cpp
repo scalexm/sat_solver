@@ -16,7 +16,7 @@
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
-solver parse(std::ifstream & file) {
+solver parse(std::ifstream & file, guess_mode mode) {
     std::string line;
     int line_number = 0;
     bool header = false;
@@ -73,7 +73,7 @@ solver parse(std::ifstream & file) {
         }
     }
 
-    return solver { std::move(res) };
+    return solver { std::move(res), mode };
 }
 
 void trim_expr(std::string & exp) {
@@ -83,21 +83,44 @@ void trim_expr(std::string & exp) {
 }
 
 int main(int argc, char ** argv) {
-    if (argc < 2) {
+    auto mode = guess_mode::LINEAR;
+    bool tseitin = false;
+    bool watch_litterals = false;
+    std::string file_name;
+
+    for (auto i = 1; i < argc; ++i) {
+        if (argv[i][0] == '-') {
+            auto arg = std::string(argv[1]);
+            if (arg == "-tseitin")
+                tseitin = true;
+            else if (arg == "-wl")
+                watch_litterals = true;
+            else if (arg == "-rand")
+                mode = guess_mode::RAND;
+            else if (arg == "-moms")
+                mode = guess_mode::MOMS;
+            else if (arg == "-dlis")
+                mode = guess_mode::DLIS;
+            else
+                std::cout << "unkown option " << arg << std::endl;
+        } else
+            file_name = argv[i];
+    }
+
+    if (file_name.empty()) {
         std::cerr << "no input" << std::endl;
         return 1;
-    } else if (std::string { argv[1] } == "-tseitin") {
-        if (argc < 3) {
-            std::cerr << "no input" << std::endl;
-            return 1;
-        }
+    }
 
-        std::ifstream f { argv[2] };
-        if (!f) {
-            std::cerr << "file not found" << std::endl;
-            return 1;
-        }
+    std::ifstream f { file_name };
+    if (!f) {
+        std::cerr << "file not found `" << file_name << "`" << std::endl;
+        return 1;
+    }
 
+    bool sat;
+    valuation val;
+    if (tseitin) {
         std::ostringstream ss;
         ss << f.rdbuf();
         auto exp = ss.str();
@@ -110,38 +133,24 @@ int main(int argc, char ** argv) {
         }
 
         auto tseitin = expr::tseitin_transform(*boost::get<expr::logical_expr>(&res));
-        solver s { std::move(tseitin.first) };
-        auto valuation = expr::remove_trailing_variables(s.solve(), tseitin.second);
-
-        if (s.satisfiable()) {
-            std::cout << "s SATISFIABLE" << std::endl;
-            for (auto && v : valuation) {
-                std::cout << (v.second ? v.first : -v.first) << " ";
-            }
-            std::cout << "0" << std::endl;
-        }
-        else
-            std::cout << "s UNSATISFIABLE" << std::endl;
+        solver s { std::move(tseitin.first), mode };
+        val = expr::remove_trailing_variables(s.solve(), tseitin.second);
+        sat = s.satisfiable();
     } else {
-        std::ifstream f { argv[1] };
-        if (!f) {
-            std::cerr << "file not found" << std::endl;
-            return 1;
-        }
-
-        auto s = parse(f);
-        auto valuation = s.solve();
-
-        if (s.satisfiable()) {
-            std::cout << "s SATISFIABLE" << std::endl;
-            for (auto && v : valuation) {
-                std::cout << (v.second ? v.first : -v.first) << " ";
-            }
-            std::cout << "0" << std::endl;
-        }
-        else
-            std::cout << "s UNSATISFIABLE" << std::endl;
+        auto s = parse(f, mode);
+        val = s.solve();
+        sat = s.satisfiable();
     }
+
+    if (sat) {
+        std::cout << "s SATISFIABLE" << std::endl;
+        for (auto && v : val) {
+            std::cout << (v.second ? v.first : -v.first) << " ";
+        }
+        std::cout << "0" << std::endl;
+    }
+    else
+        std::cout << "s UNSATISFIABLE" << std::endl;
 
     return 0;
 }

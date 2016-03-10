@@ -9,6 +9,7 @@
 #include "solver.hpp"
 #include <cstdlib>
 #include <iostream>
+#include <map>
 
 cnf remove_tautologies(const cnf & formula) {
     cnf ret;
@@ -29,7 +30,8 @@ cnf remove_tautologies(const cnf & formula) {
     return ret;
 }
 
-solver::solver(cnf clauses) {
+solver::solver(cnf clauses, guess_mode mode) : m_guess_mode { mode },
+                                               m_rng { std::random_device {}()} {
     clauses = remove_tautologies(clauses);
     for (auto i = 0; i < clauses.size(); ++i) {
         if (clauses[i].empty()) {
@@ -45,7 +47,7 @@ solver::solver(cnf clauses) {
     m_remaining_clauses = m_clauses.size(); // the total number of clauses not yet satisfied
 }
 
-bool solver::step(detail::litteral lit) {
+bool solver::deduce(detail::litteral lit) {
     // adding lit to our valuation stack and removing |lit| from the remaining variables
     int value = lit.value();
     m_valuation.emplace_back(std::move(lit));
@@ -64,6 +66,8 @@ bool solver::step(detail::litteral lit) {
 
     // we remove -lit from other clauses
     for (auto && c : m_occurences[-value]) {
+        if (m_clauses[c].is_satisfied() != 0)
+            continue;
 #ifdef DEBUG
         std::cout << "removing " << (-value) << " from clause " << c << std::endl;
 #endif
@@ -94,6 +98,8 @@ int solver::backtrack() {
 
     // we add back -lit to corresponding clauses
     for (auto && c : m_occurences[-value]) {
+        if (m_clauses[c].is_satisfied() != 0)
+            continue;
 #ifdef DEBUG
         std::cout << "adding back " << (-value) << " to clause " << c << std::endl;
 #endif
@@ -101,6 +107,67 @@ int solver::backtrack() {
     }
 
     return value;
+}
+
+double solver::calculate_score(int v) {
+    double score = 0;
+    for (auto && c_id : m_occurences[v]) {
+        auto && clause = m_clauses[c_id];
+        if (clause.is_satisfied() != 0)
+            continue;
+        score += 1. / ((double) (1 << clause.litterals().size()));
+    }
+    return score;
+}
+
+int solver::guess(size_t min_clause) {
+    switch (m_guess_mode) {
+        case guess_mode::RAND: {
+            auto begin = m_remaining_variables.begin();
+            std::uniform_int_distribution<> dis(0, m_remaining_variables.size() - 1);
+            auto offset = dis(m_rng);
+            for (auto i = 0; i < offset; ++i)
+                ++begin;
+            return *begin;
+        }
+        case guess_mode::MOMS: {
+            std::map<int, size_t> counts;
+            for (auto && c : m_clauses) {
+                if (c.is_satisfied() != 0)
+                    continue;
+                else if (c.litterals().size() == min_clause) {
+                    for (auto && lit : c.litterals()) {
+                        if (counts.find(lit) == counts.end())
+                            counts[lit] = 1;
+                        else
+                            counts[lit] += 1;
+                    }
+                }
+            }
+            return counts.begin()->first;
+        }
+        case guess_mode::DLIS: {
+            int max_lit = 0;
+            double max_score = 0;
+            for (auto && v : m_remaining_variables) {
+                auto score = calculate_score(v);
+                if (score >= max_score) {
+                    max_lit = v;
+                    max_score = score;
+                }
+
+                score = calculate_score(-v);
+                if (score >= max_score) {
+                    max_lit = -v;
+                    max_score = score;
+                }
+            }
+            return max_lit;
+        }
+        default: {
+            return *m_remaining_variables.begin();
+        }
+    }
 }
 
 valuation solver::solve() {
@@ -118,13 +185,19 @@ valuation solver::solve() {
                 ++not_satisfied_count;
 #endif
 
+        size_t min_clause = m_remaining_variables.size();
         if (!found) {
             /* we start by searching a necessary truth */
 
             for (auto && c : m_clauses) {
                 if (c.is_satisfied() != 0)
                     continue;
-                else if (c.litterals().size() == 1) {
+
+                auto size = c.litterals().size();
+                if (size <= min_clause)
+                    min_clause = size;
+
+                if (size == 1) {
                     auto value = *c.litterals().begin();
 #ifdef DEBUG
                     std::cout << "forcing " << value << std::endl;
@@ -142,15 +215,16 @@ valuation solver::solve() {
 
         if (!found) {
             /* if we haven't found any, we make a guess */
+            int val = guess(min_clause);
 #ifdef DEBUG
-            std::cout << "guessing " << *m_remaining_variables.begin() << std::endl;
+            std::cout << "guessing " << val << std::endl;
 #endif
-            lit = detail::litteral { *m_remaining_variables.begin(), false };
+            lit = detail::litteral { val, false };
             found = true;
         }
 
         /* we now try to deduce from our litteral set to true */
-        if (!step(std::move(lit))) {
+        if (!deduce(std::move(lit))) {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
