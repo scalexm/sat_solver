@@ -1,0 +1,44 @@
+#! /bin/bash
+
+commande=../bin/resol
+cflags=""
+echo TIME LIMIT IN SECOND ?
+read temps
+temps+="s"
+echo "========== Sans flags ============="
+for x in *.cnf; do
+    echo "/////// $x //////// "
+    ligne=$((time (timeout $temps $commande $x) )2>&1)
+    result=$(echo "$ligne" | grep SAT)
+    reel=$(echo "$ligne" | grep real)
+    user=$(echo "$ligne" | grep user)
+    sys=$(echo "$ligne" | grep sys)
+    if [ -n "$result" ]; then
+        echo $result
+    else
+        echo TIME LIMIT EXEDEED
+    fi
+    echo $reel
+    echo $user
+    echo $sys
+done ;
+
+for cflags in -moms -dlis -rand; do
+    echo "========== Avec $cflags ============="
+    for x in *.cnf; do
+        echo " ////// $x /////// "
+        ligne=$((time (timeout $temps $commande $cflags $x) )2>&1)
+        result=$(echo "$ligne" | grep SAT)
+        reel=$(echo "$ligne" | grep real)
+        user=$(echo "$ligne" | grep user)
+        sys=$(echo "$ligne" | grep sys)
+        if [ -n "$result" ]; then
+            echo $result
+        else
+            echo TIME LIMIT EXEDEED
+        fi
+        echo $reel
+        echo $user
+        echo $sys
+    done ;
+done ;
