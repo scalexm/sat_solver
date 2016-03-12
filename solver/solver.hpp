@@ -64,6 +64,7 @@ private:
     int backtrack();
     double calculate_score(int);
     int guess(size_t min_clause = 0);
+    int new_to_old_value(int);
 public:
     solver() = default;
     solver(cnf, guess_mode mode = guess_mode::RAND);

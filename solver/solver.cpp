@@ -100,7 +100,7 @@ bool solver::deduce(detail::litteral lit) {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
 #ifdef DEBUG
-        std::cout << "removing " << (-value) << " from clause " << c << std::endl;
+        std::cout << "removing " << -new_to_old_value(value) << " from clause " << c << std::endl;
 #endif
         m_clauses[c].remove(-value);
         if (m_clauses[c].empty())
@@ -135,7 +135,7 @@ int solver::backtrack() {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
 #ifdef DEBUG
-        std::cout << "adding back " << (-value) << " to clause " << c << std::endl;
+        std::cout << "adding back " << -new_to_old_value(value) << " to clause " << c << std::endl;
 #endif
         m_clauses[c].add(-value);
     }
@@ -220,6 +220,11 @@ int solver::guess(size_t min_clause) {
     }
 }
 
+int solver::new_to_old_value(int value) {
+    auto old = m_old_variables[std::abs(value)];
+    return value > 0 ? old : -old;
+}
+
 valuation solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { { } };
@@ -250,7 +255,7 @@ valuation solver::solve() {
                 if (size == 1) {
                     auto value = c.first();
 #ifdef DEBUG
-                    std::cout << "forcing " << m_old_variables[value] << std::endl;
+                    std::cout << "forcing " << new_to_old_value(value) << std::endl;
 #endif
                     lit = detail::litteral { value, true };
                     found = true;
@@ -267,7 +272,7 @@ valuation solver::solve() {
             /* if we haven't found any, we make a guess */
             int val = guess(min_clause);
 #ifdef DEBUG
-            std::cout << "guessing " << m_old_variables[val] << std::endl;
+            std::cout << "guessing " << new_to_old_value(val) << std::endl;
 #endif
             lit = detail::litteral { val, false };
             found = true;
@@ -288,7 +293,7 @@ valuation solver::solve() {
 
             auto value = backtrack();
 #ifdef DEBUG
-            std::cout << "forcing " << -m_old_variables[value] << std::endl;
+            std::cout << "forcing " << -new_to_old_value(value) << std::endl;
 #endif
             lit = detail::litteral { -value, true };
         } else // no conflict encountered, we can search for a new litteral
