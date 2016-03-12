@@ -185,8 +185,11 @@ int solver::guess(size_t min_clause) {
                     clause.update_counts(counts);
             }
 
-            auto it = std::max_element(counts.begin(), counts.end());
-            return detail::ind_to_lit((int) std::distance(counts.begin(), it));
+            int i_max = 0;
+            for (auto i = 1; i < counts.size(); ++i)
+                if (counts[i] > counts[i_max])
+                    i_max = i;
+            return detail::ind_to_lit(i_max);
         }
 
         case guess_mode::DLIS: {
