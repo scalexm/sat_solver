@@ -12,8 +12,6 @@
 #include "cnf.hpp"
 #include "detail/clause.hpp"
 #include <vector>
-#include <unordered_map>
-#include <list>
 #include <random>
 
 class solver;
@@ -42,17 +40,25 @@ enum class guess_mode {
 
 class solver {
 private:
-    std::unordered_set<int> m_remaining_variables;
+    std::vector<int> m_old_variables;
+
+    // to keep track of variables we haven't tried yet
+    std::vector<bool> m_variables;
+    size_t m_remaining_variables;
+
     std::vector<detail::clause> m_clauses;
     guess_mode m_guess_mode;
 
     std::mt19937 m_rng;
-    //std::uniform_int_distribution<> m_dis;
 
+    // the total number of clauses not yet satisfied
     size_t m_remaining_clauses;
-    std::unordered_map<int, std::unordered_set<size_t>> m_occurences;
 
-    std::list<detail::litteral> m_valuation;
+    // to know in O(1) in which clauses each litteral appear
+    std::vector<std::vector<size_t>> m_occurences;
+
+    // valuation stack
+    std::vector<detail::litteral> m_valuation;
 
     bool deduce(detail::litteral lit);
     int backtrack();

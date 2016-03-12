@@ -2,9 +2,9 @@
 *.xcodeproj
 dpll
 resol
-./tests/tests
-./expr/detail/*.hh
-./expr/detail/logical_scanner.tab.cpp
-./expr/detail/y.tab.c
-./expr/detail/y.tab.h
-./bin
+tests/tests
+solver/expr/detail/*.hh
+solver/expr/detail/logical_scanner.tab.cpp
+solver/expr/detail/y.tab.c
+solver/expr/detail/y.tab.h
+bin

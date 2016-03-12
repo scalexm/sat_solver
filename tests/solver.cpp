@@ -11,23 +11,25 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
+extern guess_mode mode;
+
 TEST_CASE("Testing SAT solver", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
-        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
+        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, mode };
         REQUIRE(s.satisfiable());
 
-        s = solver { { { -1, 2, 3 }, { 1 }, { -2, 3 }, { -2, -3 }, { 2, 3 }, { 2, -3 } } };
+        s = solver { { { -1, 2, 3 }, { 1 }, { -2, 3 }, { -2, -3 }, { 2, 3 }, { 2, -3 } }, mode };
         REQUIRE(!s.satisfiable());
 
-        s = solver { { } };
+        s = solver { { }, mode };
         REQUIRE(s.satisfiable());
 
-        s = solver { { { 1, -2 }, { } } };
+        s = solver { { { 1, -2 }, { } }, mode };
         REQUIRE(!s.satisfiable());
     }
 
     SECTION("calling `solve` two times") {
-        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } } };
+        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, mode };
         REQUIRE(s.solve() == s.solve());
     }
 
@@ -36,7 +38,7 @@ TEST_CASE("Testing SAT solver", "[solver]") {
             { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 }
         };
 
-        solver s { c };
+        solver s { c, mode };
         REQUIRE(expr::eval(expr::cnf_to_expr(c), s.solve()));
     }
 }

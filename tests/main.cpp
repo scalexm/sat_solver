@@ -8,8 +8,10 @@
 
 #define CATCH_CONFIG_RUNNER
 #include <catch/catch.hpp>
+#include "../solver/solver.hpp"
 
 bool gen(const std::string &, long long int);
+guess_mode mode = guess_mode::LINEAR;
 
 int main(int argc, const char ** argv) {
     if (argc > 1 && std::string { argv[1] } == "--gen") {

@@ -33,28 +33,58 @@ cnf remove_tautologies(const cnf & formula) {
 solver::solver(cnf clauses, guess_mode mode) : m_guess_mode { mode },
                                                m_rng { std::random_device {}()} {
     clauses = remove_tautologies(clauses);
-    for (auto i = 0; i < clauses.size(); ++i) {
-        if (clauses[i].empty()) {
+
+    std::unordered_map<int, int> old_to_new;
+    int count = 0;
+
+    for (auto && clause : clauses) {
+        if (clause.empty()) {
             m_remaining_clauses = -1;
             return;
         }
-        for (auto && l : clauses[i]) {
-            m_remaining_variables.emplace(std::abs(l)); // to keep track of variables we haven't tried yet
-            m_occurences[l].emplace(i); // to know in O(1) in which clauses each litteral appear
+
+        for (auto && l : clause) {
+            auto abs_l = std::abs(l);
+            if (old_to_new.find(abs_l) == old_to_new.end()) {
+                ++count;
+                old_to_new[abs_l] = count;
+            }
         }
-        m_clauses.emplace_back(std::move(clauses[i]));
     }
-    m_remaining_clauses = m_clauses.size(); // the total number of clauses not yet satisfied
+
+    m_valuation.reserve(count);
+    m_variables.resize(count + 1, true); // index 0 is not used
+    m_remaining_variables = count;
+    m_old_variables.resize(count + 1);
+    m_occurences.resize(2 * count);
+
+    for (auto i = 0; i < clauses.size(); ++i) {
+        detail::litterals_container litterals(count);
+        for (auto && l : clauses[i]) {
+            auto abs_l = std::abs(l);
+            int new_ind = old_to_new[abs_l];
+            auto new_lit = l > 0 ? new_ind : -new_ind;
+
+            m_occurences[detail::lit_to_ind(new_lit)].push_back(i);
+            m_old_variables[new_ind] = abs_l;
+            litterals.emplace(new_lit);
+        }
+        m_clauses.emplace_back(std::move(litterals));
+    }
+
+    m_remaining_clauses = m_clauses.size();
 }
 
 bool solver::deduce(detail::litteral lit) {
     // adding lit to our valuation stack and removing |lit| from the remaining variables
     int value = lit.value();
     m_valuation.emplace_back(std::move(lit));
-    m_remaining_variables.erase(m_remaining_variables.find(std::abs(value)));
+    m_variables[std::abs(value)] = false;
+    --m_remaining_variables;
 
     // we mark all clauses containing lit as satisfied
-    for (auto && c : m_occurences[value]) {
+    auto ind = detail::lit_to_ind(value);
+    for (auto && c : m_occurences[ind]) {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
 #ifdef DEBUG
@@ -65,7 +95,8 @@ bool solver::deduce(detail::litteral lit) {
     }
 
     // we remove -lit from other clauses
-    for (auto && c : m_occurences[-value]) {
+    ind = detail::lit_to_ind(-value);
+    for (auto && c : m_occurences[ind]) {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
 #ifdef DEBUG
@@ -83,10 +114,12 @@ int solver::backtrack() {
     // removing the head of our valuation stack, and pushing it back to the remaining variables
     auto value = m_valuation.back().value();
     m_valuation.pop_back();
-    m_remaining_variables.emplace(std::abs(value));
+    m_variables[std::abs(value)] = true;
+    ++m_remaining_variables;
 
     // clauses previously statisfied by a step with lit are now unsatisfied
-    for (auto && c : m_occurences[value]) {
+    auto ind = detail::lit_to_ind(value);
+    for (auto && c : m_occurences[ind]) {
         if (m_clauses[c].is_satisfied() != value)
             continue;
 #ifdef DEBUG
@@ -97,7 +130,8 @@ int solver::backtrack() {
     }
 
     // we add back -lit to corresponding clauses
-    for (auto && c : m_occurences[-value]) {
+    ind = detail::lit_to_ind(-value);
+    for (auto && c : m_occurences[ind]) {
         if (m_clauses[c].is_satisfied() != 0)
             continue;
 #ifdef DEBUG
@@ -111,45 +145,57 @@ int solver::backtrack() {
 
 double solver::calculate_score(int v) {
     double score = 0;
-    for (auto && c_id : m_occurences[v]) {
+    auto ind = detail::lit_to_ind(v);
+    for (auto && c_id : m_occurences[ind]) {
         auto && clause = m_clauses[c_id];
         if (clause.is_satisfied() != 0)
             continue;
-        score += 1. / ((double) (1 << clause.litterals().size()));
+        score += 1. / ((double) (1 << clause.size()));
     }
     return score;
 }
 
 int solver::guess(size_t min_clause) {
+    assert(m_remaining_variables != 0);
+
     switch (m_guess_mode) {
         case guess_mode::RAND: {
-            auto begin = m_remaining_variables.begin();
-            std::uniform_int_distribution<> dis(0, m_remaining_variables.size() - 1);
+            std::uniform_int_distribution<> dis(0, (int) m_remaining_variables - 1);
             auto offset = dis(m_rng);
-            for (auto i = 0; i < offset; ++i)
-                ++begin;
-            return *begin;
-        }
-        case guess_mode::MOMS: {
-            std::map<int, size_t> counts;
-            for (auto && c : m_clauses) {
-                if (c.is_satisfied() != 0)
+
+            auto begin = 0;
+            for (auto v = 1; v < m_variables.size(); ++v) {
+                if (!m_variables[v])
                     continue;
-                else if (c.litterals().size() == min_clause) {
-                    for (auto && lit : c.litterals()) {
-                        if (counts.find(lit) == counts.end())
-                            counts[lit] = 1;
-                        else
-                            counts[lit] += 1;
-                    }
-                }
+                else if (begin == offset)
+                    return v;
+                else
+                    ++begin;
             }
-            return counts.begin()->first;
+
+            return 0; // not reached
         }
+
+        case guess_mode::MOMS: {
+            std::vector<size_t> counts(2 * (m_variables.size() - 1), 0);
+            for (auto && clause : m_clauses) {
+                if (clause.is_satisfied() != 0)
+                    continue;
+                else if (clause.size() == min_clause)
+                    clause.update_counts(counts);
+            }
+
+            auto it = std::max_element(counts.begin(), counts.end());
+            return detail::ind_to_lit((int) std::distance(counts.begin(), it));
+        }
+
         case guess_mode::DLIS: {
             int max_lit = 0;
             double max_score = 0;
-            for (auto && v : m_remaining_variables) {
+            for (auto v = 1; v < m_variables.size(); ++v) {
+                if (!m_variables[v])
+                    continue;
+
                 auto score = calculate_score(v);
                 if (score >= max_score) {
                     max_lit = v;
@@ -164,8 +210,12 @@ int solver::guess(size_t min_clause) {
             }
             return max_lit;
         }
+
         default: {
-            return *m_remaining_variables.begin();
+            for (auto v = 1; v < m_variables.size(); ++v)
+                if (m_variables[v])
+                    return v;
+            return 0;
         }
     }
 }
@@ -185,7 +235,7 @@ valuation solver::solve() {
                 ++not_satisfied_count;
 #endif
 
-        size_t min_clause = m_remaining_variables.size();
+        size_t min_clause = m_remaining_variables;
         if (!found) {
             /* we start by searching a necessary truth */
 
@@ -193,14 +243,14 @@ valuation solver::solve() {
                 if (c.is_satisfied() != 0)
                     continue;
 
-                auto size = c.litterals().size();
+                auto size = c.size();
                 if (size <= min_clause)
                     min_clause = size;
 
                 if (size == 1) {
-                    auto value = *c.litterals().begin();
+                    auto value = c.first();
 #ifdef DEBUG
-                    std::cout << "forcing " << value << std::endl;
+                    std::cout << "forcing " << m_old_variables[value] << std::endl;
 #endif
                     lit = detail::litteral { value, true };
                     found = true;
@@ -217,7 +267,7 @@ valuation solver::solve() {
             /* if we haven't found any, we make a guess */
             int val = guess(min_clause);
 #ifdef DEBUG
-            std::cout << "guessing " << val << std::endl;
+            std::cout << "guessing " << m_old_variables[val] << std::endl;
 #endif
             lit = detail::litteral { val, false };
             found = true;
@@ -238,7 +288,7 @@ valuation solver::solve() {
 
             auto value = backtrack();
 #ifdef DEBUG
-            std::cout << "forcing " << -value << std::endl;
+            std::cout << "forcing " << -m_old_variables[value] << std::endl;
 #endif
             lit = detail::litteral { -value, true };
         } else // no conflict encountered, we can search for a new litteral
@@ -250,9 +300,10 @@ valuation solver::solve() {
 
     std::unordered_map<int, bool> result;
     for (auto && v : m_valuation)
-        result.emplace(std::abs(v.value()), v.value() > 0);
-    for (auto && v : m_remaining_variables)
-        result.emplace(v, false);
+        result.emplace(m_old_variables[std::abs(v.value())], v.value() > 0);
+    for (auto v = 1; v < m_variables.size(); ++v)
+        if (m_variables[v])
+            result.emplace(m_old_variables[v], false);
 
     return result;
 }

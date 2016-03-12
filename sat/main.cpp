@@ -90,7 +90,7 @@ int main(int argc, char ** argv) {
 
     for (auto i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
-            auto arg = std::string(argv[1]);
+            auto arg = std::string(argv[i]);
             if (arg == "-tseitin")
                 tseitin = true;
             else if (arg == "-wl")
