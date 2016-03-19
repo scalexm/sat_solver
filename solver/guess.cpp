@@ -67,7 +67,10 @@ int solver::guess_dlis(size_t) {
 }
 
 int solver::guess_moms(size_t min_clause) {
-    std::vector<size_t> counts(2 * m_assignment.size(), 0);
+    static std::vector<size_t> counts(2 * m_assignment.size(), 0);
+    for (auto & c : counts)
+        c = 0;
+
     for (auto && clause : m_clauses) {
         if (clause.satisfied_by() != -1)
             continue;
