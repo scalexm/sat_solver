@@ -3,10 +3,11 @@
 
 d=$(date +%x)
 h=$(date +%X)
-output="$d"_"$h".log
+outp="$d"_"$h".log
 commande=../bin/resol
 cflags=""
 temps=20s
+output=$(echo "$outp" | sed -e "s/\//-/g")
 echo "========== Sans flags =============" > "$output"
 for x in *.cnf; do
     echo "/////// $x //////// " >> "$output"
@@ -20,9 +21,9 @@ for x in *.cnf; do
     else
         echo TIME LIMIT EXEDEED >> "$output"
     fi
-    echo $reel | (read name value; echo value) >> "$output"
-    echo $user | (read name value; echo value) >> "$output"
-    echo $sys  | (read name value; echo value) >> "$output"
+    echo $reel | (read name value; echo "$value") >> "$output"
+    echo $user | (read name value; echo "$value") >> "$output"
+    echo $sys  | (read name value; echo "$value") >> "$output"
 done ;
 
 for cflags in -moms -dlis -rand -wl; do
@@ -39,8 +40,8 @@ for cflags in -moms -dlis -rand -wl; do
         else
             echo TIME LIMIT EXEDEED >> "$output"
         fi
-        echo $reel | (read name value; echo value) >> "$output"
-        echo $user | (read name value; echo value) >> "$output"
-        echo $sys  | (read name value; echo value) >> "$output"
+        echo $reel | (read name value; echo "$value") >> "$output"
+        echo $user | (read name value; echo "$value") >> "$output"
+        echo $sys  | (read name value; echo "$value") >> "$output"
     done ;
 done ;
