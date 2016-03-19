@@ -1,44 +1,46 @@
 #! /bin/bash
 
+
+d=$(date +%x)
+h=$(date +%X)
+output="$d"_"$h".log
 commande=../bin/resol
 cflags=""
-echo TIME LIMIT IN SECOND ?
-read temps
-temps+="s"
-echo "========== Sans flags ============="
+temps=20s
+echo "========== Sans flags =============" > "$output"
 for x in *.cnf; do
-    echo "/////// $x //////// "
+    echo "/////// $x //////// " >> "$output"
     ligne=$((time (timeout $temps $commande $x) )2>&1)
     result=$(echo "$ligne" | grep SAT)
     reel=$(echo "$ligne" | grep real)
     user=$(echo "$ligne" | grep user)
     sys=$(echo "$ligne" | grep sys)
     if [ -n "$result" ]; then
-        echo $result
+        echo $result >> "$output"
     else
-        echo TIME LIMIT EXEDEED
+        echo TIME LIMIT EXEDEED >> "$output"
     fi
-    echo $reel
-    echo $user
-    echo $sys
+    echo $reel | (read name value; echo value) >> "$output"
+    echo $user | (read name value; echo value) >> "$output"
+    echo $sys  | (read name value; echo value) >> "$output"
 done ;
 
-for cflags in -moms -dlis -rand; do
-    echo "========== Avec $cflags ============="
+for cflags in -moms -dlis -rand -wl; do
+    echo "========== Avec $cflags =============" >> "$output"
     for x in *.cnf; do
-        echo " ////// $x /////// "
+        echo " ////// $x /////// " >> "$output"
         ligne=$((time (timeout $temps $commande $cflags $x) )2>&1)
         result=$(echo "$ligne" | grep SAT)
         reel=$(echo "$ligne" | grep real)
         user=$(echo "$ligne" | grep user)
         sys=$(echo "$ligne" | grep sys)
         if [ -n "$result" ]; then
-            echo $result
+            echo $result >> "$output"
         else
-            echo TIME LIMIT EXEDEED
+            echo TIME LIMIT EXEDEED >> "$output"
         fi
-        echo $reel
-        echo $user
-        echo $sys
+        echo $reel | (read name value; echo value) >> "$output"
+        echo $user | (read name value; echo value) >> "$output"
+        echo $sys  | (read name value; echo value) >> "$output"
     done ;
 done ;
