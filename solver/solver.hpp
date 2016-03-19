@@ -10,11 +10,9 @@
 #define SOLVER_HPP
 
 #include "cnf.hpp"
-#include "detail/clause.hpp"
+#include "detail/solver.hpp"
 #include <vector>
 #include <random>
-
-class solver;
 
 namespace detail {
     class litteral {
@@ -36,14 +34,17 @@ enum class guess_mode {
     RAND,
     MOMS,
     DLIS,
+    WL,
 };
 
 class solver {
 private:
+    detail::litteral (solver::*m_backtrack_one)() = nullptr;
+    bool (solver::*m_deduce_one)(int) = nullptr;
+    int (solver::*m_guess)(size_t) = nullptr;
+
     std::vector<int> m_old_variables;
 
-    // to keep track of variables we haven't tried yet
-    std::vector<bool> m_variables;
     size_t m_remaining_variables;
 
     std::vector<detail::clause> m_clauses;
@@ -54,17 +55,33 @@ private:
     // the total number of clauses not yet satisfied
     size_t m_remaining_clauses;
 
-    // to know in O(1) in which clauses each litteral appear
-    std::vector<std::vector<size_t>> m_occurences;
+    std::vector<std::vector<detail::clause*>> m_watches;
 
     // valuation stack
     std::vector<detail::litteral> m_valuation;
 
-    bool deduce(detail::litteral lit);
-    int backtrack();
-    double calculate_score(int);
+    // current assignment of variables
+    detail::assignment m_assignment;
+
+    void enqueue(int, bool);
+    detail::litteral dequeue();
+
+    bool deduce_one_wl(int);
+    bool deduce_one_default(int);
+    bool deduce(size_t);
+
+    detail::litteral backtrack_one_wl();
+    detail::litteral backtrack_one_default();
+    detail::litteral backtrack();
+
     int guess(size_t min_clause = 0);
-    int new_to_old_value(int);
+    int new_to_old_lit(int);
+
+    double calculate_score(int);
+    int guess_linear(size_t);
+    int guess_moms(size_t);
+    int guess_dlis(size_t);
+    int guess_rand(size_t);
 public:
     solver() = default;
     solver(cnf, guess_mode mode = guess_mode::RAND);

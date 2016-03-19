@@ -9,6 +9,7 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch/catch.hpp>
 #include "../solver/solver.hpp"
+#include "../solver/command_line.hpp"
 
 bool gen(const std::string &, long long int);
 guess_mode mode = guess_mode::LINEAR;
@@ -29,6 +30,16 @@ int main(int argc, const char ** argv) {
         return gen(output, number) ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
-    int result = Catch::Session().run( argc, argv );
-    return result;
+    bool tseitin = false;
+    std::string file_name;
+
+    parse_command_line(argc, argv, mode, tseitin, file_name);
+
+    Catch::Session session;
+
+    int rc = session.applyCommandLine(argc, argv, Catch::Session::OnUnusedOptions::Ignore);
+    if (rc != 0)
+        return rc;
+
+    return session.run();
 }

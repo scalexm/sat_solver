@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef DETAIL_TSEITIN_HPP
+#define DETAIL_TSEITIN_HPP
+
 #include "../logical_expr.hpp"
 
 namespace expr { namespace detail {
@@ -118,3 +121,5 @@ namespace expr { namespace detail {
         }
     };
 } }
+
+#endif

@@ -261,9 +261,9 @@ TEST_CASE("Testing arithmetic operations encoder") {
     }
 
     SECTION("solving more specific equations") {
-        solver s { equation_to_cnf(10, 30, 20), mode };
+        solver s { equation_to_cnf(2, 3, 0), mode };
         auto val = s.solve();
-        REQUIRE(val_to_number(val, 1, 10) + 20 == 30);
+        REQUIRE(val_to_number(val, 1, 2) + 0 == 3);
 
         s = solver { equation_to_cnf(20, 243243, 123123), mode };
         val = s.solve();
@@ -272,7 +272,7 @@ TEST_CASE("Testing arithmetic operations encoder") {
 }
 
 TEST_CASE("Testing factor to SAT encoder", "[factor][solver][.]") {
-    SECTION("factoring numbers from 2 to 1000") {
+    SECTION("factoring numbers from 2 to 10000") {
         for (auto i = 2; i <= 1000; ++i) {
             solver s { factor_to_cnf(i), mode };
             if (is_prime(i))
@@ -292,6 +292,7 @@ TEST_CASE("Testing factor to SAT encoder", "[factor][solver][.]") {
             std::uniform_int_distribution<> dis(100, 10000);
             auto x = dis(gen), y = dis(gen);
             auto n = x * y;
+
             solver s { factor_to_cnf(n), mode };
             auto val = s.solve();
             auto l = std::floor(std::log2(n)) + 1;

@@ -9,6 +9,7 @@
 #include "../solver/expr/tseitin.hpp"
 #include "../solver/solver.hpp"
 #include <catch/catch.hpp>
+#include <iostream>
 
 expr::logical_expr unwrap(expr::expr_result);
 

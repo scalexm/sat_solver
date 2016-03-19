@@ -26,9 +26,12 @@ TEST_CASE("Testing SAT solver", "[solver]") {
 
         s = solver { { { 1, -2 }, { } }, mode };
         REQUIRE(!s.satisfiable());
+
+        s = solver { { { 1 }, { 2 }, { -1, -2 } }, mode };
+        REQUIRE(!s.satisfiable());
     }
 
-    SECTION("calling `solve` two times") {
+    SECTION("calling `solve` twice") {
         solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, mode };
         REQUIRE(s.solve() == s.solve());
     }

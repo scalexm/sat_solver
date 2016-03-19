@@ -9,6 +9,7 @@
 #include "../solver/solver.hpp"
 #include "../solver/expr/tseitin.hpp"
 #include <iostream>
+#include "../solver/command_line.hpp"
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -82,30 +83,12 @@ void trim_expr(std::string & exp) {
         boost::algorithm::erase_tail(exp, 2);
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, const char ** argv) {
     auto mode = guess_mode::LINEAR;
     bool tseitin = false;
-    bool watch_litterals = false;
     std::string file_name;
 
-    for (auto i = 1; i < argc; ++i) {
-        if (argv[i][0] == '-') {
-            auto arg = std::string(argv[i]);
-            if (arg == "-tseitin")
-                tseitin = true;
-            else if (arg == "-wl")
-                watch_litterals = true;
-            else if (arg == "-rand")
-                mode = guess_mode::RAND;
-            else if (arg == "-moms")
-                mode = guess_mode::MOMS;
-            else if (arg == "-dlis")
-                mode = guess_mode::DLIS;
-            else
-                std::cout << "unkown option " << arg << std::endl;
-        } else
-            file_name = argv[i];
-    }
+    parse_command_line(argc, argv, mode, tseitin, file_name);
 
     if (file_name.empty()) {
         std::cerr << "no input" << std::endl;
