@@ -22,7 +22,7 @@ for x in *.cnf; do
     if [ -n "$result" ]; then
         echo $result >> "$output"
     else
-        echo TIME LIMIT EXEDEED >> "$output"
+        echo TIME LIMIT EXEEDED >> "$output"
     fi
     echo $reel | (read name value; echo "$value") >> "$output"
     echo $user | (read name value; echo "$value") >> "$output"
@@ -41,7 +41,7 @@ for cflags in -moms -dlis -rand -wl; do
         if [ -n "$result" ]; then
             echo $result >> "$output"
         else
-            echo TIME LIMIT EXEDEED >> "$output"
+            echo TIME LIMIT EXEEDED >> "$output"
         fi
         echo $reel | (read name value; echo "$value") >> "$output"
         echo $user | (read name value; echo "$value") >> "$output"
