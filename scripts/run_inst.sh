@@ -13,5 +13,5 @@ printf "$K\n$V\nno flag" | ./give_data.sh |python plot.py
 for flag in -moms -dlis -rand -wl; do
     printf "$K\n$V\n$flag" | ./give_data.sh |python plot.py
 done
-rm .result
-rm .tmp.cnf
+rm -f .result
+rm -f .tmp.cnf
