@@ -38,9 +38,9 @@ Par conséquent, l'heuristique utilisée quand les watched litterals sont activ�
 Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Il y a
 des traductions de problèmes de factorisation en problèmes SAT: les fichiers
 `prime1.cnf` à `prime5.cnf` sont associés à des nombres premiers et sont non
-satisfiables. Les fichiers `comp1.cnf` à `comp5.cnf` sont associés à des nombres
+satisfiables tandis que les fichiers `comp1.cnf` à `comp5.cnf` sont associés à des nombres
 composés et sont satisfiables. Il y a également divers fichiers provenant du site
-http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html
+http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 
 ## Structuration du code
 
@@ -70,7 +70,7 @@ Ainsi, lorsque l'algorithme de DPLL est en marche, il n'y a aucune allocation m�
 
 ## Améliorations possibles
 Nous devons encore chercher à améliorer les heuristiques MOMS et DLIS, car le temps passé à parier est beaucoup trop élevé par
-rapport au temps passé à faire de la propagation ou du backtracking (60% du temps passé à parier pour MOMS et 35% pour DLIS).
+rapport au temps passé à faire de la propagation ou du backtracking (par exemple sur dubois22.cnf, 60% du temps passé à parier pour MOMS et 35% pour DLIS).
 Pour ces deux heuristiques, il faudrait réussir à tenir à jour une file de priorité pendant la phase de propagation, pour que
 l'accès au littéral le plus intéressant lors des paris puisse se faire en temps constant. Mais il faudrait aussi faire attention
 à ne pas ralentir la phase de propagation. Nous nous pencherons plus en détails sur ce problème un peu plus tard.
