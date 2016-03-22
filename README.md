@@ -66,14 +66,28 @@ lors de la phase de propagation. Ainsi, toutes les structures utilisés au cours
 en mémoire, ceci est très important pour éviter au maximum les cache misses quand on parcout ces structures (et on les parcourt
 très souvent).
 
-Ainsi, lorsque l'algorithme de DPLL est en marche, il n'y a aucune allocation mémoire.
-
 ## Améliorations possibles
-Nous devons encore chercher à améliorer les heuristiques MOMS et DLIS, car le temps passé à parier est beaucoup trop élevé par
+Nous devons encore chercher à améliorer les heuristiques MOMS et DLIS, car le temps passé à parier est anormalement élevé par
 rapport au temps passé à faire de la propagation ou du backtracking (par exemple sur dubois22.cnf, 60% du temps passé à parier pour MOMS et 35% pour DLIS).
 Pour ces deux heuristiques, il faudrait réussir à tenir à jour une file de priorité pendant la phase de propagation, pour que
 l'accès au littéral le plus intéressant lors des paris puisse se faire en temps constant. Mais il faudrait aussi faire attention
 à ne pas ralentir la phase de propagation. Nous nous pencherons plus en détails sur ce problème un peu plus tard.
+
+## Observations sur les performances
+Sur les fichiers présents dans `cnf_files`, les watched litterals obtiennent globalement les meilleures performances sauf pour les fichiers `comp2.cnf`, `dubois20.cnf`, `dubois21.cnf`, `dubois22.cnf`, `aim-100-1_6-no-1.cnf`.
+
+Pour les dubois, l'heuristique LINEAR reste la meilleure.
+
+`comp2.cnf` est un peu particulier car ni WL ni LINEAR n'arrivent à le résoudre en un temps raisonnable, mais MOMS et DLIS
+le résolvent tous les deux en moins de deux secondes (sur un MacBook Pro avec un processeur Intel core i7 à 3.1GHz).
+
+`aim-100-1_6-no-1.cnf` est résolu le plus rapidement par MOMS (1.2s en MOMS, 2.6s en WL, 5.8s en LINEAR).
+
+Par contre sur des instances 3-SAT générées aléatoirement, MOMS et DLIS obtiennent en moyenne des performances
+bien meilleurs que WL, elle-même obtenant des performances meilleures que LINEAR et RAND.
+
+Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. De même dans le dossier
+`scripts`, il y a plusieurs courbes de performance au format PNG sur un grand nombre d'instances 3-SAT générées aléatoirement.
 
 ## Répartition du travail
 
