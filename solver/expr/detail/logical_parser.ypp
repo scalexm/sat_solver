@@ -48,7 +48,7 @@
 %token <int> VARIABLE "variable"
 %type <expr::logical_expr> exp
 
-// defines left associativity AND priority (ordering is important)
+// define left associativity AND priority (ordering is important)
 %left NEW_LINE
 %left EQ
 %left IMPL

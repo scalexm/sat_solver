@@ -7,10 +7,15 @@
  *
  */
 
- #include "logical_expr.hpp"
- #include <utility>
+#ifndef TSEITIN_HPP
+#define TSEITIN_HPP
+
+#include "logical_expr.hpp"
+#include <utility>
 
 namespace expr {
     std::pair<cnf, variable> tseitin_transform(const logical_expr &);
     valuation remove_trailing_variables(valuation, variable);
 }
+
+#endif

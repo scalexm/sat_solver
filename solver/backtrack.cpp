@@ -48,8 +48,7 @@ detail::litteral solver::backtrack_one_wl() {
 
 detail::litteral solver::backtrack() {
     auto lit = (this->*m_backtrack_one)();
-    while (lit.forced()) {
+    while (lit.forced())
         lit = (this->*m_backtrack_one)();
-    }
     return lit;
 }

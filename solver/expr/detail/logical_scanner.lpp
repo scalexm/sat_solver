@@ -50,7 +50,7 @@
 
 namespace expr { namespace detail {
     /*
-        initializes location and loads the string to parse into yyin
+        initialize location and loads the string to parse into yyin
     */
     void logical_driver::begin_scan(const std::string & str) {
         loc = location { };
