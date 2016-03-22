@@ -78,13 +78,14 @@ Sur les fichiers présents dans `cnf_files`, les watched litterals obtiennent gl
 
 Pour les dubois, l'heuristique LINEAR reste la meilleure.
 
-`comp2.cnf` est un peu particulier car ni WL ni LINEAR n'arrivent à le résoudre en un temps raisonnable, mais MOMS et DLIS
-le résolvent tous les deux en moins de deux secondes (sur un MacBook Pro avec un processeur Intel core i7 à 3.1GHz).
+`comp2.cnf` est un peu particulier car LINEAR n'arrive pas à le résoudre en un temps raisonnable et WL le résout en 14s,
+mais MOMS et DLIS le résolvent tous les deux en moins de deux secondes (sur un MacBook Pro avec un processeur Intel
+core i7 à 3.1GHz).
 
 `aim-100-1_6-no-1.cnf` est résolu le plus rapidement par MOMS (1.2s en MOMS, 2.6s en WL, 5.8s en LINEAR).
 
 Par contre sur des instances 3-SAT générées aléatoirement, MOMS et DLIS obtiennent en moyenne des performances
-bien meilleurs que WL, elle-même obtenant des performances meilleures que LINEAR et RAND.
+bien meilleures que WL, elle-même obtenant des performances meilleures que LINEAR et RAND.
 
 Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. De même dans le dossier
 `scripts`, il y a plusieurs courbes de performance au format PNG sur un grand nombre d'instances 3-SAT générées aléatoirement.
