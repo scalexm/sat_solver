@@ -24,7 +24,7 @@ TEST_CASE("Testing SAT solver", "[solver]") {
         s = solver { { }, mode };
         REQUIRE(s.satisfiable());
 
-        s = solver { { { 1, -2 }, { } }, mode };
+        s = solver { { { 1, -2 }, std::unordered_set<int> { } }, mode };
         REQUIRE(!s.satisfiable());
 
         s = solver { { { 1 }, { 2 }, { -1, -2 } }, mode };

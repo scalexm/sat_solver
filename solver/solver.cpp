@@ -70,7 +70,7 @@ solver::solver(cnf clauses, guess_mode mode) : m_guess_mode { mode },
 
     m_remaining_variables = m_old_variables.size();
     m_valuation.reserve(m_remaining_variables);
-    m_assignment.resize(m_remaining_variables, detail::polarity::VUNDEF);
+    m_assignment.resize(m_remaining_variables, std::make_pair(detail::polarity::VUNDEF, 0));
     m_watches.resize(2 * m_remaining_variables);
 
     // set up clauses and apply a first round of unit propagation in case of wl
@@ -99,7 +99,7 @@ solver::solver(cnf clauses, guess_mode mode) : m_guess_mode { mode },
         } else if (sat_clause.count() == 1) { // unit clause => propagation
             auto first = sat_clause.first_unassigned(m_assignment);
             if (first != -1)
-                enqueue(sat_clause.watch_0(), true);
+                enqueue(sat_clause.watch_0(), true, 0);
 
             if (m_guess_mode == guess_mode::WL && !deduce(0)) {
                 m_remaining_clauses = -1;
@@ -125,9 +125,9 @@ solver::solver(cnf clauses, guess_mode mode) : m_guess_mode { mode },
 }
 
 /* assume lit is TRUE, wether deduced or guessed, and push it on the valuation stack */
-void solver::enqueue(int lit, bool force) {
+void solver::enqueue(int lit, bool force, size_t level) {
     auto var = detail::var(lit);
-    assert(m_assignment[var] == detail::polarity::VUNDEF);
+    assert(m_assignment[var].first == detail::polarity::VUNDEF);
 
 #ifdef DEBUG
     if (force)
@@ -136,7 +136,9 @@ void solver::enqueue(int lit, bool force) {
         std::cout << "guessing " << new_to_old_lit(lit) << std::endl;
 #endif
 
-    m_assignment[var] = detail::sign(lit) ? detail::polarity::VTRUE : detail::polarity::VFALSE;
+    m_assignment[var].first =
+        detail::sign(lit) ? detail::polarity::VTRUE : detail::polarity::VFALSE;
+    m_assignment[var].second = level;
     m_valuation.emplace_back(lit, force);
     --m_remaining_variables;
 }
@@ -148,7 +150,7 @@ detail::litteral solver::dequeue() {
 
     detail::litteral lit = m_valuation.back();
     m_valuation.pop_back();
-    m_assignment[detail::var(lit.value())] = detail::polarity::VUNDEF;
+    m_assignment[detail::var(lit.value())].first = detail::polarity::VUNDEF;
     ++m_remaining_variables;
     return lit;
 }
@@ -163,10 +165,11 @@ valuation solver::solve() {
         return { { } };
 
     size_t level = 0;
-    bool found = false;
 
     while (m_remaining_clauses > 0) {
-        if (!deduce(level)) {
+        auto conflict = deduce(level);
+        ++level;
+        if (conflict != nullptr) {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
@@ -178,11 +181,8 @@ valuation solver::solve() {
                 return { { } };
             }
 
-            level = m_valuation.size();
-            enqueue(detail::neg(lit.value()), true);
+            enqueue(detail::neg(lit.value()), true, level);
         } else {
-            found = false;
-
             // we have a full valuation
             if (m_remaining_variables == 0 || m_remaining_clauses == 0)
                 break;
@@ -201,8 +201,7 @@ valuation solver::solve() {
             }
 
             int lit = (this->*m_guess)(min_clause);
-            level = m_valuation.size();
-            enqueue(lit, false);
+            enqueue(lit, false, level);
         }
     }
 
@@ -220,7 +219,7 @@ valuation solver::solve() {
     for (auto v = 0; v < m_assignment.size(); ++v) {
         result.emplace(
             m_old_variables[v],
-            m_assignment[v] == detail::polarity::VTRUE ? true : false
+            m_assignment[v].first == detail::polarity::VTRUE ? true : false
         );
     }
 

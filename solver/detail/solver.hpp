@@ -19,7 +19,7 @@ namespace detail {
         VUNDEF,
     };
 
-    using assignment = std::vector<polarity>;
+    using assignment = std::vector<std::pair<polarity, size_t>>; // (polarity, level)
 
     inline bool sign(int lit) {
         return lit & 1;
@@ -38,7 +38,7 @@ namespace detail {
     }
 
     inline polarity polarity_lit(const assignment & a, int lit) {
-        auto var_polarity = a[var(lit)];
+        auto var_polarity = a[var(lit)].first;
         if (var_polarity == polarity::VUNDEF)
             return polarity::VUNDEF;
         else if (sign(lit))
@@ -58,6 +58,14 @@ namespace detail {
         clause() = default;
         clause(clause &&) = default;
         clause & operator =(clause &&) = default;
+
+        clause(size_t capacity) {
+            m_litterals.reserve(capacity);
+        }
+
+        const std::vector<int> & litterals() const {
+            return m_litterals;
+        }
 
         void set_id(size_t id) {
             m_id = id;
@@ -102,7 +110,7 @@ namespace detail {
 
         int first_unassigned(const assignment & a) const {
             for (auto && lit : m_litterals) {
-                if (a[detail::var(lit)] == polarity::VUNDEF)
+                if (a[detail::var(lit)].first == polarity::VUNDEF)
                     return lit;
             }
             return -1;
@@ -110,7 +118,7 @@ namespace detail {
 
         void update_counts(const assignment & a, std::vector<size_t> & counts) const {
             for (auto && lit : m_litterals) {
-                if (a[detail::var(lit)] == polarity::VUNDEF)
+                if (a[detail::var(lit)].first == polarity::VUNDEF)
                     ++counts[lit];
             }
         }

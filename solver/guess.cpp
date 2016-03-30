@@ -10,7 +10,7 @@
 
 int solver::guess_linear(size_t) {
     for (auto v = 0; v < m_assignment.size(); ++v)
-        if (m_assignment[v] == detail::polarity::VUNDEF)
+        if (m_assignment[v].first == detail::polarity::VUNDEF)
             return detail::lit(v, true);
     return -1;
 }
@@ -21,7 +21,7 @@ int solver::guess_rand(size_t) {
 
     auto begin = 0;
     for (auto v = 0; v < m_assignment.size(); ++v) {
-        if (m_assignment[v] != detail::polarity::VUNDEF)
+        if (m_assignment[v].first != detail::polarity::VUNDEF)
             continue;
         else if (begin == offset)
             return detail::lit(v, true);
@@ -46,7 +46,7 @@ int solver::guess_dlis(size_t) {
     int max_lit = 0;
     double max_score = 0;
     for (auto v = 0; v < m_assignment.size(); ++v) {
-        if (m_assignment[v] != detail::polarity::VUNDEF)
+        if (m_assignment[v].first != detail::polarity::VUNDEF)
             continue;
 
         auto lit = detail::lit(v, true);

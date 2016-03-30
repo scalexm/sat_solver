@@ -78,9 +78,11 @@ solver parse(std::ifstream & file, guess_mode mode) {
 }
 
 void trim_expr(std::string & exp) {
+    boost::algorithm::replace_all(exp, "\r\n", "\n"); // fuck windows
     boost::algorithm::trim(exp);
     if (boost::algorithm::ends_with(exp, " 0"))
         boost::algorithm::erase_tail(exp, 2);
+    boost::algorithm::trim(exp);
 }
 
 int main(int argc, const char ** argv) {

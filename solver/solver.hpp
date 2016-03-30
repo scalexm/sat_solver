@@ -27,6 +27,8 @@ namespace detail {
         bool forced() const { return m_forced; }
         int value() const { return m_value; }
     };
+
+    using adj_list = std::vector<std::unordered_set<int>>;
 }
 
 enum class guess_mode {
@@ -40,7 +42,7 @@ enum class guess_mode {
 class solver {
 private:
     detail::litteral (solver::*m_backtrack_one)() = nullptr;
-    bool (solver::*m_deduce_one)(int) = nullptr;
+    detail::clause * (solver::*m_deduce_one)(int, size_t) = nullptr;
     int (solver::*m_guess)(size_t) = nullptr;
 
     std::vector<int> m_old_variables;
@@ -55,7 +57,7 @@ private:
     // the total number of clauses not yet satisfied
     size_t m_remaining_clauses;
 
-    std::vector<std::vector<detail::clause*>> m_watches;
+    std::vector<std::vector<detail::clause *>> m_watches;
 
     // valuation stack
     std::vector<detail::litteral> m_valuation;
@@ -63,12 +65,12 @@ private:
     // current assignment of variables
     detail::assignment m_assignment;
 
-    void enqueue(int, bool);
+    void enqueue(int, bool, size_t);
     detail::litteral dequeue();
 
-    bool deduce_one_wl(int);
-    bool deduce_one_default(int);
-    bool deduce(size_t);
+    detail::clause * deduce_one_wl(int, size_t);
+    detail::clause * deduce_one_default(int, size_t);
+    detail::clause * deduce(size_t);
 
     detail::litteral backtrack_one_wl();
     detail::litteral backtrack_one_default();
@@ -82,6 +84,8 @@ private:
     int guess_moms(size_t);
     int guess_dlis(size_t);
     int guess_rand(size_t);
+
+    void learn(const detail::clause &);
 public:
     solver() = default;
     solver(cnf, guess_mode mode = guess_mode::RAND);
