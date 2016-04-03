@@ -28,13 +28,16 @@ solver parse(std::ifstream & file, guess_mode mode) {
     while (std::getline(file, line)) {
         boost::algorithm::trim(line);
         ++line_number;
-        if(!line.empty() && line[0] == 'c')
+        if (line.empty())
             continue;
-        else if(!line.empty() && line[0] == 'p') {
+        if(line[0] == 'c')
+            continue;
+        else if(line[0] == 'p') {
             if (header) {
                 std::cout
                     << MAKE_WARNING(line_number, "redefinition of header ignored")
                     << std::endl;
+                continue;
             }
             header = true;
 

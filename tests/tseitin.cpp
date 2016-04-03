@@ -40,4 +40,10 @@ TEST_CASE("Testing tseitin transform", "[logical_expr][solver]") {
 
     s = solver { std::move(tseitin.first) };
     REQUIRE(s.satisfiable());
+
+    exp = unwrap(expr::parse("1 => -1"));
+    tseitin = expr::tseitin_transform(exp);
+
+    s = solver { std::move(tseitin.first) };
+    REQUIRE(s.satisfiable());
 }
