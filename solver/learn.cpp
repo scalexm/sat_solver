@@ -30,4 +30,5 @@ detail::clause marry(const detail::clause & c1, const detail::clause & c2, int x
 }
 
 void solver::learn(const detail::clause &) {
+    
 }

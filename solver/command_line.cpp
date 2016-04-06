@@ -12,7 +12,7 @@
 #include <algorithm>
 
 void parse_command_line(int argc, const char ** argv, guess_mode & mode, bool & tseitin,
-                        std::string & file_name) {
+                        std::string & file_name, cdcl_mode & cdcl) {
     for (auto i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
             auto arg = std::string(argv[i]);
@@ -27,6 +27,10 @@ void parse_command_line(int argc, const char ** argv, guess_mode & mode, bool & 
                 mode = guess_mode::MOMS;
             else if (arg == "-dlis")
                 mode = guess_mode::DLIS;
+            else if (arg == "-cl-interac")
+                cdcl = cdcl_mode::INTERACTIVE;
+            else if (arg == "-cl")
+                cdcl = cdcl_mode::NORMAL;
             else
                 std::cout << "unkown option " << arg << std::endl;
         } else

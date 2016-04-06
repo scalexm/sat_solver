@@ -11,7 +11,8 @@
 
 #include <string>
 enum class guess_mode;
+enum class cdcl_mode;
 
-void parse_command_line(int, const char **, guess_mode &, bool &, std::string &);
+void parse_command_line(int, const char **, guess_mode &, bool &, std::string &, cdcl_mode &);
 
 #endif

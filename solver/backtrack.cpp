@@ -7,16 +7,11 @@
 //
 
 #include "solver.hpp"
+#include "detail/solver.hpp"
 #include <iostream>
 
 /* backtrack in default mode */
-detail::litteral solver::backtrack_one_default() {
-    auto lit = dequeue();
-    auto val = lit.value();
-
-    if (val == -1)
-        return lit;
-
+void solver::backtrack_one_default(int val) {
     for (auto && c : m_watches[val]) {
         if (c->satisfied_by() != val)
             continue;
@@ -37,18 +32,18 @@ detail::litteral solver::backtrack_one_default() {
 #endif
         c->increase_count();
     }
-
-    return lit;
 }
 
 /* backtrack in wl mode */
-detail::litteral solver::backtrack_one_wl() {
-    return dequeue();
+void solver::backtrack_one_wl(int val) {
 }
 
-detail::litteral solver::backtrack() {
-    auto lit = (this->*m_backtrack_one)();
-    while (lit.forced())
-        lit = (this->*m_backtrack_one)();
+detail::litteral solver::backtrack(size_t level) {
+    detail::litteral lit;
+    ;
+    while (!m_valuation.empty() && m_assignment[detail::var(m_valuation.back().value())].second >= level) {
+        lit = dequeue();
+        (this->*m_backtrack_one)(lit.value());
+    }
     return lit;
 }

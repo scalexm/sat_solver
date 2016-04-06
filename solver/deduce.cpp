@@ -7,6 +7,7 @@
 //
 
 #include "solver.hpp"
+#include "detail/solver.hpp"
 #include <iostream>
 
 /* deduce for one litteral in default mode */

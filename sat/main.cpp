@@ -17,7 +17,7 @@
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
-solver parse(std::ifstream & file, guess_mode mode) {
+solver parse(std::ifstream & file, guess_mode mode, cdcl_mode cdcl) {
     std::string line;
     int line_number = 0;
     bool header = false;
@@ -77,7 +77,7 @@ solver parse(std::ifstream & file, guess_mode mode) {
         }
     }
 
-    return solver { std::move(res), mode };
+    return solver { std::move(res), mode, cdcl };
 }
 
 void trim_expr(std::string & exp) {
@@ -90,10 +90,11 @@ void trim_expr(std::string & exp) {
 
 int main(int argc, const char ** argv) {
     auto mode = guess_mode::LINEAR;
+    auto cdcl = cdcl_mode::NONE;
     bool tseitin = false;
     std::string file_name;
 
-    parse_command_line(argc, argv, mode, tseitin, file_name);
+    parse_command_line(argc, argv, mode, tseitin, file_name, cdcl);
 
     if (file_name.empty()) {
         std::cerr << "no input" << std::endl;
@@ -121,11 +122,11 @@ int main(int argc, const char ** argv) {
         }
 
         auto tseitin = expr::tseitin_transform(*boost::get<expr::logical_expr>(&res));
-        solver s { std::move(tseitin.first), mode };
+        solver s { std::move(tseitin.first), mode, cdcl };
         val = expr::remove_trailing_variables(s.solve(), tseitin.second);
         sat = s.satisfiable();
     } else {
-        auto s = parse(f, mode);
+        auto s = parse(f, mode, cdcl);
         val = s.solve();
         sat = s.satisfiable();
     }

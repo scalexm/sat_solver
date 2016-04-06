@@ -13,6 +13,7 @@
 
 bool gen(const std::string &, long long int);
 guess_mode mode = guess_mode::LINEAR;
+cdcl_mode cdcl = cdcl_mode::NONE;
 
 int main(int argc, const char ** argv) {
     if (argc > 1 && std::string { argv[1] } == "--gen") {
@@ -33,7 +34,7 @@ int main(int argc, const char ** argv) {
     bool tseitin = false;
     std::string file_name;
 
-    parse_command_line(argc, argv, mode, tseitin, file_name);
+    parse_command_line(argc, argv, mode, tseitin, file_name, cdcl);
 
     Catch::Session session;
 

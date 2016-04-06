@@ -7,6 +7,7 @@
 //
 
 #include "solver.hpp"
+#include "detail/solver.hpp"
 #include <cstdlib>
 #include <iostream>
 
@@ -29,8 +30,9 @@ cnf remove_tautologies(const cnf & formula) {
     return ret;
 }
 
-solver::solver(cnf clauses, guess_mode mode) : m_guess_mode { mode },
-                                               m_rng { std::random_device {}() } {
+solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mode },
+                                                               m_cdcl { cdcl },
+                                                               m_rng { std::random_device {}() } {
     if (m_guess_mode == guess_mode::WL) {
         m_backtrack_one = &solver::backtrack_one_wl;
         m_deduce_one = &solver::deduce_one_wl;
@@ -145,8 +147,9 @@ void solver::enqueue(int lit, bool force, size_t level) {
 
 /* removes the top of the valuation stack */
 detail::litteral solver::dequeue() {
-    if (m_valuation.empty())
-        return { -1, false };
+    /*if (m_valuation.empty())
+        return { -1, false };*/
+    assert(!m_valuation.empty());
 
     detail::litteral lit = m_valuation.back();
     m_valuation.pop_back();
@@ -168,21 +171,23 @@ valuation solver::solve() {
 
     while (m_remaining_clauses > 0) {
         auto conflict = deduce(level);
-        ++level;
         if (conflict != nullptr) {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
-            auto lit = backtrack();
-
-            // we reached the bottom of our stack, the formula is not satisfiable
-            if (lit.value() == -1) {
+            if (level == 0) {
                 m_remaining_clauses = -1;
                 return { { } };
             }
 
+            if (can_learn())
+                learn(*conflict);
+            auto lit = backtrack(level);
+            --level;
+
             enqueue(detail::neg(lit.value()), true, level);
         } else {
+            ++level;
             // we have a full valuation
             if (m_remaining_variables == 0 || m_remaining_clauses == 0)
                 break;

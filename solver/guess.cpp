@@ -7,6 +7,7 @@
 //
 
 #include "solver.hpp"
+#include "detail/solver.hpp"
 
 int solver::guess_linear(size_t) {
     for (auto v = 0; v < m_assignment.size(); ++v)
