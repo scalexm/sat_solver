@@ -38,7 +38,7 @@ detail::clause * solver::deduce_one_default(int lit, int level) {
         else if (c->count() == 1) { // unit clause: we enqueue the litteral for further deducing
             auto first = c->first_unassigned(m_assignment);
             if (first != -1)
-                enqueue(first, true, level);
+                enqueue(first, level, c);
         }
     }
 
@@ -83,7 +83,7 @@ detail::clause * solver::deduce_one_wl(int lit, int level) {
                     *it1++ = *it2++;
                 break;
             }
-            enqueue(w0, true, level);
+            enqueue(w0, level, c);
         } else
             m_watches[new_watch].emplace_back(c);
     }

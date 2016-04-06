@@ -41,7 +41,7 @@ void solver::backtrack_one_wl(int val) {
 int solver::backtrack(int level) {
     int lit;
     assert(!m_valuation.empty());
-    while (!m_valuation.empty() && m_assignment[detail::var(m_valuation.back())].second >= level) {
+    while (!m_valuation.empty() && m_assignment[detail::var(m_valuation.back())].level >= level) {
         lit = dequeue();
         (this->*m_backtrack_one)(lit);
     }

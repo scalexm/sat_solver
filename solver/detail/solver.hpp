@@ -36,7 +36,7 @@ namespace detail {
     }
 
     inline polarity polarity_lit(const assignment & a, int lit) {
-        auto var_polarity = a[var(lit)].first;
+        auto var_polarity = a[var(lit)].polarity;
         if (var_polarity == polarity::VUNDEF)
             return polarity::VUNDEF;
         else if (sign(lit))

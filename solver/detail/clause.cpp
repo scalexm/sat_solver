@@ -12,7 +12,7 @@
 namespace detail {
     int clause::first_unassigned(const assignment & a) const {
         for (auto && lit : m_litterals) {
-            if (a[var(lit)].first == polarity::VUNDEF)
+            if (a[var(lit)].polarity == polarity::VUNDEF)
                 return lit;
         }
         return -1;
@@ -20,7 +20,7 @@ namespace detail {
 
     void clause::update_counts(const assignment & a, std::vector<size_t> & counts) const {
         for (auto && lit : m_litterals) {
-            if (a[var(lit)].first == polarity::VUNDEF)
+            if (a[var(lit)].polarity == polarity::VUNDEF)
                 ++counts[lit];
         }
     }

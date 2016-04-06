@@ -13,6 +13,7 @@
 #include "detail/clause.hpp"
 #include <vector>
 #include <random>
+#include <list>
 
 enum class guess_mode {
     LINEAR,
@@ -39,7 +40,7 @@ private:
 
     size_t m_remaining_variables;
 
-    std::vector<detail::clause> m_clauses;
+    std::list<detail::clause> m_clauses;
     guess_mode m_guess_mode;
     cdcl_mode m_cdcl;
 
@@ -56,7 +57,7 @@ private:
     // current assignment of variables
     detail::assignment m_assignment;
 
-    void enqueue(int, bool, int);
+    void enqueue(int, int, detail::clause *);
     int dequeue();
 
     detail::clause * deduce_one_wl(int, int);
