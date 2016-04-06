@@ -128,13 +128,13 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
 /* assume lit is TRUE, wether deduced or guessed, and push it on the valuation stack */
 void solver::enqueue(int lit, int level, detail::clause * reason) {
     auto var = detail::var(lit);
-    assert(m_assignment[var].polarity == detail::polarity::VUNDEF);
+    assert(m_assignment[var].pol == detail::polarity::VUNDEF);
 
 #ifdef DEBUG
         std::cout << "enqueue " << new_to_old_lit(lit) << std::endl;
 #endif
 
-    m_assignment[var].polarity =
+    m_assignment[var].pol =
         detail::sign(lit) ? detail::polarity::VTRUE : detail::polarity::VFALSE;
     m_assignment[var].level = level;
     m_assignment[var].reason = reason;
@@ -149,7 +149,7 @@ int solver::dequeue() {
     int lit = m_valuation.back();
     m_valuation.pop_back();
     auto var = detail::var(lit);
-    m_assignment[var].polarity = detail::polarity::VUNDEF;
+    m_assignment[var].pol = detail::polarity::VUNDEF;
     m_assignment[var].level = -1;
     m_assignment[var].reason = nullptr;
     ++m_remaining_variables;
@@ -225,7 +225,7 @@ valuation solver::solve() {
     for (auto v = 0; v < m_assignment.size(); ++v) {
         result.emplace(
             m_old_variables[v],
-            m_assignment[v].polarity == detail::polarity::VTRUE ? true : false
+            m_assignment[v].pol == detail::polarity::VTRUE ? true : false
         );
     }
 

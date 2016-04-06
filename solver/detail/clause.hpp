@@ -10,13 +10,14 @@
 #define CLAUSE_HPP
 
 #include <vector>
+#include <cstddef>
 
 namespace detail {
     enum class polarity;
     class clause;
 
     struct var_data {
-        polarity polarity;
+        polarity pol;
         int level;
         clause * reason;
     };
