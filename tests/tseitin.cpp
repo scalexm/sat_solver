@@ -20,6 +20,9 @@ TEST_CASE("Testing tseitin transform", "[logical_expr][solver]") {
     solver s { std::move(tseitin.first) };
     auto val = s.solve();
 
+    for (auto && v : val) {
+        std::cout << (v.second ? v.first : -v.first) << " ";
+    }
     REQUIRE(expr::eval(exp, val));
     REQUIRE(expr::eval(exp, expr::remove_trailing_variables(val, tseitin.second)));
 

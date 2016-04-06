@@ -12,6 +12,9 @@
 
 /* backtrack in default mode */
 void solver::backtrack_one_default(int val) {
+    if (val == -1)
+        return;
+
     for (auto && c : m_watches[val]) {
         if (c->satisfied_by() != val)
             continue;
@@ -38,10 +41,10 @@ void solver::backtrack_one_default(int val) {
 void solver::backtrack_one_wl(int val) {
 }
 
-detail::litteral solver::backtrack(size_t level) {
-    detail::litteral lit;
-    ;
-    while (!m_valuation.empty() && m_assignment[detail::var(m_valuation.back().value())].second >= level) {
+detail::litteral solver::backtrack(int level) {
+    auto lit = dequeue();
+    (this->*m_backtrack_one)(lit.value());
+    while (lit.forced()) {//(!m_valuation.empty() && m_assignment[detail::var(m_valuation.back().value())].second >= level) {
         lit = dequeue();
         (this->*m_backtrack_one)(lit.value());
     }

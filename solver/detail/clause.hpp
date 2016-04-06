@@ -13,7 +13,7 @@
 
 namespace detail {
     enum class polarity;
-    using assignment = std::vector<std::pair<polarity, size_t>>; // (polarity, level)
+    using assignment = std::vector<std::pair<polarity, int>>; // (polarity, level)
 
     class clause {
     private:

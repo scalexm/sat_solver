@@ -11,7 +11,7 @@
 #include <iostream>
 
 /* deduce for one litteral in default mode */
-detail::clause * solver::deduce_one_default(int lit, size_t level) {
+detail::clause * solver::deduce_one_default(int lit, int level) {
      detail::clause * conflict = nullptr;
 
     for (auto && c : m_watches[lit]) {
@@ -46,7 +46,7 @@ detail::clause * solver::deduce_one_default(int lit, size_t level) {
 }
 
 /* deduce for one litteral in wl mode */
-detail::clause * solver::deduce_one_wl(int lit, size_t level) {
+detail::clause * solver::deduce_one_wl(int lit, int level) {
     auto neg_lit = detail::neg(lit);
     auto it1 = m_watches[neg_lit].begin(), end = m_watches[neg_lit].end();
     auto it2 = it1;
@@ -94,7 +94,7 @@ detail::clause * solver::deduce_one_wl(int lit, size_t level) {
 }
 
 /* deduce until no more deductions can be done */
-detail::clause * solver::deduce(size_t level) {
+detail::clause * solver::deduce(int level) {
     detail::clause * conflict = nullptr;
     if (!m_valuation.empty()) {
         auto top = level == 0 ? 0 : m_valuation.size() - 1;

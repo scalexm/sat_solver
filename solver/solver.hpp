@@ -17,7 +17,7 @@
 namespace detail {
     class litteral {
     private:
-        int m_value;
+        int m_value = -1;
         bool m_forced;
 
     public:
@@ -46,7 +46,7 @@ enum class cdcl_mode {
 class solver {
 private:
     void (solver::*m_backtrack_one)(int) = nullptr;
-    detail::clause * (solver::*m_deduce_one)(int, size_t) = nullptr;
+    detail::clause * (solver::*m_deduce_one)(int, int) = nullptr;
     int (solver::*m_guess)(size_t) = nullptr;
 
     std::vector<int> m_old_variables;
@@ -70,16 +70,16 @@ private:
     // current assignment of variables
     detail::assignment m_assignment;
 
-    void enqueue(int, bool, size_t);
+    void enqueue(int, bool, int);
     detail::litteral dequeue();
 
-    detail::clause * deduce_one_wl(int, size_t);
-    detail::clause * deduce_one_default(int, size_t);
-    detail::clause * deduce(size_t);
+    detail::clause * deduce_one_wl(int, int);
+    detail::clause * deduce_one_default(int, int);
+    detail::clause * deduce(int);
 
     void backtrack_one_wl(int);
     void backtrack_one_default(int);
-    detail::litteral backtrack(size_t);
+    detail::litteral backtrack(int);
 
     int guess(size_t min_clause = 0);
     int new_to_old_lit(int);

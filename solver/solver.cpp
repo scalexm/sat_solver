@@ -10,6 +10,7 @@
 #include "detail/solver.hpp"
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 cnf remove_tautologies(const cnf & formula) {
     cnf ret;
@@ -72,7 +73,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
 
     m_remaining_variables = m_old_variables.size();
     m_valuation.reserve(m_remaining_variables);
-    m_assignment.resize(m_remaining_variables, std::make_pair(detail::polarity::VUNDEF, 0));
+    m_assignment.resize(m_remaining_variables, std::make_pair(detail::polarity::VUNDEF, -1));
     m_watches.resize(2 * m_remaining_variables);
 
     // set up clauses and apply a first round of unit propagation in case of wl
@@ -127,7 +128,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
 }
 
 /* assume lit is TRUE, wether deduced or guessed, and push it on the valuation stack */
-void solver::enqueue(int lit, bool force, size_t level) {
+void solver::enqueue(int lit, bool force, int level) {
     auto var = detail::var(lit);
     assert(m_assignment[var].first == detail::polarity::VUNDEF);
 
@@ -147,13 +148,15 @@ void solver::enqueue(int lit, bool force, size_t level) {
 
 /* removes the top of the valuation stack */
 detail::litteral solver::dequeue() {
-    /*if (m_valuation.empty())
-        return { -1, false };*/
+    if (m_valuation.empty())
+        return { -1, false };
     assert(!m_valuation.empty());
 
     detail::litteral lit = m_valuation.back();
     m_valuation.pop_back();
-    m_assignment[detail::var(lit.value())].first = detail::polarity::VUNDEF;
+    auto var = detail::var(lit.value());
+    m_assignment[var].first = detail::polarity::VUNDEF;
+    m_assignment[var].second = -1;
     ++m_remaining_variables;
     return lit;
 }
@@ -167,7 +170,7 @@ valuation solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { { } };
 
-    size_t level = 0;
+    int level = 0;
 
     while (m_remaining_clauses > 0) {
         auto conflict = deduce(level);
@@ -175,14 +178,18 @@ valuation solver::solve() {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
-            if (level == 0) {
+            /*if (level == 0) {
+                m_remaining_clauses = -1;
+                return { { } };
+            }*/
+
+            /*if (can_learn())
+                learn(*conflict);*/
+            auto lit = backtrack(level);
+            if (lit.value() == -1) {
                 m_remaining_clauses = -1;
                 return { { } };
             }
-
-            if (can_learn())
-                learn(*conflict);
-            auto lit = backtrack(level);
             --level;
 
             enqueue(detail::neg(lit.value()), true, level);
