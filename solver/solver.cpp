@@ -102,12 +102,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
         } else if (sat_clause.count() == 1) { // unit clause => propagation
             auto first = sat_clause.first_unassigned(m_assignment);
             if (first != -1)
-                enqueue(sat_clause.watch_0(), true, 0);
-
-            if (m_guess_mode == guess_mode::WL && !deduce(0)) {
-                m_remaining_clauses = -1;
-                return;
-            }
+                enqueue(first, true, 0);
             continue;
         }
 
@@ -142,19 +137,17 @@ void solver::enqueue(int lit, bool force, int level) {
     m_assignment[var].first =
         detail::sign(lit) ? detail::polarity::VTRUE : detail::polarity::VFALSE;
     m_assignment[var].second = level;
-    m_valuation.emplace_back(lit, force);
+    m_valuation.emplace_back(lit);
     --m_remaining_variables;
 }
 
 /* removes the top of the valuation stack */
-detail::litteral solver::dequeue() {
-    if (m_valuation.empty())
-        return { -1, false };
+int solver::dequeue() {
     assert(!m_valuation.empty());
 
-    detail::litteral lit = m_valuation.back();
+    int lit = m_valuation.back();
     m_valuation.pop_back();
-    auto var = detail::var(lit.value());
+    auto var = detail::var(lit);
     m_assignment[var].first = detail::polarity::VUNDEF;
     m_assignment[var].second = -1;
     ++m_remaining_variables;
@@ -178,21 +171,17 @@ valuation solver::solve() {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
-            /*if (level == 0) {
-                m_remaining_clauses = -1;
-                return { { } };
-            }*/
-
-            /*if (can_learn())
-                learn(*conflict);*/
-            auto lit = backtrack(level);
-            if (lit.value() == -1) {
+            if (level == 0) {
                 m_remaining_clauses = -1;
                 return { { } };
             }
+
+            if (can_learn())
+                learn(*conflict);
+            auto lit = backtrack(level);
             --level;
 
-            enqueue(detail::neg(lit.value()), true, level);
+            enqueue(detail::neg(lit), true, level);
         } else {
             ++level;
             // we have a full valuation
@@ -212,7 +201,7 @@ valuation solver::solve() {
                 }
             }
 
-            int lit = (this->*m_guess)(min_clause);
+            auto lit = (this->*m_guess)(min_clause);
             enqueue(lit, false, level);
         }
     }

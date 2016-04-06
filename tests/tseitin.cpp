@@ -13,40 +13,40 @@
 
 expr::logical_expr unwrap(expr::expr_result);
 
+extern guess_mode mode;
+extern cdcl_mode cdcl;
+
 TEST_CASE("Testing tseitin transform", "[logical_expr][solver]") {
     auto exp = unwrap(expr::parse("(3 X 5) /\\ (6 => ~(7 <=> 3 \\/ 5))"));
     auto tseitin = expr::tseitin_transform(exp);
 
-    solver s { std::move(tseitin.first) };
+    solver s { std::move(tseitin.first), mode, cdcl };
     auto val = s.solve();
 
-    for (auto && v : val) {
-        std::cout << (v.second ? v.first : -v.first) << " ";
-    }
     REQUIRE(expr::eval(exp, val));
     REQUIRE(expr::eval(exp, expr::remove_trailing_variables(val, tseitin.second)));
 
     exp = unwrap(expr::parse("7 <=> -7"));
     tseitin = expr::tseitin_transform(exp);
 
-    s = solver { std::move(tseitin.first) };
+    s = solver { std::move(tseitin.first), mode, cdcl };
     REQUIRE(!s.satisfiable());
 
     exp = unwrap(expr::parse("7 <=> ~7"));
     tseitin = expr::tseitin_transform(exp);
 
-    s = solver { std::move(tseitin.first) };
+    s = solver { std::move(tseitin.first), mode, cdcl };
     REQUIRE(!s.satisfiable());
 
     exp = unwrap(expr::parse("7 <=> 7"));
     tseitin = expr::tseitin_transform(exp);
 
-    s = solver { std::move(tseitin.first) };
+    s = solver { std::move(tseitin.first), mode, cdcl };
     REQUIRE(s.satisfiable());
 
     exp = unwrap(expr::parse("1 => -1"));
     tseitin = expr::tseitin_transform(exp);
 
-    s = solver { std::move(tseitin.first) };
+    s = solver { std::move(tseitin.first), mode, cdcl };
     REQUIRE(s.satisfiable());
 }

@@ -31,7 +31,7 @@ int main(int argc, const char ** argv) {
         return gen(output, number) ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
-    bool tseitin = false;
+    auto tseitin = false;
     std::string file_name;
 
     parse_command_line(argc, argv, mode, tseitin, file_name, cdcl);

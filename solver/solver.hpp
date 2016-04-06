@@ -14,21 +14,6 @@
 #include <vector>
 #include <random>
 
-namespace detail {
-    class litteral {
-    private:
-        int m_value = -1;
-        bool m_forced;
-
-    public:
-        litteral() = default;
-        litteral(int value, bool forced) : m_value { value }, m_forced { forced } { }
-
-        bool forced() const { return m_forced; }
-        int value() const { return m_value; }
-    };
-}
-
 enum class guess_mode {
     LINEAR,
     RAND,
@@ -48,6 +33,7 @@ private:
     void (solver::*m_backtrack_one)(int) = nullptr;
     detail::clause * (solver::*m_deduce_one)(int, int) = nullptr;
     int (solver::*m_guess)(size_t) = nullptr;
+    bool m_first_propagation_round = true;
 
     std::vector<int> m_old_variables;
 
@@ -65,13 +51,13 @@ private:
     std::vector<std::vector<detail::clause *>> m_watches;
 
     // valuation stack
-    std::vector<detail::litteral> m_valuation;
+    std::vector<int> m_valuation;
 
     // current assignment of variables
     detail::assignment m_assignment;
 
     void enqueue(int, bool, int);
-    detail::litteral dequeue();
+    int dequeue();
 
     detail::clause * deduce_one_wl(int, int);
     detail::clause * deduce_one_default(int, int);
@@ -79,7 +65,7 @@ private:
 
     void backtrack_one_wl(int);
     void backtrack_one_default(int);
-    detail::litteral backtrack(int);
+    int backtrack(int);
 
     int guess(size_t min_clause = 0);
     int new_to_old_lit(int);
@@ -93,6 +79,7 @@ private:
     bool can_learn() const {
         return m_cdcl != cdcl_mode::NONE;
     }
+
     void learn(const detail::clause &);
 public:
     solver() = default;

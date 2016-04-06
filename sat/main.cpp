@@ -91,7 +91,7 @@ void trim_expr(std::string & exp) {
 int main(int argc, const char ** argv) {
     auto mode = guess_mode::LINEAR;
     auto cdcl = cdcl_mode::NONE;
-    bool tseitin = false;
+    auto tseitin = false;
     std::string file_name;
 
     parse_command_line(argc, argv, mode, tseitin, file_name, cdcl);

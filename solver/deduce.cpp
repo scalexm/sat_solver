@@ -97,9 +97,10 @@ detail::clause * solver::deduce_one_wl(int lit, int level) {
 detail::clause * solver::deduce(int level) {
     detail::clause * conflict = nullptr;
     if (!m_valuation.empty()) {
-        auto top = level == 0 ? 0 : m_valuation.size() - 1;
+        auto top = m_first_propagation_round ? 0 : m_valuation.size() - 1;
+        m_first_propagation_round = false;
         while (top < m_valuation.size()) {
-            auto c = (this->*m_deduce_one)(m_valuation[top].value(), level);
+            auto c = (this->*m_deduce_one)(m_valuation[top], level);
             if (c != nullptr)
                 conflict = c;
             ++top;
