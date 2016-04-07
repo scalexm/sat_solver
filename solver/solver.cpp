@@ -80,6 +80,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
     m_watches.resize(2 * m_remaining_variables);
 
     // set up clauses
+    m_remaining_clauses = 0;
     for (auto && cnf_clause : clauses) {
         detail::clause sat_clause;
         bool sat = false;
@@ -105,24 +106,24 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
         } else if (sat_clause.count() == 1) { // unit clause => propagation
             auto first = sat_clause.first_unassigned(m_assignment);
             if (first != -1)
-                enqueue(first, true, 0);
+                enqueue(first, 0, nullptr);
             continue;
         }
 
-        sat_clause.set_id(m_clauses.size());
-        m_clauses.emplace_back(std::move(sat_clause));
+        add_clause(std::move(sat_clause));
     }
+}
 
-    // set up watches now that m_clauses is fully allocated
-    for (auto && sat_clause : m_clauses) {
-        if (m_guess_mode == guess_mode::WL) {
-            m_watches[sat_clause.watch_0()].emplace_back(&sat_clause);
-            m_watches[sat_clause.watch_1()].emplace_back(&sat_clause);
-        } else
-            sat_clause.build_watches(m_watches);
-    }
-
-    m_remaining_clauses = m_clauses.size();
+detail::clause* solver::add_clause(detail::clause clause) {
+    clause.set_id(m_clauses.size());
+    ++m_remaining_clauses;
+    auto it = m_clauses.emplace(m_clauses.end(), std::move(clause));
+    if (m_guess_mode == guess_mode::WL) {
+        m_watches[(*it).watch_0()].emplace_back(&*it);
+        m_watches[(*it).watch_1()].emplace_back(&*it);
+    } else
+        (*it).build_watches(m_watches);
+    return &*it;
 }
 
 /* assume lit is TRUE, wether deduced or guessed, and push it on the valuation stack */
@@ -178,14 +179,32 @@ valuation solver::solve() {
                 return { { } };
             }
 
-            if (can_learn())
-                learn(*conflict);
+            detail::clause learnt;
+            if (can_learn()) {
+                auto knowledge = learn(conflict, level);
+                level = knowledge.second + 1;
+                learnt = std::move(knowledge.first);
+            }
+
             auto lit = backtrack(level);
             --level;
+#ifdef DEBUG
+            std::cout << "go back to level " << level << std::endl;
+#endif
 
-            enqueue(detail::neg(lit), level, nullptr);
+            if (can_learn()) {
+                learnt.set_count(1);
+                auto lit = learnt.first_unassigned(m_assignment);
+                auto reason = learnt.litterals().size() != 1 ?
+                    add_clause(std::move(learnt)) : nullptr;
+                enqueue(lit, level, reason);
+            } else
+                enqueue(detail::neg(lit), level, nullptr);
         } else {
             ++level;
+#ifdef DEBUG
+            std::cout << "level " << level << std::endl;
+#endif
             // we have a full valuation
             if (m_remaining_variables == 0 || m_remaining_clauses == 0)
                 break;
@@ -205,7 +224,7 @@ valuation solver::solve() {
 
             auto lit = (this->*m_guess)(min_clause);
 #ifdef DEBUG
-            std::cout << "guess " << lit << std::endl;
+            std::cout << "guess " << new_to_old_lit(lit) << std::endl;
 #endif
             enqueue(lit, level, nullptr);
         }

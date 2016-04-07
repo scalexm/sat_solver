@@ -81,7 +81,9 @@ private:
         return m_cdcl != cdcl_mode::NONE;
     }
 
-    void learn(const detail::clause &);
+    detail::clause marry(const detail::clause &, const detail::clause &, int);
+    std::pair<detail::clause, int> learn(detail::clause *, int);
+    detail::clause * add_clause(detail::clause);
 public:
     solver() = default;
     solver(cnf, guess_mode mode = guess_mode::RAND, cdcl_mode cdcl = cdcl_mode::NONE);

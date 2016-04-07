@@ -43,10 +43,10 @@ composés et sont satisfiables. Il y a également divers fichiers provenant du s
 http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 
 ## Structuration du code
-
 * Le dossier `solver` constitue le coeur du projet.
 
-    Le code du solveur lui-même est contenu dans `detail/solver.hpp`, `solver.hpp`, `solver.cpp`, `guess.cpp`, `deduce.cpp` et
+    Le code du solveur lui-même est contenu dans `detail/clause.hpp`, `detail/clause.cpp`,
+    `detail/solver.hpp`, `solver.hpp`, `solver.cpp`, `guess.cpp`, `deduce.cpp` et
     `backtrack.cpp`.
 
     Le sous-dossier `expr` contient le code relatif au traitement des formules logiques conviviales. La structure des expressions et les opérations sur celles-ci sont contenues dans les fichiers `expr/detail/logical_expr.hpp`, `expr/logical_expr.hpp`, `expr/logical_expr.cpp`, `expr/detail/tseitin.hpp`, `expr/tseitin.hpp` et `expr/tseitin.cpp`.
@@ -61,10 +61,14 @@ http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 
 ## Structures de données utilisées
 Pour obtenir les meilleures performances possibles, nous avons concentré nos efforts dans la réduction des allocations mémoire
-lors de la phase de propagation. Ainsi, toutes les structures utilisés au cours de cette phase sont des `std::vector` ayant
+lors de la phase de propagation. Ainsi, presque toutes les structures utilisées sont des `std::vector` ayant
 été pré-alloués lors de la construction de l'instance du solveur. Cela permet aussi d'avoir des structures qui sont contiguës
 en mémoire, ceci est très important pour éviter au maximum les cache misses quand on parcout ces structures (et on les parcourt
 très souvent).
+
+Avec l'apprentissage de clauses, nous avons choisi d'utiliser une `std::list` pour stocker les clauses car comme nous
+devons parfois ajouter des clauses à l'exécution, le fait d'utiliser un `std::vector` pouvait entraîner une réallocation
+de tout le tableau et invalider les pointeurs vers les clauses déjà existantes.
 
 ## Améliorations possibles
 Nous devons encore chercher à améliorer les heuristiques MOMS et DLIS, car le temps passé à parier est anormalement élevé par
@@ -91,7 +95,6 @@ Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les
 `scripts`, il y a plusieurs courbes de performance au format PNG sur un grand nombre d'instances 3-SAT générées aléatoirement.
 
 ## Répartition du travail
-
 * parsing des expressions logiques: Alexandre
 * transformation de Tseitin: Nicolas
 * tests unitaires: Alexandre
@@ -99,4 +102,4 @@ Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les
 * prétraitement de l'entrée: Nicolas
 * heuristiques MOMS, DLIS et RAND: Alexandre et Nicolas
 * watched litterals: Alexandre
-* script pour mesurer les performances: Nicolas
+* scripts pour mesurer les performances: Nicolas

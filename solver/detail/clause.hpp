@@ -73,6 +73,10 @@ namespace detail {
             --m_count;
         }
 
+        void set_count(int c) {
+            m_count = c;
+        }
+
         int count() const {
             return m_count;
         }
