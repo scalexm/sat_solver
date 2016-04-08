@@ -175,10 +175,13 @@ valuation solver::solve() {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
+
             if (level == 0) {
                 m_remaining_clauses = -1;
                 return { { } };
             }
+
+            auto old_level = level;
 
             detail::clause learnt;
             if (can_learn()) {
@@ -187,6 +190,9 @@ valuation solver::solve() {
                 learnt = std::move(knowledge.first);
             }
 
+            if (m_cdcl == cdcl_mode::INTERACTIVE)
+                interac(conflict, old_level, learnt.watch_0());
+
             auto lit = backtrack(level);
             --level;
 #ifdef DEBUG
@@ -194,7 +200,7 @@ valuation solver::solve() {
 #endif
 
             if (can_learn()) {
-                lit = learnt.first_unassigned(m_assignment);
+                lit = learnt.watch_0();
                 auto reason = learnt.litterals().size() != 1 ?
                     add_clause(std::move(learnt)) : nullptr;
                 enqueue(lit, level, reason);

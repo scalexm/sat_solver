@@ -38,6 +38,8 @@ void solver::backtrack_one_default(int val) {
 void solver::backtrack_one_wl(int val) {
 }
 
+
+// backtrack all levels whiche are >= level
 int solver::backtrack(int level) {
     int lit;
     assert(!m_valuation.empty());

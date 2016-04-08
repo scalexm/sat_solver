@@ -15,6 +15,7 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include <chrono>
+#include <iomanip>
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
@@ -110,7 +111,9 @@ int main(int argc, const char ** argv) {
 
     bool sat;
     valuation val;
+    std::cout << std::fixed << std::setprecision(6);
     if (tseitin) {
+        auto tp = std::chrono::system_clock::now();
         std::ostringstream ss;
         ss << f.rdbuf();
         auto exp = ss.str();
@@ -124,11 +127,34 @@ int main(int argc, const char ** argv) {
 
         auto tseitin = expr::tseitin_transform(*boost::get<expr::logical_expr>(&res));
         solver s { std::move(tseitin.first), mode, cdcl };
+
+        std::cout << "parse time: "
+          << (std::chrono::system_clock::now() - tp).count() / 1000000.
+          << "s" << std::endl;
+
+        tp = std::chrono::system_clock::now();
         val = expr::remove_trailing_variables(s.solve(), tseitin.second);
+
+        std::cout << "solve time: "
+          << (std::chrono::system_clock::now() - tp).count() / 1000000.
+          << "s" << std::endl;
+
         sat = s.satisfiable();
     } else {
+        auto tp = std::chrono::system_clock::now();
         auto s = parse(f, mode, cdcl);
+
+        std::cout << "parse time: "
+          << (std::chrono::system_clock::now() - tp).count() / 1000000.
+          << "s" << std::endl;
+
+        tp = std::chrono::system_clock::now();
         val = s.solve();
+
+        std::cout << "solve time: "
+          << (std::chrono::system_clock::now() - tp).count() / 1000000.
+          << "s" << std::endl;
+
         sat = s.satisfiable();
     }
 

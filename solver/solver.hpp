@@ -82,7 +82,8 @@ private:
         return m_cdcl != cdcl_mode::NONE;
     }
 
-    detail::clause marry(const detail::clause &, const detail::clause &, int);
+    void interac(detail::clause *, int, int);
+    void draw(detail::clause *, int, int);
     std::pair<detail::clause, int> learn(detail::clause *, int);
     detail::clause * add_clause(detail::clause);
 public:
