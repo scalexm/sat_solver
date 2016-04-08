@@ -82,7 +82,9 @@ http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 ## Structures de données utilisées
 Pour obtenir les meilleures performances possibles, nous avons concentré nos efforts dans la réduction des allocations mémoire
 lors de la phase de propagation. Ainsi, presque toutes les structures utilisées sont des `std::vector` ayant
-été si possible pré-alloués lors de la construction de l'instance du solveur. Cela permet aussi d'avoir des structures qui sont contiguës en mémoire, ceci est très important pour éviter au maximum les cache misses quand on parcout ces structures (et on les parcourt très souvent). Notons l'utilisation d'une `std::list` pour les clauses comme expliqué plus haut
+été si possible pré-alloués lors de la construction de l'instance du solveur. Cela permet aussi d'avoir des structures qui sont contiguës en mémoire, ceci est très important pour éviter au maximum les cache misses quand on parcout ces structures (et on les parcourt très souvent). Ceci nous oblige par contre à renuméroter les variables pour qu'elles soient représentées par des entiers
+consécutifs, nous avons donc une table de conversion "anciennes variables" <-> "nouvelles variables" utilisées pour le debug et
+pour le résultat donné en sortie. Notons l'utilisation d'une `std::list` pour les clauses comme expliqué plus haut
 (section Clause learning).
 
 ## Améliorations possibles
