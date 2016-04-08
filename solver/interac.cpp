@@ -47,6 +47,8 @@ void solver::draw(detail::clause * c, int level, int uip) {
         current = todo.front();
         todo.pop_front();
         auto reason = m_assignment[detail::var(current)].reason;
+        if (reason == nullptr)
+            continue;
         dest = node_name(new_to_old_lit(current));
         for (auto && lit : reason->litterals()) {
             source = node_name(new_to_old_lit(lit));
