@@ -88,7 +88,7 @@ detail::clause * solver::deduce_one_wl(int lit, int level) {
             m_watches[new_watch].emplace_back(c);
     }
 
-    // remove the watched clauses of the old watched litteral
+    // remove the watched clauses of the old watched litteral (std::remove_if idiom)
     m_watches[neg_lit].erase(it1, it2);
     return conflict;
 }

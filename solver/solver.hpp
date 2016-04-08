@@ -37,6 +37,7 @@ private:
     bool m_first_propagation_round = true;
 
     std::vector<int> m_old_variables;
+    std::vector<bool> m_already_seen; // member so as to avoid allocations in clause learning
 
     size_t m_remaining_variables;
 

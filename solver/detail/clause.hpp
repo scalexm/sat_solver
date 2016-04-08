@@ -30,14 +30,22 @@ namespace detail {
         size_t m_id = 0;
         int m_satisfied_by = -1;
         int m_count = 0;
+        bool m_learnt = false;
 
     public:
         clause() = default;
         clause(clause &&) = default;
         clause & operator =(clause &&) = default;
 
-        clause(size_t capacity) {
-            m_litterals.reserve(capacity);
+        // set m_count to 1: use only for clause learning
+        clause(std::vector<int> litterals) {
+            m_litterals = std::move(litterals);
+            m_count = 1;
+            m_learnt = true;
+        }
+
+        bool learnt() const {
+            return m_learnt;
         }
 
         const std::vector<int> & litterals() const {
@@ -71,10 +79,6 @@ namespace detail {
 
         void decrease_count() {
             --m_count;
-        }
-
-        void set_count(int c) {
-            m_count = c;
         }
 
         int count() const {

@@ -14,6 +14,7 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
+#include <chrono>
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 

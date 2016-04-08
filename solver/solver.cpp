@@ -77,6 +77,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
         m_remaining_variables,
         detail::var_data { detail::polarity::VUNDEF, -1, nullptr }
     );
+    m_already_seen.resize(m_assignment.size(), false);
     m_watches.resize(2 * m_remaining_variables);
 
     // set up clauses
@@ -114,7 +115,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
     }
 }
 
-detail::clause* solver::add_clause(detail::clause clause) {
+detail::clause * solver::add_clause(detail::clause clause) {
     clause.set_id(m_clauses.size());
     ++m_remaining_clauses;
     auto it = m_clauses.emplace(m_clauses.end(), std::move(clause));
@@ -193,8 +194,7 @@ valuation solver::solve() {
 #endif
 
             if (can_learn()) {
-                learnt.set_count(1);
-                auto lit = learnt.first_unassigned(m_assignment);
+                lit = learnt.first_unassigned(m_assignment);
                 auto reason = learnt.litterals().size() != 1 ?
                     add_clause(std::move(learnt)) : nullptr;
                 enqueue(lit, level, reason);
