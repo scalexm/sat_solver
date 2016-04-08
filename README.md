@@ -11,6 +11,7 @@
 ## Fonctionnalités
 * solveur utilisant l'algorithme DPLL pour satisfaire des formules sous forme CNF
 * heuristiques: LINEAR (les paris sont faits dans l'ordre d'apparition des variables), RAND, MOMS, DLIS, WL (watched litterals)
+* apprentissage de clauses
 * parsing de formules logiques sous forme générale
 * transformation de Tseitin
 * traduction de problèmes de factorisation d'entiers en problèmes SAT
@@ -34,6 +35,25 @@ besoin de savoir exactement quelles sont les clauses déjà satisfaites, et le c
 watched litterals empêche d'obtenir cette information.
 Par conséquent, l'heuristique utilisée quand les watched litterals sont activés est l'heuristique LINEAR.
 
+## Clause learning
+L'apprentissage de clauses peut être activé via l'option `-cl` ou bien en mode interactif `-cl-interac`.
+Il fonctionne aussi bien avec les watched litterals que sans. Nous avons eu quelques difficultés à
+obtenir une version optimisée du clause learning et avons dû modifier quelques structures de données,
+en particulier nous utilisons désormais une `std::list` pour stocker les clauses, car le fait d'ajouter
+des clauses en cours de route entraîne des allocations mémoire et le fait d'utiliser un `std::vector`
+pouvait invalider les pointeurs vers les clauses déjà existantes.
+
+Au début la construction se faisait avec des mariages successifs de la clause apprise courante avec
+la dernière clause "responsable" trouvée. Cette méthode entraînait beaucoup d'allocations et était
+peu performante, nous l'avons donc en quelques sortes "compactifiée": on part d'une clause vide
+qu'on fait grandir au fur et à mesure (en utilisant les mêmes règles que pour le mariage), et on
+s'arrête comme pour les mariages quand il n'y a plus qu'un littéral du niveau courant (l'UIP) dans
+la dernière clause responsable.
+
+Nous visons le premier UIP comme demandé dans le bonus, en cherchant le littéral du niveau courant
+affecté le plus récemment lors de la résolution. Notons que ceci nous a finalement permis de simplifier
+encore la construction précédente.
+
 ## Fichiers de tests
 Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Il y a
 des traductions de problèmes de factorisation en problèmes SAT: les fichiers
@@ -46,8 +66,8 @@ http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 * Le dossier `solver` constitue le coeur du projet.
 
     Le code du solveur lui-même est contenu dans `detail/clause.hpp`, `detail/clause.cpp`,
-    `detail/solver.hpp`, `solver.hpp`, `solver.cpp`, `guess.cpp`, `deduce.cpp` et
-    `backtrack.cpp`.
+    `detail/solver.hpp`, `solver.hpp`, `solver.cpp`, `guess.cpp`, `deduce.cpp`,
+    `backtrack.cpp` et `learn.cpp`.
 
     Le sous-dossier `expr` contient le code relatif au traitement des formules logiques conviviales. La structure des expressions et les opérations sur celles-ci sont contenues dans les fichiers `expr/detail/logical_expr.hpp`, `expr/logical_expr.hpp`, `expr/logical_expr.cpp`, `expr/detail/tseitin.hpp`, `expr/tseitin.hpp` et `expr/tseitin.cpp`.
 
@@ -62,13 +82,8 @@ http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 ## Structures de données utilisées
 Pour obtenir les meilleures performances possibles, nous avons concentré nos efforts dans la réduction des allocations mémoire
 lors de la phase de propagation. Ainsi, presque toutes les structures utilisées sont des `std::vector` ayant
-été pré-alloués lors de la construction de l'instance du solveur. Cela permet aussi d'avoir des structures qui sont contiguës
-en mémoire, ceci est très important pour éviter au maximum les cache misses quand on parcout ces structures (et on les parcourt
-très souvent).
-
-Avec l'apprentissage de clauses, nous avons choisi d'utiliser une `std::list` pour stocker les clauses car comme nous
-devons parfois ajouter des clauses à l'exécution, le fait d'utiliser un `std::vector` pouvait entraîner une réallocation
-de tout le tableau et invalider les pointeurs vers les clauses déjà existantes.
+été si possible pré-alloués lors de la construction de l'instance du solveur. Cela permet aussi d'avoir des structures qui sont contiguës en mémoire, ceci est très important pour éviter au maximum les cache misses quand on parcout ces structures (et on les parcourt très souvent). Notons l'utilisation d'une `std::list` pour les clauses comme expliqué plus haut
+(section Clause learning).
 
 ## Améliorations possibles
 Nous devons encore chercher à améliorer les heuristiques MOMS et DLIS, car le temps passé à parier est anormalement élevé par
@@ -103,3 +118,5 @@ Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les
 * heuristiques MOMS, DLIS et RAND: Alexandre et Nicolas
 * watched litterals: Alexandre
 * scripts pour mesurer les performances: Nicolas
+* clause learning: Alexandre
+* mode interactif du clause learning: Nicolas
