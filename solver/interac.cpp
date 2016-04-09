@@ -18,7 +18,7 @@
 std::string node_name(int lit) {
     std::ostringstream name;
     if (lit < 0)
-        name << "-X" << std::abs(lit);
+        name << "\"-X" << std::abs(lit)<<"\"";
     else
         name << "X" << std::abs(lit);
     return name.str();
@@ -32,9 +32,11 @@ void solver::draw(detail::clause * c, int level, int uip) {
     int current = 0;
     std::string dest;
     std::string source;
+    std::unordered_set <int> nodes;
 
     dest = "conflict";
-    for (auto && lit : c->litterals()) {
+    for (auto && l : c->litterals()) {
+        auto lit = detail::neg(l);
         source = node_name(new_to_old_lit(lit));
         if(m_assignment[detail::var(lit)].level == level) {
             todo.push_back(lit);
@@ -46,25 +48,31 @@ void solver::draw(detail::clause * c, int level, int uip) {
     while (!todo.empty()) {
         current = todo.front();
         todo.pop_front();
+        if (nodes.find(new_to_old_lit(current)) != nodes.end())
+            continue;
+
         auto reason = m_assignment[detail::var(current)].reason;
         if (reason == nullptr)
             continue;
         dest = node_name(new_to_old_lit(current));
-        for (auto && lit : reason->litterals()) {
+        for (auto && l : reason->litterals()) {
+            auto lit = detail::neg(l);
+            if (std::abs(new_to_old_lit(lit)) == std::abs(new_to_old_lit(current)))
+                continue;
             source = node_name(new_to_old_lit(lit));
-            if (m_assignment[detail::var(lit)].level == level) {
+            graph << "    " << source << " -> " << dest << ";\n";
+            if (m_assignment[detail::var(lit)].level == level && lit != detail::neg(uip)) {
                 todo.push_back(lit);
-                graph << "    " << source << " -> " << dest << ";\n";
+                graph << "    " << source << " [color=blue];\n";
             }
-            else if (current == uip) {
-                graph << "    " << source << " -> " << dest << ";\n";
+            else if (lit == detail::neg(uip)) {
+                graph << "    " << source << " [color=yellow];\n";
+            }
+            else {
                 graph << "    " << source << " [color=purple];\n";
             }
         }
-        if (current == uip)
-            graph << "    " << dest << " [color=yellow];\n";
-        else
-            graph << "    " << dest << " [color=blue];\n";
+        nodes.insert(new_to_old_lit(current));
     }
     graph << "}\n";
 }
