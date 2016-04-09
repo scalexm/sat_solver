@@ -41,8 +41,13 @@ void solver::draw(detail::clause * c, int level, int uip) {
         if(m_assignment[detail::var(lit)].level == level) {
             todo.push_back(lit);
             graph << "    " << source << " -> " << dest <<";\n";
+            graph << "    " << source << " [style=filled, fillcolor=blue];\n";
         }
-        graph << "    " << "conflict [color=red];\n";
+        else {
+            graph << "    " << source << " -> " << dest <<";\n";
+            graph << "    " << source << " [style=filled, fillcolor=purple];\n";
+        }
+        graph << "    " << "conflict [style=filled, fillcolor=red];\n";
     }
 
     while (!todo.empty()) {
@@ -63,13 +68,13 @@ void solver::draw(detail::clause * c, int level, int uip) {
             graph << "    " << source << " -> " << dest << ";\n";
             if (m_assignment[detail::var(lit)].level == level && lit != detail::neg(uip)) {
                 todo.push_back(lit);
-                graph << "    " << source << " [color=blue];\n";
+                graph << "    " << source << " [style=filled, fillcolor=blue];\n";
             }
             else if (lit == detail::neg(uip)) {
-                graph << "    " << source << " [color=yellow];\n";
+                graph << "    " << source << " [style=filled, fillcolor=yellow];\n";
             }
             else {
-                graph << "    " << source << " [color=purple];\n";
+                graph << "    " << source << " [style=filled, fillcolor=purple];\n";
             }
         }
         nodes.insert(new_to_old_lit(current));
