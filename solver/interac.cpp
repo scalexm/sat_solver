@@ -18,9 +18,9 @@
 std::string node_name(int lit) {
     std::ostringstream name;
     if (lit < 0)
-        name << "\"-X" << std::abs(lit)<<"\"";
+        name << "\"-" << std::abs(lit)<<"\"";
     else
-        name << "X" << std::abs(lit);
+        name << std::abs(lit);
     return name.str();
 }
 
