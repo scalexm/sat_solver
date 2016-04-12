@@ -72,6 +72,12 @@ Pour l'heuristique VSIDS, à chaque fois qu'un littéral apparaît dans une clau
 1 à son score. On divise les scores par 2 tous les 100 conflits. Le littéral choisi est celui qui
 a le score le plus grand (on utilise une file de priorité qu'on tient à jour lors du learning).
 
+Notons que VSIDS est la seule heuristique qui nous permette d'utiliser une file de priorité de façon
+efficace, car la mise à jour de la file de priorité ne se fait que pendant l'analyse de conflit (qui
+ne représente pas beaucoup de temps d'exécution comparé au temps total). Les autres heuristiques
+obligeraient à maintenir une file de priorité pendant la phase de propagation et cela serait beaucoup
+trop coûteux.
+
 ## Oubli de clauses
 L'oubli de clauses peut être activé via l'option `-forget`.
 À chaque fois qu'une clause apprise intervient dans l'analyse de conflit, on incrémente son score
