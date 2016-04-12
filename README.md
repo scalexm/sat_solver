@@ -10,8 +10,10 @@
 
 ## Fonctionnalités
 * solveur utilisant l'algorithme DPLL pour satisfaire des formules sous forme CNF
-* heuristiques: LINEAR (les paris sont faits dans l'ordre d'apparition des variables), RAND, MOMS, DLIS, WL (watched litterals)
-* apprentissage de clauses
+* heuristiques: LINEAR (les paris sont faits dans l'ordre d'apparition des variables), RAND, MOMS, DLIS,
+VSIDS, Oubli
+* watched litterals
+* apprentissage de clauses (avec mode interactif)
 * parsing de formules logiques sous forme générale
 * transformation de Tseitin
 * traduction de problèmes de factorisation d'entiers en problèmes SAT
@@ -21,19 +23,20 @@ Les différentes heuristiques peuvent être activées sur les exécutables `reso
 suivantes:
 * par défaut: LINEAR
 * `-rand`: RAND
-* `-moms`: MOMS
-* `-dlis`: DLIS
-* `-wl`: WL
+* `-moms`: MOMS (incompatible avec watched litterals)
+* `-dlis`: DLIS (incompatible avec watched litterals)
+* `-vsids`: VSIDS (uniquement avec clause learning)
+* `-forget`: Oubli (uniquement avec clause learning)
 
 Seule la dernière option d'heuristique de la ligne d'arguments sera prise en compte.
 À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut écrire les options
 en majuscule.
 
 ## Watched litterals
+Les watched litterals peuvent être activés via l'option `-wl`.
 Avec les watched litterals, il est impossible d'utiliser les heuristiques MOMS et DLIS, car celles-ci ont
 besoin de savoir exactement quelles sont les clauses déjà satisfaites, et le caractère paresseux des
 watched litterals empêche d'obtenir cette information.
-Par conséquent, l'heuristique utilisée quand les watched litterals sont activés est l'heuristique LINEAR.
 
 ## Clause learning
 L'apprentissage de clauses peut être activé via l'option `-cl` ou bien en mode interactif `-cl-interac`.
@@ -54,6 +57,13 @@ Nous visons le premier UIP comme demandé dans le bonus, en cherchant le littér
 affecté le plus récemment lors de la résolution. Notons que ceci nous a finalement permis de simplifier
 encore la construction précédente.
 
+## Mode interactif (clause learning)
+Le mode interactif du clause learning peut être activé via l'option `-cl-interac`. Lors d'un conflit,
+les commandes disponibles sont:
+* g pour obtenir le graphe de conflit: celui-ci sera écrit dans un fichier appelé `conflict.dot`
+* c pour passer au conflit suivant
+* t pour sortir du mode interactif
+
 ## Fichiers de tests
 Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Il y a
 des traductions de problèmes de factorisation en problèmes SAT: les fichiers
@@ -67,7 +77,7 @@ http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
 
     Le code du solveur lui-même est contenu dans `detail/clause.hpp`, `detail/clause.cpp`,
     `detail/solver.hpp`, `solver.hpp`, `solver.cpp`, `guess.cpp`, `deduce.cpp`,
-    `backtrack.cpp` et `learn.cpp`.
+    `backtrack.cpp`, `learn.cpp` et `interac.cpp`.
 
     Le sous-dossier `expr` contient le code relatif au traitement des formules logiques conviviales. La structure des expressions et les opérations sur celles-ci sont contenues dans les fichiers `expr/detail/logical_expr.hpp`, `expr/logical_expr.hpp`, `expr/logical_expr.cpp`, `expr/detail/tseitin.hpp`, `expr/tseitin.hpp` et `expr/tseitin.cpp`.
 
@@ -115,3 +125,4 @@ Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les
 * scripts pour mesurer les performances: Nicolas
 * clause learning: Alexandre
 * mode interactif du clause learning: Nicolas
+* heuristiques VSIDS et Oubli: Alexandre

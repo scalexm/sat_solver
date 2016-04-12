@@ -94,6 +94,8 @@ private:
     int guess_moms();
     int guess_dlis();
     int guess_rand();
+    int guess_vsids();
+    int guess_forget();
 
     bool can_learn() const {
         return m_options.cdcl != cdcl_mode::NONE;
