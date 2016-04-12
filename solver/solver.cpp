@@ -31,10 +31,10 @@ cnf remove_tautologies(const cnf & formula) {
     return ret;
 }
 
-solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mode },
-                                                               m_cdcl { cdcl },
-                                                               m_rng { std::random_device {}() } {
-    if (m_guess_mode == guess_mode::WL) {
+solver::solver(cnf clauses, options opt) : m_options { opt },
+                                           m_rng { std::random_device {}() } {
+    if (m_options.wl) {
+        assert(m_options.guess != guess_mode::DLIS && m_options.guess != guess_mode::MOMS);
         m_backtrack_one = &solver::backtrack_one_wl;
         m_deduce_one = &solver::deduce_one_wl;
     } else {
@@ -42,7 +42,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
         m_deduce_one = &solver::deduce_one_default;
     }
 
-    switch (m_guess_mode) {
+    switch (m_options.guess) {
         case guess_mode::DLIS:
             m_guess = &solver::guess_dlis;
             break;
@@ -78,6 +78,7 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
         detail::var_data { detail::polarity::VUNDEF, -1, nullptr }
     );
     m_already_seen.resize(m_assignment.size(), false);
+    m_moms_counts.resize(2 * m_assignment.size(), 0);
     m_watches.resize(2 * m_remaining_variables);
 
     // set up clauses
@@ -101,10 +102,11 @@ solver::solver(cnf clauses, guess_mode mode, cdcl_mode cdcl) : m_guess_mode { mo
         if (sat)
             continue;
 
-        if (sat_clause.count() == 0) { // we have found a conflicting clause
+        auto count = sat_clause.count();
+        if (count == 0) { // we have found a conflicting clause
             m_remaining_clauses = -1;
             return;
-        } else if (sat_clause.count() == 1) { // unit clause => propagation
+        } else if (count == 1) { // unit clause => propagation
             auto first = sat_clause.first_unassigned(m_assignment);
             if (first != -1)
                 enqueue(first, 0, nullptr);
@@ -119,7 +121,7 @@ detail::clause * solver::add_clause(detail::clause clause) {
     clause.set_id(m_clauses.size());
     ++m_remaining_clauses;
     auto it = m_clauses.emplace(m_clauses.end(), std::move(clause));
-    if (m_guess_mode == guess_mode::WL) {
+    if (m_options.wl) {
         m_watches[(*it).watch_0()].emplace_back(&*it);
         m_watches[(*it).watch_1()].emplace_back(&*it);
     } else
@@ -190,7 +192,7 @@ valuation solver::solve() {
                 learnt = std::move(knowledge.first);
             }
 
-            if (m_cdcl == cdcl_mode::INTERACTIVE)
+            if (m_options.cdcl == cdcl_mode::INTERACTIVE)
                 interac(conflict, old_level, learnt.watch_0());
 
             auto lit = backtrack(level);
@@ -215,20 +217,19 @@ valuation solver::solve() {
             if (m_remaining_variables == 0 || m_remaining_clauses == 0)
                 break;
 
-            size_t min_clause = 0;
-            if (m_guess_mode == guess_mode::MOMS) {
-                min_clause = m_remaining_variables;
+            if (m_options.guess == guess_mode::MOMS) {
+                m_min_clause = m_remaining_variables;
                 for (auto && c : m_clauses) {
                     if (c.satisfied_by() != -1)
                         continue;
 
                     auto size = c.count();
-                    if (size <= min_clause)
-                        min_clause = size;
+                    if (size <= m_min_clause)
+                        m_min_clause = size;
                 }
             }
 
-            auto lit = (this->*m_guess)(min_clause);
+            auto lit = (this->*m_guess)();
 #ifdef DEBUG
             std::cout << "guess " << new_to_old_lit(lit) << std::endl;
 #endif

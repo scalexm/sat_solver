@@ -11,33 +11,31 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
-extern guess_mode mode;
-extern cdcl_mode cdcl;
+extern options opt;
 
 TEST_CASE("Testing SAT solver", "[solver]") {
     SECTION("satisfying basic CNF formulas") {
-        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, mode, cdcl };
+        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, opt };
         REQUIRE(s.satisfiable());
 
         s = solver {
             { { -1, 2, 3 }, { 1 }, { -2, 3 }, { -2, -3 }, { 2, 3 }, { 2, -3 } },
-            mode,
-            cdcl
+            opt
         };
         REQUIRE(!s.satisfiable());
 
-        s = solver { { }, mode, cdcl };
+        s = solver { { }, opt };
         REQUIRE(s.satisfiable());
 
-        s = solver { { { 1, -2 }, std::unordered_set<int> { } }, mode, cdcl };
+        s = solver { { { 1, -2 }, std::unordered_set<int> { } }, opt };
         REQUIRE(!s.satisfiable());
 
-        s = solver { { { 1 }, { 2 }, { -1, -2 } }, mode, cdcl };
+        s = solver { { { 1 }, { 2 }, { -1, -2 } }, opt };
         REQUIRE(!s.satisfiable());
     }
 
     SECTION("calling `solve` twice") {
-        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, mode, cdcl };
+        solver s { { { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 } }, opt };
         REQUIRE(s.solve() == s.solve());
     }
 
@@ -46,7 +44,7 @@ TEST_CASE("Testing SAT solver", "[solver]") {
             { -1, 2 }, { -3, 4 }, { -5, -6 }, { 6, -5, -2 }
         };
 
-        solver s { c, mode, cdcl };
+        solver s { c, opt };
         REQUIRE(expr::eval(expr::cnf_to_expr(c), s.solve()));
     }
 }

@@ -34,7 +34,7 @@ std::pair<detail::clause, int> solver::learn(detail::clause * reason, int level)
                     if (l_level > backtrack_level) {
                         backtrack_level = l_level;
 
-                        // litteral at next highest level will be watched because we will backtrack at this level
+                        // litteral at next highest level should be watched because we will backtrack at this level
                         std::swap(clause[1], clause[clause.size() - 1]);
                     }
                 }

@@ -94,7 +94,7 @@ void solver::interac(detail::clause * c, int level, int uip) {
         } else if (line == "c")
             break;
         else if (line == "t") {
-            m_cdcl = cdcl_mode::NORMAL;
+            m_options.cdcl = cdcl_mode::NORMAL;
             break;
         } else
             std::cout << "unkown command `" << line << "`" << std::endl;

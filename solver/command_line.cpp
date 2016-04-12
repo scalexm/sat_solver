@@ -11,8 +11,8 @@
 #include <iostream>
 #include <algorithm>
 
-void parse_command_line(int argc, const char ** argv, guess_mode & mode, bool & tseitin,
-                        std::string & file_name, cdcl_mode & cdcl) {
+void parse_command_line(int argc, const char ** argv, std::string & file_name, options & opt,
+                        bool & tseitin) {
     for (auto i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
             auto arg = std::string(argv[i]);
@@ -20,20 +20,33 @@ void parse_command_line(int argc, const char ** argv, guess_mode & mode, bool & 
             if (arg == "-tseitin")
                 tseitin = true;
             else if (arg == "-wl")
-                mode = guess_mode::WL;
+                opt.wl = true;
             else if (arg == "-rand")
-                mode = guess_mode::RAND;
+                opt.guess = guess_mode::RAND;
             else if (arg == "-moms")
-                mode = guess_mode::MOMS;
+                opt.guess = guess_mode::MOMS;
             else if (arg == "-dlis")
-                mode = guess_mode::DLIS;
+                opt.guess = guess_mode::DLIS;
             else if (arg == "-cl-interac")
-                cdcl = cdcl_mode::INTERACTIVE;
+                opt.cdcl = cdcl_mode::INTERACTIVE;
             else if (arg == "-cl")
-                cdcl = cdcl_mode::NORMAL;
+                opt.cdcl = cdcl_mode::NORMAL;
             else
-                std::cout << "unkown option " << arg << std::endl;
+                std::cout << "unkown option `" << arg << "`" << std::endl;
         } else
             file_name = argv[i];
+
+        if (opt.wl && (opt.guess == guess_mode::MOMS || opt.guess == guess_mode::DLIS)) {
+            std::cout << "cannot use MOMS or DLIS with watched litterals: switched to LINEAR"
+                      << std::endl;
+            opt.guess = guess_mode::LINEAR;
+        }
+
+        if (opt.cdcl != cdcl_mode::NONE
+            && (opt.guess == guess_mode::VSIDS || opt.guess == guess_mode::FORGET)) {
+            std::cout << "VSIDS or FORGET can only be used with clause learning: switched to LINEAR"
+                      << std::endl;
+            opt.guess = guess_mode::LINEAR;
+        }
     }
 }

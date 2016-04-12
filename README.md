@@ -87,13 +87,6 @@ consécutifs, nous avons donc une table de conversion "anciennes variables" <-> 
 pour le résultat donné en sortie. Notons l'utilisation d'une `std::list` pour les clauses comme expliqué plus haut
 (section Clause learning).
 
-## Améliorations possibles
-Nous devons encore chercher à améliorer les heuristiques MOMS et DLIS, car le temps passé à parier est anormalement élevé par
-rapport au temps passé à faire de la propagation ou du backtracking (par exemple sur dubois22.cnf, 60% du temps passé à parier pour MOMS et 35% pour DLIS).
-Pour ces deux heuristiques, il faudrait réussir à tenir à jour une file de priorité pendant la phase de propagation, pour que
-l'accès au littéral le plus intéressant lors des paris puisse se faire en temps constant. Mais il faudrait aussi faire attention
-à ne pas ralentir la phase de propagation. Nous nous pencherons plus en détails sur ce problème un peu plus tard.
-
 ## Observations sur les performances
 Sur les fichiers présents dans `cnf_files`, les watched litterals obtiennent globalement les meilleures performances sauf pour les fichiers `comp2.cnf`, `dubois20.cnf`, `dubois21.cnf`, `dubois22.cnf`, `aim-100-1_6-no-1.cnf`.
 

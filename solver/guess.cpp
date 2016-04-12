@@ -9,14 +9,14 @@
 #include "solver.hpp"
 #include "detail/solver.hpp"
 
-int solver::guess_linear(size_t) {
+int solver::guess_linear() {
     for (auto v = 0; v < m_assignment.size(); ++v)
         if (m_assignment[v].pol == detail::polarity::VUNDEF)
             return detail::lit(v, true);
     return -1;
 }
 
-int solver::guess_rand(size_t) {
+int solver::guess_rand() {
     std::uniform_int_distribution<> dis(0, (int) m_remaining_variables - 1);
     auto offset = dis(m_rng);
 
@@ -43,7 +43,7 @@ double solver::calculate_score(int lit) {
     return score;
 }
 
-int solver::guess_dlis(size_t) {
+int solver::guess_dlis() {
     int max_lit = 0;
     double max_score = 0;
     for (auto v = 0; v < m_assignment.size(); ++v) {
@@ -67,21 +67,20 @@ int solver::guess_dlis(size_t) {
     return max_lit;
 }
 
-int solver::guess_moms(size_t min_clause) {
-    static std::vector<size_t> counts(2 * m_assignment.size(), 0);
-    for (auto & c : counts)
+int solver::guess_moms() {
+    for (auto & c : m_moms_counts)
         c = 0;
 
     for (auto && clause : m_clauses) {
         if (clause.satisfied_by() != -1)
             continue;
-        else if (clause.count() == min_clause)
-            clause.update_counts(m_assignment, counts);
+        else if (clause.count() == m_min_clause)
+            clause.update_counts(m_assignment, m_moms_counts);
     }
 
     int lit_max = 0;
-    for (auto lit = 1; lit < counts.size(); ++lit)
-        if (counts[lit] > counts[lit_max])
+    for (auto lit = 1; lit < m_moms_counts.size(); ++lit)
+        if (m_moms_counts[lit] > m_moms_counts[lit_max])
             lit_max = lit;
     return lit_max;
 }

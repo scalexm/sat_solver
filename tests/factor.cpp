@@ -222,51 +222,50 @@ bool is_prime(long long int number) {
 	return true;	
 }
 
-extern guess_mode mode;
-extern cdcl_mode cdcl;
+extern options opt;
 
 TEST_CASE("Testing arithmetic operations encoder") {
     SECTION("testing encode") {
-        solver s { encode_to_cnf(2347862), mode, cdcl };
+        solver s { encode_to_cnf(2347862), opt };
         auto val = s.solve();
         REQUIRE(val_to_number(val, 1, val.size() + 1) == 2347862);
 
-        s = solver { encode_to_cnf(982478), mode, cdcl };
+        s = solver { encode_to_cnf(982478), opt };
         val = s.solve();
         REQUIRE(val_to_number(val, 1, val.size() + 1) == 982478);
     }
 
     SECTION("testing equality pow2") {
-        solver s { check_pow2_or_zero_to_cnf(4, 0, 3, 3, false), mode, cdcl };
+        solver s { check_pow2_or_zero_to_cnf(4, 0, 3, 3, false), opt };
         REQUIRE(s.satisfiable());
 
-        s = solver { check_pow2_or_zero_to_cnf(4, 8, 2, 3, false), mode, cdcl };
+        s = solver { check_pow2_or_zero_to_cnf(4, 8, 2, 3, false), opt };
         REQUIRE(!s.satisfiable());
 
-        s = solver { check_pow2_or_zero_to_cnf(4, 8, 1, 3, true), mode, cdcl };
+        s = solver { check_pow2_or_zero_to_cnf(4, 8, 1, 3, true), opt };
         REQUIRE(s.satisfiable());
     }
 
     SECTION("testing sum") {
-        solver s { check_sum_to_cnf(10, 20, 10, 10), mode, cdcl };
+        solver s { check_sum_to_cnf(10, 20, 10, 10), opt };
         REQUIRE(s.satisfiable());
 
-        s = solver { check_sum_to_cnf(10, 20, 8, 9), mode, cdcl };
+        s = solver { check_sum_to_cnf(10, 20, 8, 9), opt };
         REQUIRE(!s.satisfiable());
 
-        s = solver { check_sum_to_cnf(4, 10, 5, 5), mode, cdcl };
+        s = solver { check_sum_to_cnf(4, 10, 5, 5), opt };
         REQUIRE(s.satisfiable());
 
-        s = solver { check_sum_to_cnf(4, 10, 13, 13), mode, cdcl };
+        s = solver { check_sum_to_cnf(4, 10, 13, 13), opt };
         REQUIRE(!s.satisfiable());
     }
 
     SECTION("solving more specific equations") {
-        solver s { equation_to_cnf(2, 3, 0), mode, cdcl };
+        solver s { equation_to_cnf(2, 3, 0), opt };
         auto val = s.solve();
         REQUIRE(val_to_number(val, 1, 2) + 0 == 3);
 
-        s = solver { equation_to_cnf(20, 243243, 123123), mode, cdcl };
+        s = solver { equation_to_cnf(20, 243243, 123123), opt };
         val = s.solve();
         REQUIRE(val_to_number(val, 1, 20) + 123123 == 243243);
     }
@@ -275,7 +274,7 @@ TEST_CASE("Testing arithmetic operations encoder") {
 TEST_CASE("Testing factor to SAT encoder", "[factor][solver][.]") {
     SECTION("factoring numbers from 2 to 10000") {
         for (auto i = 2; i <= 1000; ++i) {
-            solver s { factor_to_cnf(i), mode, cdcl };
+            solver s { factor_to_cnf(i), opt };
             if (is_prime(i))
                 REQUIRE(!s.satisfiable());
             else {
@@ -294,7 +293,7 @@ TEST_CASE("Testing factor to SAT encoder", "[factor][solver][.]") {
             auto x = dis(gen), y = dis(gen);
             auto n = x * y;
 
-            solver s { factor_to_cnf(n), mode, cdcl };
+            solver s { factor_to_cnf(n), opt };
             auto val = s.solve();
             auto l = std::floor(std::log2(n)) + 1;
             REQUIRE(val_to_number(val, 1, l) * val_to_number(val, l + 1, 2 * l) == n);

@@ -10,9 +10,8 @@
 #define COMMAND_LINE_HPP
 
 #include <string>
-enum class guess_mode;
-enum class cdcl_mode;
+class options;
 
-void parse_command_line(int, const char **, guess_mode &, bool &, std::string &, cdcl_mode &);
+void parse_command_line(int, const char **, std::string &, options &, bool &);
 
 #endif

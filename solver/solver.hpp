@@ -14,13 +14,15 @@
 #include <vector>
 #include <random>
 #include <list>
+#include <boost/heap/fibonacci_heap.hpp>
 
 enum class guess_mode {
     LINEAR,
     RAND,
     MOMS,
     DLIS,
-    WL,
+    VSIDS,
+    FORGET,
 };
 
 enum class cdcl_mode {
@@ -29,15 +31,30 @@ enum class cdcl_mode {
     INTERACTIVE,
 };
 
+struct options {
+    guess_mode guess = guess_mode::LINEAR;
+    cdcl_mode cdcl = cdcl_mode::NONE;
+    bool wl = false;
+};
+
 class solver {
 private:
     void (solver::*m_backtrack_one)(int) = nullptr;
     detail::clause * (solver::*m_deduce_one)(int, int) = nullptr;
-    int (solver::*m_guess)(size_t) = nullptr;
+    int (solver::*m_guess)() = nullptr;
     bool m_first_propagation_round = true;
+    options m_options;
 
     std::vector<int> m_old_variables;
-    std::vector<bool> m_already_seen; // member so as to avoid allocations in clause learning
+
+    /* member so as to avoid allocations in clause learning
+       (we can't bear the use of an unordered_set here, profiling has shown
+       that it was less performant) */
+    std::vector<bool> m_already_seen;
+
+    // preallocated vector for MOMS
+    std::vector<size_t> m_moms_counts;
+    int m_min_clause;
 
     size_t m_remaining_variables;
 
@@ -73,13 +90,13 @@ private:
     int new_to_old_lit(int);
 
     double calculate_score(int);
-    int guess_linear(size_t);
-    int guess_moms(size_t);
-    int guess_dlis(size_t);
-    int guess_rand(size_t);
+    int guess_linear();
+    int guess_moms();
+    int guess_dlis();
+    int guess_rand();
 
     bool can_learn() const {
-        return m_cdcl != cdcl_mode::NONE;
+        return m_options.cdcl != cdcl_mode::NONE;
     }
 
     void interac(detail::clause *, int, int);
@@ -88,7 +105,7 @@ private:
     detail::clause * add_clause(detail::clause);
 public:
     solver() = default;
-    solver(cnf, guess_mode mode = guess_mode::RAND, cdcl_mode cdcl = cdcl_mode::NONE);
+    solver(cnf, options);
     valuation solve();
 
     bool satisfiable() {

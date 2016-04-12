@@ -19,10 +19,10 @@
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
-solver parse(std::ifstream & file, guess_mode mode, cdcl_mode cdcl) {
+solver parse(std::ifstream & file, options opt) {
     std::string line;
     int line_number = 0;
-    bool header = false;
+    auto header = false;
     int V = -1, C = -1;
     int clause_number = 0;
     std::vector<std::unordered_set<int>> res;
@@ -79,7 +79,7 @@ solver parse(std::ifstream & file, guess_mode mode, cdcl_mode cdcl) {
         }
     }
 
-    return solver { std::move(res), mode, cdcl };
+    return solver { std::move(res), opt };
 }
 
 void trim_expr(std::string & exp) {
@@ -91,12 +91,11 @@ void trim_expr(std::string & exp) {
 }
 
 int main(int argc, const char ** argv) {
-    auto mode = guess_mode::LINEAR;
-    auto cdcl = cdcl_mode::NONE;
+    options opt;
     auto tseitin = false;
     std::string file_name;
 
-    parse_command_line(argc, argv, mode, tseitin, file_name, cdcl);
+    parse_command_line(argc, argv, file_name, opt, tseitin);
 
     if (file_name.empty()) {
         std::cerr << "no input" << std::endl;
@@ -126,7 +125,7 @@ int main(int argc, const char ** argv) {
         }
 
         auto tseitin = expr::tseitin_transform(*boost::get<expr::logical_expr>(&res));
-        solver s { std::move(tseitin.first), mode, cdcl };
+        solver s { std::move(tseitin.first), opt };
 
         std::cout << "parse time: "
           << (std::chrono::system_clock::now() - tp).count() / 1000000.
@@ -142,7 +141,7 @@ int main(int argc, const char ** argv) {
         sat = s.satisfiable();
     } else {
         auto tp = std::chrono::system_clock::now();
-        auto s = parse(f, mode, cdcl);
+        auto s = parse(f, opt);
 
         std::cout << "parse time: "
           << (std::chrono::system_clock::now() - tp).count() / 1000000.
@@ -160,9 +159,8 @@ int main(int argc, const char ** argv) {
 
     if (sat) {
         std::cout << "s SATISFIABLE" << std::endl;
-        for (auto && v : val) {
+        for (auto && v : val)
             std::cout << (v.second ? v.first : -v.first) << " ";
-        }
         std::cout << "0" << std::endl;
     }
     else

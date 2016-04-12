@@ -12,8 +12,7 @@
 #include "../solver/command_line.hpp"
 
 bool gen(const std::string &, long long int);
-guess_mode mode = guess_mode::LINEAR;
-cdcl_mode cdcl = cdcl_mode::NONE;
+options opt;
 
 int main(int argc, const char ** argv) {
     if (argc > 1 && std::string { argv[1] } == "--gen") {
@@ -34,7 +33,7 @@ int main(int argc, const char ** argv) {
     auto tseitin = false;
     std::string file_name;
 
-    parse_command_line(argc, argv, mode, tseitin, file_name, cdcl);
+    parse_command_line(argc, argv, file_name, opt, tseitin);
 
     Catch::Session session;
 
