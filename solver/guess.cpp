@@ -44,7 +44,7 @@ double solver::calculate_score(int lit) {
 }
 
 int solver::guess_dlis() {
-    int max_lit = 0;
+    int max_lit = -1;
     double max_score = 0;
     for (auto v = 0; v < m_assignment.size(); ++v) {
         if (m_assignment[v].pol != detail::polarity::VUNDEF)
@@ -83,4 +83,18 @@ int solver::guess_moms() {
         if (m_moms_counts[lit] > m_moms_counts[lit_max])
             lit_max = lit;
     return lit_max;
+}
+
+int solver::guess_vsids() {
+    auto var = -1;
+    while (var == -1 || m_assignment[var].pol != detail::polarity::VUNDEF) {
+        var = m_vsids_heap.top().var();
+        m_vsids_heap.pop();
+        m_vsids_score[var].second = vsids_heap::handle_type { };
+    }
+    return detail::lit(var, true);
+}
+
+int solver::guess_forget() {
+    return -1;
 }

@@ -14,7 +14,7 @@
 #include <vector>
 #include <random>
 #include <list>
-#include <boost/heap/fibonacci_heap.hpp>
+#include <boost/heap/d_ary_heap.hpp>
 
 enum class guess_mode {
     LINEAR,
@@ -55,6 +55,28 @@ private:
     // preallocated vector for MOMS
     std::vector<size_t> m_moms_counts;
     int m_min_clause;
+
+    class heap_data {
+    private:
+        int m_var;
+        solver * m_father;
+
+    public:
+        heap_data(int var, solver * father) : m_var { var }, m_father { father } { }
+
+        int var() const {
+            return m_var;
+        }
+
+        bool operator <(heap_data const & rhs) const {
+            return m_father->m_vsids_score[m_var].first < m_father->m_vsids_score[rhs.m_var].first;
+        }
+    };
+
+    using vsids_heap = boost::heap::d_ary_heap<heap_data, boost::heap::mutable_<true>, boost::heap::arity<2>>;
+
+    vsids_heap m_vsids_heap;
+    std::vector<std::pair<double, vsids_heap::handle_type>> m_vsids_score;
 
     size_t m_remaining_variables;
 

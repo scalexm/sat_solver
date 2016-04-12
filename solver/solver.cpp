@@ -52,11 +52,15 @@ solver::solver(cnf clauses, options opt) : m_options { opt },
         case guess_mode::MOMS:
             m_guess = &solver::guess_moms;
             break;
+        case guess_mode::VSIDS:
+            assert(can_learn());
+            m_guess = &solver::guess_vsids;
+            break;
         default:
             m_guess = &solver::guess_linear;
     }
 
-    clauses = remove_tautologies(clauses);
+    //clauses = remove_tautologies(clauses);
 
     std::unordered_map<int, int> old_to_new;
 
@@ -77,9 +81,13 @@ solver::solver(cnf clauses, options opt) : m_options { opt },
         m_remaining_variables,
         detail::var_data { detail::polarity::VUNDEF, -1, nullptr }
     );
-    m_already_seen.resize(m_assignment.size(), false);
-    m_moms_counts.resize(2 * m_assignment.size(), 0);
-    m_watches.resize(2 * m_remaining_variables);
+    m_watches.resize(2 * m_assignment.size());
+
+    if (can_learn())
+        m_already_seen.resize(m_assignment.size(), false);
+
+    if (m_options.guess == guess_mode::MOMS)
+        m_moms_counts.resize(2 * m_assignment.size(), 0);
 
     // set up clauses
     m_remaining_clauses = 0;
@@ -156,6 +164,12 @@ int solver::dequeue() {
     m_assignment[var].pol = detail::polarity::VUNDEF;
     m_assignment[var].level = -1;
     m_assignment[var].reason = nullptr;
+
+    if (m_options.guess == guess_mode::VSIDS
+        && m_vsids_score[var].second == vsids_heap::handle_type { }) {
+        m_vsids_score[var].second = m_vsids_heap.push({ var, this });
+    }
+
     ++m_remaining_variables;
     return lit;
 }
@@ -169,7 +183,15 @@ valuation solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { { } };
 
+    // solver has to be fully constructed in order to store this pointer somewhere
+    if (m_options.guess == guess_mode::VSIDS) {
+        m_vsids_score.resize(m_assignment.size());
+        for (auto v = 0; v < m_assignment.size(); ++v)
+            m_vsids_score[v] = std::make_pair(0.0, m_vsids_heap.push({ v, this }));
+    }
+
     int level = 0;
+    auto conflict_nb = 0;
 
     while (m_remaining_clauses > 0) {
         auto conflict = deduce(level);
@@ -177,6 +199,7 @@ valuation solver::solve() {
 #ifdef DEBUG
             std::cout << "conflict" << std::endl;
 #endif
+            ++conflict_nb;
 
             if (level == 0) {
                 m_remaining_clauses = -1;
@@ -190,6 +213,11 @@ valuation solver::solve() {
                 auto knowledge = learn(conflict, level);
                 level = knowledge.second + 1;
                 learnt = std::move(knowledge.first);
+            }
+
+            if (conflict_nb % 100 == 0 && m_options.guess == guess_mode::VSIDS) {
+                for (auto && v : m_vsids_score)
+                    v.first /= 2.0;
             }
 
             if (m_options.cdcl == cdcl_mode::INTERACTIVE)
@@ -230,6 +258,8 @@ valuation solver::solve() {
             }
 
             auto lit = (this->*m_guess)();
+            assert(lit != -1);
+
 #ifdef DEBUG
             std::cout << "guess " << new_to_old_lit(lit) << std::endl;
 #endif

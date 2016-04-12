@@ -27,6 +27,10 @@ void parse_command_line(int argc, const char ** argv, std::string & file_name, o
                 opt.guess = guess_mode::MOMS;
             else if (arg == "-dlis")
                 opt.guess = guess_mode::DLIS;
+            else if (arg == "-vsids")
+                opt.guess = guess_mode::VSIDS;
+            else if (arg == "-forget")
+                opt.guess = guess_mode::FORGET;
             else if (arg == "-cl-interac")
                 opt.cdcl = cdcl_mode::INTERACTIVE;
             else if (arg == "-cl")
@@ -35,18 +39,18 @@ void parse_command_line(int argc, const char ** argv, std::string & file_name, o
                 std::cout << "unkown option `" << arg << "`" << std::endl;
         } else
             file_name = argv[i];
+    }
 
-        if (opt.wl && (opt.guess == guess_mode::MOMS || opt.guess == guess_mode::DLIS)) {
-            std::cout << "cannot use MOMS or DLIS with watched litterals: switched to LINEAR"
-                      << std::endl;
-            opt.guess = guess_mode::LINEAR;
-        }
+    if (opt.wl && (opt.guess == guess_mode::MOMS || opt.guess == guess_mode::DLIS)) {
+        std::cout << "cannot use MOMS or DLIS with watched litterals: switched to LINEAR"
+                  << std::endl;
+        opt.guess = guess_mode::LINEAR;
+    }
 
-        if (opt.cdcl != cdcl_mode::NONE
-            && (opt.guess == guess_mode::VSIDS || opt.guess == guess_mode::FORGET)) {
-            std::cout << "VSIDS or FORGET can only be used with clause learning: switched to LINEAR"
-                      << std::endl;
-            opt.guess = guess_mode::LINEAR;
-        }
+    if (opt.cdcl == cdcl_mode::NONE
+        && (opt.guess == guess_mode::VSIDS || opt.guess == guess_mode::FORGET)) {
+        std::cout << "VSIDS or FORGET can only be used with clause learning: switched to LINEAR"
+                  << std::endl;
+        opt.guess = guess_mode::LINEAR;
     }
 }

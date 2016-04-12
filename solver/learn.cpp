@@ -30,6 +30,12 @@ std::pair<detail::clause, int> solver::learn(detail::clause * reason, int level)
                 if (l_level == level)
                     ++count;
                 else {
+                    if (m_options.guess == guess_mode::VSIDS) {
+                        m_vsids_score[var].first += 1.0;
+                        if (m_vsids_score[var].second != vsids_heap::handle_type { })
+                            m_vsids_heap.increase(m_vsids_score[var].second);
+                    }
+
                     clause.push_back(l);
                     if (l_level > backtrack_level) {
                         backtrack_level = l_level;

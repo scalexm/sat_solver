@@ -16,6 +16,7 @@
 #include <boost/algorithm/string.hpp>
 #include <chrono>
 #include <iomanip>
+#include <boost/heap/fibonacci_heap.hpp>
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
