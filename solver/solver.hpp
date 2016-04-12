@@ -22,7 +22,6 @@ enum class guess_mode {
     MOMS,
     DLIS,
     VSIDS,
-    FORGET,
 };
 
 enum class cdcl_mode {
@@ -35,6 +34,7 @@ struct options {
     guess_mode guess = guess_mode::LINEAR;
     cdcl_mode cdcl = cdcl_mode::NONE;
     bool wl = false;
+    bool forget = false;
 };
 
 class solver {
@@ -73,7 +73,11 @@ private:
         }
     };
 
-    using vsids_heap = boost::heap::d_ary_heap<heap_data, boost::heap::mutable_<true>, boost::heap::arity<2>>;
+    using vsids_heap = boost::heap::d_ary_heap<
+        heap_data,
+        boost::heap::mutable_<true>,
+        boost::heap::arity<2>
+    >;
 
     vsids_heap m_vsids_heap;
     std::vector<std::pair<double, vsids_heap::handle_type>> m_vsids_score;
@@ -90,6 +94,10 @@ private:
     size_t m_remaining_clauses;
 
     std::vector<std::vector<detail::clause *>> m_watches;
+
+    // for clause removal
+    using clause_it = std::list<detail::clause>::iterator;
+    std::vector<clause_it> m_learnt;
 
     // valuation stack
     std::vector<int> m_valuation;
@@ -117,7 +125,6 @@ private:
     int guess_dlis();
     int guess_rand();
     int guess_vsids();
-    int guess_forget();
 
     bool can_learn() const {
         return m_options.cdcl != cdcl_mode::NONE;
@@ -125,8 +132,10 @@ private:
 
     void interac(detail::clause *, int, int);
     void draw(detail::clause *, int, int);
+
     std::pair<detail::clause, int> learn(detail::clause *, int);
     detail::clause * add_clause(detail::clause);
+    void remove_learnt(size_t);
 public:
     solver() = default;
     solver(cnf, options);

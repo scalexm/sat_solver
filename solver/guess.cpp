@@ -94,7 +94,3 @@ int solver::guess_vsids() {
     }
     return detail::lit(var, true);
 }
-
-int solver::guess_forget() {
-    return -1;
-}

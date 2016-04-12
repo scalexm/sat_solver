@@ -21,6 +21,9 @@ std::pair<detail::clause, int> solver::learn(detail::clause * reason, int level)
     do {
         --index;
 
+        if (reason->learnt())
+            reason->inc_score();
+
         // marry reason with current learnt clause and count number of litterals assigned at current level
         for (auto && l : reason->litterals()) {
             auto var = detail::var(l);

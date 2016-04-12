@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <list>
 
 namespace detail {
     enum class polarity;
@@ -20,6 +21,7 @@ namespace detail {
         polarity pol;
         int level;
         clause * reason;
+        std::list<int>::iterator it;
     };
 
     using assignment = std::vector<var_data>;
@@ -31,6 +33,8 @@ namespace detail {
         int m_satisfied_by = -1;
         int m_count = 0;
         bool m_learnt = false;
+        int m_score = 0;
+        int m_reason_count = 0;
 
     public:
         clause() = default;
@@ -42,6 +46,26 @@ namespace detail {
             m_litterals = std::move(litterals);
             m_count = 1;
             m_learnt = true;
+        }
+
+        void inc_score() {
+            m_score += 1;
+        }
+
+        int score() const {
+            return m_score;
+        }
+
+        bool is_reason() const {
+            return m_reason_count > 0;
+        }
+
+        void inc_reason() {
+            ++m_reason_count;
+        }
+
+        void dec_reason() {
+            --m_reason_count;
         }
 
         bool learnt() const {

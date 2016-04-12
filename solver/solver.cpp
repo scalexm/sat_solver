@@ -128,7 +128,10 @@ solver::solver(cnf clauses, options opt) : m_options { opt },
 detail::clause * solver::add_clause(detail::clause clause) {
     clause.set_id(m_clauses.size());
     ++m_remaining_clauses;
+    bool learnt = clause.learnt();
     auto it = m_clauses.emplace(m_clauses.end(), std::move(clause));
+    if (learnt && m_options.forget)
+        m_learnt.emplace_back(it);
     if (m_options.wl) {
         m_watches[(*it).watch_0()].emplace_back(&*it);
         m_watches[(*it).watch_1()].emplace_back(&*it);
@@ -150,6 +153,8 @@ void solver::enqueue(int lit, int level, detail::clause * reason) {
         detail::sign(lit) ? detail::polarity::VTRUE : detail::polarity::VFALSE;
     m_assignment[var].level = level;
     m_assignment[var].reason = reason;
+    if (reason != nullptr)
+        reason->inc_reason();
     m_valuation.emplace_back(lit);
     --m_remaining_variables;
 }
@@ -163,6 +168,8 @@ int solver::dequeue() {
     auto var = detail::var(lit);
     m_assignment[var].pol = detail::polarity::VUNDEF;
     m_assignment[var].level = -1;
+    if (m_assignment[var].reason != nullptr)
+        m_assignment[var].reason->dec_reason();
     m_assignment[var].reason = nullptr;
 
     if (m_options.guess == guess_mode::VSIDS
@@ -179,11 +186,58 @@ int solver::new_to_old_lit(int lit) {
     return detail::sign(lit) ? old : -old;
 }
 
+void solver::remove_learnt(size_t count) {
+#ifdef DEBUG
+    std::cout << "size before forgetting: " << m_clauses.size() << std::endl;
+#endif
+
+    std::sort(m_learnt.begin(), m_learnt.end(), [](const clause_it & it1, const clause_it & it2) {
+        return (*it1).score() < (*it2).score();
+    });
+
+    // remove clause with lowest score, but don't remove clauses which are a reason for someone
+    auto it = std::remove_if(m_learnt.begin(), m_learnt.end(), [&count, this](const clause_it & it) {
+        if (count == 0 || (*it).is_reason())
+            return false;
+        --count;
+
+        auto clause = &*it;
+
+        // remove watches
+        if (m_options.wl) {
+            auto watch = clause->watch_0();
+            m_watches[watch].erase(
+                std::remove(m_watches[watch].begin(), m_watches[watch].end(), clause)
+            );
+            watch = clause->watch_1();
+            m_watches[watch].erase(
+                std::remove(m_watches[watch].begin(), m_watches[watch].end(), clause)
+            );
+        } else {
+            for (auto && lit : clause->litterals()) {
+                m_watches[lit].erase(
+                    std::remove(m_watches[lit].begin(), m_watches[lit].end(), clause)
+                );
+            }
+        }
+
+        // remove clause
+        m_clauses.erase(it);
+
+        return true;
+    });
+
+    m_learnt.erase(it, m_learnt.end());
+#ifdef DEBUG
+    std::cout << "size after forgetting: " << m_clauses.size() << std::endl;
+#endif
+}
+
 valuation solver::solve() {
     if (m_remaining_clauses == -1) // not satisfiable
         return { { } };
 
-    // solver has to be fully constructed in order to store this pointer somewhere
+    // solver has to be fully constructed in order to store pointer to `this` somewhere
     if (m_options.guess == guess_mode::VSIDS) {
         m_vsids_score.resize(m_assignment.size());
         for (auto v = 0; v < m_assignment.size(); ++v)
@@ -192,6 +246,7 @@ valuation solver::solve() {
 
     int level = 0;
     auto conflict_nb = 0;
+    auto max_learnt = m_clauses.size() / 3;
 
     while (m_remaining_clauses > 0) {
         auto conflict = deduce(level);
@@ -241,9 +296,13 @@ valuation solver::solve() {
 #ifdef DEBUG
             std::cout << "level " << level << std::endl;
 #endif
+
             // we have a full valuation
             if (m_remaining_variables == 0 || m_remaining_clauses == 0)
                 break;
+
+            if (m_options.forget && m_learnt.size() > max_learnt)
+                remove_learnt(m_learnt.size() / 2); // remove half of the learnt clauses
 
             if (m_options.guess == guess_mode::MOMS) {
                 m_min_clause = m_remaining_variables;

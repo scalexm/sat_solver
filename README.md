@@ -11,9 +11,10 @@
 ## Fonctionnalités
 * solveur utilisant l'algorithme DPLL pour satisfaire des formules sous forme CNF
 * heuristiques: LINEAR (les paris sont faits dans l'ordre d'apparition des variables), RAND, MOMS, DLIS,
-VSIDS, Oubli
+VSIDS
 * watched litterals
 * apprentissage de clauses (avec mode interactif)
+* oubli de clauses
 * parsing de formules logiques sous forme générale
 * transformation de Tseitin
 * traduction de problèmes de factorisation d'entiers en problèmes SAT
@@ -26,7 +27,6 @@ suivantes:
 * `-moms`: MOMS (incompatible avec watched litterals)
 * `-dlis`: DLIS (incompatible avec watched litterals)
 * `-vsids`: VSIDS (uniquement avec clause learning)
-* `-forget`: Oubli (uniquement avec clause learning)
 
 Seule la dernière option d'heuristique de la ligne d'arguments sera prise en compte.
 À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut écrire les options
@@ -56,6 +56,19 @@ la dernière clause responsable.
 Nous visons le premier UIP comme demandé dans le bonus, en cherchant le littéral du niveau courant
 affecté le plus récemment lors de la résolution. Notons que ceci nous a finalement permis de simplifier
 encore la construction précédente.
+
+## VSIDS
+Pour l'heuristique VSIDS, à chaque fois qu'un littéral apparaît dans une clause apprise, on ajoute
+1 à son score. On divise les scores par 2 tous les 100 conflits. Le littéral choisi est celui qui
+a le score le plus grand (on utilise une file de priorité qu'on tient à jour lors du learning).
+
+## Oubli de clauses
+L'oubli de clause peut être activé via l'option `-forget`.
+À chaque fois qu'une clause apprise intervient dans l'analyse de conflit, on incrémente son score
+de 1. Dès que le nombre de clauses apprises dépasse une certaine borne (pour l'instant cette borne
+vaut 1/3 du total des clauses initiales, ceci est totalement arbitraire et pourra être configuré à
+l'avenir), on supprime la moitié des clauses apprises (arbitraire aussi) en choisissant les clauses
+de plus petit score (donc les clauses les moins actives).
 
 ## Mode interactif (clause learning)
 Le mode interactif du clause learning peut être activé via l'option `-cl-interac`. Lors d'un conflit,
@@ -98,21 +111,10 @@ pour le résultat donné en sortie. Notons l'utilisation d'une `std::list` pour 
 (section Clause learning).
 
 ## Observations sur les performances
-Sur les fichiers présents dans `cnf_files`, les watched litterals obtiennent globalement les meilleures performances sauf pour les fichiers `comp2.cnf`, `dubois20.cnf`, `dubois21.cnf`, `dubois22.cnf`, `aim-100-1_6-no-1.cnf`.
-
-Pour les dubois, l'heuristique LINEAR reste la meilleure.
-
-`comp2.cnf` est un peu particulier car LINEAR n'arrive pas à le résoudre en un temps raisonnable et WL le résout en 14s,
-mais MOMS et DLIS le résolvent tous les deux en moins de deux secondes (sur un MacBook Pro avec un processeur Intel
-core i7 à 3.1GHz).
-
-`aim-100-1_6-no-1.cnf` est résolu le plus rapidement par MOMS (1.2s en MOMS, 2.6s en WL, 5.8s en LINEAR).
-
-Par contre sur des instances 3-SAT générées aléatoirement, MOMS et DLIS obtiennent en moyenne des performances
-bien meilleures que WL, elle-même obtenant des performances meilleures que LINEAR et RAND.
-
 Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. De même dans le dossier
 `scripts`, il y a plusieurs courbes de performance au format PNG sur un grand nombre d'instances 3-SAT générées aléatoirement.
+
+Notons que sur plusieurs problèmes, notre solveur tient tête à MiniSat.
 
 ## Répartition du travail
 * parsing des expressions logiques: Alexandre

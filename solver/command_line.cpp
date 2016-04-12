@@ -30,7 +30,7 @@ void parse_command_line(int argc, const char ** argv, std::string & file_name, o
             else if (arg == "-vsids")
                 opt.guess = guess_mode::VSIDS;
             else if (arg == "-forget")
-                opt.guess = guess_mode::FORGET;
+                opt.forget = true;
             else if (arg == "-cl-interac")
                 opt.cdcl = cdcl_mode::INTERACTIVE;
             else if (arg == "-cl")
@@ -47,10 +47,12 @@ void parse_command_line(int argc, const char ** argv, std::string & file_name, o
         opt.guess = guess_mode::LINEAR;
     }
 
-    if (opt.cdcl == cdcl_mode::NONE
-        && (opt.guess == guess_mode::VSIDS || opt.guess == guess_mode::FORGET)) {
-        std::cout << "VSIDS or FORGET can only be used with clause learning: switched to LINEAR"
+    if (opt.cdcl == cdcl_mode::NONE && opt.guess == guess_mode::VSIDS) {
+        std::cout << "VSIDS can only be used with clause learning: switched to LINEAR"
                   << std::endl;
         opt.guess = guess_mode::LINEAR;
     }
+
+    if (opt.cdcl == cdcl_mode::NONE && opt.forget)
+        std::cout << "`-forget` will have no effect without clause learning" << std::endl;
 }
