@@ -19,9 +19,21 @@ VSIDS
 * transformation de Tseitin
 * traduction de problèmes de factorisation d'entiers en problèmes SAT
 
+## Remarques générales
+Nous avons décidé de supprimer définitivement les deux pratiques suivantes:
+* suppression des tautologies en pré-traitement
+* polarité unique
+En effet, aucune de ces deux pratiques n'apportaient un gain significatif en termes
+d'efficacité (en fait c'était même pire dans tous les cas, sans réelle possibilité d'optimiser).
+Dans un souci de simplicité, nous avons donc décidé de les supprimer.
+
+## Options de la ligne de commande
+Toutes les options qui suivent peuvent être activées sur les exécutables `resol` et `tests`.
+À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut écrire les options
+en majuscule.
+
 ## Heuristiques
-Les différentes heuristiques peuvent être activées sur les exécutables `resol` et `tests` via les options
-suivantes:
+Les différentes heuristiques peuvent être activées via les options suivantes:
 * par défaut: LINEAR
 * `-rand`: RAND
 * `-moms`: MOMS (incompatible avec watched litterals)
@@ -29,8 +41,6 @@ suivantes:
 * `-vsids`: VSIDS (uniquement avec clause learning)
 
 Seule la dernière option d'heuristique de la ligne d'arguments sera prise en compte.
-À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut écrire les options
-en majuscule.
 
 ## Watched litterals
 Les watched litterals peuvent être activés via l'option `-wl`.
@@ -63,7 +73,7 @@ Pour l'heuristique VSIDS, à chaque fois qu'un littéral apparaît dans une clau
 a le score le plus grand (on utilise une file de priorité qu'on tient à jour lors du learning).
 
 ## Oubli de clauses
-L'oubli de clause peut être activé via l'option `-forget`.
+L'oubli de clauses peut être activé via l'option `-forget`.
 À chaque fois qu'une clause apprise intervient dans l'analyse de conflit, on incrémente son score
 de 1. Dès que le nombre de clauses apprises dépasse une certaine borne (pour l'instant cette borne
 vaut 1/3 du total des clauses initiales, ceci est totalement arbitraire et pourra être configuré à

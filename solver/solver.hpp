@@ -91,7 +91,7 @@ private:
     std::mt19937 m_rng;
 
     // the total number of clauses not yet satisfied
-    size_t m_remaining_clauses;
+    int m_remaining_clauses;
 
     std::vector<std::vector<detail::clause *>> m_watches;
 

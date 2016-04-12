@@ -12,25 +12,6 @@
 #include <iostream>
 #include <limits>
 
-cnf remove_tautologies(const cnf & formula) {
-    cnf ret;
-    for (auto && clause : formula) {
-        bool to_add = true;
-        if (clause.empty()) {
-            ret.push_back(std::unordered_set<int> { });
-        }
-        for (auto && x : clause) {
-            if (clause.find(-x) != clause.end()) {
-                to_add = false;
-                break;
-            }
-        }
-        if (to_add)
-            ret.push_back(clause);
-    }
-    return ret;
-}
-
 solver::solver(cnf clauses, options opt) : m_options { opt },
                                            m_rng { std::random_device {}() } {
     if (m_options.wl) {
@@ -59,8 +40,6 @@ solver::solver(cnf clauses, options opt) : m_options { opt },
         default:
             m_guess = &solver::guess_linear;
     }
-
-    //clauses = remove_tautologies(clauses);
 
     std::unordered_map<int, int> old_to_new;
 
@@ -195,7 +174,7 @@ void solver::remove_learnt(size_t count) {
         return (*it1).score() < (*it2).score();
     });
 
-    // remove clause with lowest score, but don't remove clauses which are a reason for someone
+    // remove clauses with lowest score, but don't remove clauses which are a reason for someone
     auto it = std::remove_if(m_learnt.begin(), m_learnt.end(), [&count, this](const clause_it & it) {
         if (count == 0 || (*it).is_reason())
             return false;
