@@ -16,7 +16,7 @@ echo "$K"
 echo "$V"
 echo "$flag"
 
-if [ "$flag" == "no flag" ]; then
+if [ "$flag" == "no flags" ]; then
     flag=""
 fi
 

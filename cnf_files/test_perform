@@ -7,6 +7,17 @@ else #Assuming mac OS
     timer=gtimeout
 fi
 
+param=( -moms -dlis -rand)
+
+allparam=('no flags' -moms -dlis -rand -wl -cl '-wl -vsids' '-cl -wl -vsids')
+for x in ${param[@]}; do
+    allparam+=("-wl $x")
+    allparam+=("-cl $x")
+    allparam+=("-wl -cl $x")
+    allparam+=("-cl $x -forget")
+    allparam+=("-wl -cl $x -forget")
+done;
+
 output=$(date "+%d-%m-%y_%H:%M:%S.log")
 commande=../bin/resol
 cflags=""
@@ -14,37 +25,33 @@ temps=20s
 echo "========== Sans flags =============" > "$output"
 for x in *.cnf; do
     echo "/////// $x //////// " >> "$output"
-    ligne=$((time ($timer $temps $commande $x) )2>&1)
+    ligne=$($timer $temps $commande $x 2>&1)
     result=$(echo "$ligne" | grep SAT)
-    reel=$(echo "$ligne" | grep real)
-    user=$(echo "$ligne" | grep user)
-    sys=$(echo "$ligne" | grep sys)
+    parse=$(echo "$ligne" | grep parse)
+    solve=$(echo "$ligne" | grep solve)
     if [ -n "$result" ]; then
         echo $result >> "$output"
     else
         echo TIME LIMIT EXEEDED >> "$output"
     fi
-    echo $reel | (read name value; echo "$value") >> "$output"
-    echo $user | (read name value; echo "$value") >> "$output"
-    echo $sys  | (read name value; echo "$value") >> "$output"
+    echo $parse  >> "$output"
+    echo $solve  >> "$output"
 done ;
 
-for cflags in -moms -dlis -rand -wl; do
+for cflags in "${allparam[@]}" ; do
     echo "========== Avec $cflags =============" >> "$output"
     for x in *.cnf; do
         echo " ////// $x /////// " >> "$output"
-        ligne=$((time ($timer $temps $commande $cflags $x) )2>&1)
+        ligne=$($timer $temps $commande $x 2>&1)
         result=$(echo "$ligne" | grep SAT)
-        reel=$(echo "$ligne" | grep real)
-        user=$(echo "$ligne" | grep user)
-        sys=$(echo "$ligne" | grep sys)
+        parse=$(echo "$ligne" | grep parse)
+        solve=$(echo "$ligne" | grep solve)
         if [ -n "$result" ]; then
             echo $result >> "$output"
         else
             echo TIME LIMIT EXEEDED >> "$output"
         fi
-        echo $reel | (read name value; echo "$value") >> "$output"
-        echo $user | (read name value; echo "$value") >> "$output"
-        echo $sys  | (read name value; echo "$value") >> "$output"
+        echo $parse  >> "$output"
+        echo $solve  >> "$output"
     done ;
 done ;
