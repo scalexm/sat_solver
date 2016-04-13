@@ -9,7 +9,7 @@ fi
 
 param=( -moms -dlis -rand)
 
-allparam=('no flags' -moms -dlis -rand -wl -cl '-wl -vsids' '-cl -wl -vsids')
+allparam=( -moms -dlis -rand -wl -cl '-wl -vsids' '-cl -wl -vsids')
 for x in ${param[@]}; do
     allparam+=("-wl $x")
     allparam+=("-cl $x")
@@ -21,7 +21,7 @@ done;
 output=$(date "+%d-%m-%y_%H:%M:%S.log")
 commande=../bin/resol
 cflags=""
-temps=20s
+temps=10s
 echo "========== Sans flags =============" > "$output"
 for x in *.cnf; do
     echo "/////// $x //////// " >> "$output"
@@ -32,7 +32,7 @@ for x in *.cnf; do
     if [ -n "$result" ]; then
         echo $result >> "$output"
     else
-        echo TIME LIMIT EXEEDED >> "$output"
+        echo TIME LIMIT EXCEEDED >> "$output"
     fi
     echo $parse  >> "$output"
     echo $solve  >> "$output"
@@ -42,14 +42,14 @@ for cflags in "${allparam[@]}" ; do
     echo "========== Avec $cflags =============" >> "$output"
     for x in *.cnf; do
         echo " ////// $x /////// " >> "$output"
-        ligne=$($timer $temps $commande $x 2>&1)
+        ligne=$($timer $temps $commande $cflags $x 2>&1)
         result=$(echo "$ligne" | grep SAT)
         parse=$(echo "$ligne" | grep parse)
         solve=$(echo "$ligne" | grep solve)
         if [ -n "$result" ]; then
             echo $result >> "$output"
         else
-            echo TIME LIMIT EXEEDED >> "$output"
+            echo TIME LIMIT EXCEEDED >> "$output"
         fi
         echo $parse  >> "$output"
         echo $solve  >> "$output"

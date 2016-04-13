@@ -9,7 +9,7 @@ echo "how many variables ?"
 read V
 param=( -moms -dlis -rand)
 
-allparam=( -wl -cl '-wl -vsids' '-cl -wl -vsids')
+allparam=( 'no flags' -wl -cl '-wl -vsids' '-cl -wl -vsids')
 for x in ${param[@]}; do
     allparam+=("-wl $x")
     allparam+=("-cl $x")
