@@ -12,6 +12,10 @@
 #include <iostream>
 #include <limits>
 
+#include <set>
+#include <sstream>
+#include <fstream>
+
 solver::solver(cnf clauses, options opt) : m_options { opt },
                                            m_rng { std::random_device {}() } {
     if (m_options.wl) {
@@ -227,6 +231,8 @@ valuation solver::solve() {
     auto conflict_nb = 0;
     auto max_learnt = m_clauses.size() / 3;
 
+    //std::unordered_map<std::string, int> learnt_str;
+
     while (m_remaining_clauses > 0) {
         auto conflict = deduce(level);
         if (conflict != nullptr) {
@@ -236,6 +242,11 @@ valuation solver::solve() {
             ++conflict_nb;
 
             if (level == 0) {
+                /*std::ofstream f { "output.txt" };
+                std::cout << learnt_str.size() << std::endl;
+                for (auto && str : learnt_str)
+                    f << str.first << " " << str.second << std::endl;*/
+
                 m_remaining_clauses = -1;
                 return { { } };
             }
@@ -247,6 +258,18 @@ valuation solver::solve() {
                 auto knowledge = learn(conflict, level);
                 level = knowledge.second + 1;
                 learnt = std::move(knowledge.first);
+
+                /*std::set<int> lits;
+                for (auto && l : learnt.litterals())
+                    lits.insert(new_to_old_lit(l));
+                std::ostringstream ss;
+                for (auto && l : lits)
+                    ss << l << " ";
+                auto str = ss.str();
+                if (learnt_str.find(str) != learnt_str.end())
+                    learnt_str[str] += 1;
+                else
+                    learnt_str[str] = 1;*/
             }
 
             if (conflict_nb % 100 == 0 && m_options.guess == guess_mode::VSIDS) {
