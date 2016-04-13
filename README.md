@@ -130,6 +130,7 @@ pour le résultat donné en sortie. Notons l'utilisation d'une `std::list` pour 
 ## Observations sur les performances
 Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. De même dans le dossier
 `scripts`, il y a plusieurs courbes de performance au format PNG sur un grand nombre d'instances 3-SAT générées aléatoirement.
+Les tests ont été effectués sur un MacBook Pro avec un processeur Intel Core i7 à 3.1 GHz.
 
 Notons que sur plusieurs problèmes, notre solveur tient tête à MiniSat.
 
