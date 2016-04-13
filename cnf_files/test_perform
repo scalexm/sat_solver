@@ -50,6 +50,6 @@ for cflags in "${allparam[@]}" ; do
         fi
         echo $parse  >> "$output"
         echo $solve  >> "$output"
-        echo 
+        echo >>"$output"
     done ;
 done ;
