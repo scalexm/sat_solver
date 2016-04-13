@@ -10,7 +10,7 @@ fi
 paramcl=( -moms -dlis -rand -vsids "-wl" "-wl -vsids" "-wl -rand")
 
 allparam=( -moms -dlis -rand -wl -cl "-wl -rand" "-cl -forget" )
-for x in ${param[@]}; do
+for x in ${paramcl[@]}; do
     allparam+=("-cl $x")
     allparam+=("-cl $x -forget")
 done;
@@ -33,6 +33,7 @@ for x in *.cnf; do
     fi
     echo $parse  >> "$output"
     echo $solve  >> "$output"
+    echo >> "$output"
 done ;
 
 for cflags in "${allparam[@]}" ; do
