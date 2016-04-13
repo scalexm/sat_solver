@@ -16,6 +16,7 @@ for i in range(20,61):
     for j in range(100):
         x = float(input())
         l += [x]
+    print(i)
     med += [np.percentile(np.array(l), 50)]
     Q3 += [np.percentile(np.array(l), 75)]
     Q1 += [np.percentile(np.array(l), 25)]

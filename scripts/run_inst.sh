@@ -7,15 +7,12 @@ echo "solve K-sat for which value of K ?"
 read K
 echo "how many variables ?"
 read V
-param=( -moms -dlis -rand)
+paramcl=( -moms -dlis -rand -vsids "-wl -vsid")
 
-allparam=( 'no flags' -wl -cl '-wl -vsids' '-cl -wl -vsids')
+allparam=( -wl -cl "-wl -cl" "-cl -forget" "-wl -cl -forget" )
 for x in ${param[@]}; do
-    allparam+=("-wl $x")
     allparam+=("-cl $x")
-    allparam+=("-wl -cl $x")
     allparam+=("-cl $x -forget")
-    allparam+=("-wl -cl $x -forget")
 done;
 printf "$K\n$V\nno flag" | ./give_data.sh |python plot.py
 
