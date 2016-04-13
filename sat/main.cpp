@@ -128,32 +128,36 @@ int main(int argc, const char ** argv) {
         auto tseitin = expr::tseitin_transform(*boost::get<expr::logical_expr>(&res));
         solver s { std::move(tseitin.first), opt };
 
-        std::cout << "parse time: "
-          << (std::chrono::system_clock::now() - tp).count() / 1000000.
-          << "s" << std::endl;
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::system_clock::now() - tp
+        );
+        std::cout << "parse time: " << duration.count() / 1000000. << "s" << std::endl;
 
         tp = std::chrono::system_clock::now();
         val = expr::remove_trailing_variables(s.solve(), tseitin.second);
 
-        std::cout << "solve time: "
-          << (std::chrono::system_clock::now() - tp).count() / 1000000.
-          << "s" << std::endl;
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::system_clock::now() - tp
+        );
+        std::cout << "solve time: " << duration.count() / 1000000. << "s" << std::endl;
 
         sat = s.satisfiable();
     } else {
         auto tp = std::chrono::system_clock::now();
         auto s = parse(f, opt);
 
-        std::cout << "parse time: "
-          << (std::chrono::system_clock::now() - tp).count() / 1000000.
-          << "s" << std::endl;
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::system_clock::now() - tp
+        );
+        std::cout << "parse time: " << duration.count() / 1000000. << "s" << std::endl;
 
         tp = std::chrono::system_clock::now();
         val = s.solve();
 
-        std::cout << "solve time: "
-          << (std::chrono::system_clock::now() - tp).count() / 1000000.
-          << "s" << std::endl;
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::system_clock::now() - tp
+        );
+        std::cout << "solve time: " << duration.count() / 1000000. << "s" << std::endl;
 
         sat = s.satisfiable();
     }
