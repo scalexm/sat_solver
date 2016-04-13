@@ -8,7 +8,6 @@
 
 #include "solver.hpp"
 #include "detail/solver.hpp"
-#include "detail/conflict_graph.hpp"
 
 std::pair<detail::clause, int> solver::learn(detail::clause * reason, int level) {
     std::vector<int> clause(1);
