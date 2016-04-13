@@ -23,13 +23,14 @@ VSIDS
 Nous avons décidé de supprimer définitivement les deux pratiques suivantes:
 * suppression des tautologies en pré-traitement
 * polarité unique
+
 En effet, aucune de ces deux pratiques n'apportaient un gain significatif en termes
 d'efficacité (en fait c'était même pire dans tous les cas, sans réelle possibilité d'optimiser).
 Dans un souci de simplicité, nous avons donc décidé de les supprimer.
 
 ## Options de la ligne de commande
 Toutes les options qui suivent peuvent être activées sur les exécutables `resol` et `tests`.
-À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut écrire les options
+À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut les écrire
 en majuscule.
 
 ## Heuristiques
