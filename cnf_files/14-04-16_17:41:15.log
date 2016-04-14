@@ -1,0 +1,1892 @@
+========== Sans flags =============
+/////// aim-100-1_6-no-1.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.000483s
+solve time: 5.132538s
+
+/////// bf0432-007.cnf //////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009179s
+
+
+/////// bierre.cnf //////// 
+s SATISFIABLE
+parse time: 0.000498s
+solve time: 0.000750s
+
+/////// comp1.cnf //////// 
+s SATISFIABLE
+parse time: 0.003685s
+solve time: 0.005042s
+
+/////// comp2.cnf //////// 
+s SATISFIABLE
+parse time: 0.010602s
+solve time: 8.975717s
+
+/////// comp3.cnf //////// 
+s SATISFIABLE
+parse time: 0.009079s
+solve time: 0.407154s
+
+/////// comp4.cnf //////// 
+s SATISFIABLE
+parse time: 0.011782s
+solve time: 2.595595s
+
+/////// comp5.cnf //////// 
+s SATISFIABLE
+parse time: 0.002668s
+solve time: 0.002069s
+
+/////// dubois20.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.000473s
+solve time: 0.418498s
+
+/////// dubois21.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.000769s
+solve time: 0.862550s
+
+/////// dubois22.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.000574s
+solve time: 1.698380s
+
+/////// hole6.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.000337s
+solve time: 0.007474s
+
+/////// prime1.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.007446s
+solve time: 0.228373s
+
+/////// prime2.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.006034s
+solve time: 0.037894s
+
+/////// prime3.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.008612s
+solve time: 0.525341s
+
+/////// prime4.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.005901s
+solve time: 0.037576s
+
+/////// prime5.cnf //////// 
+s UNSATISFIABLE
+parse time: 0.010602s
+solve time: 1.218460s
+
+========== Avec -moms =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000483s
+solve time: 1.157748s
+
+ ////// bf0432-007.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009032s
+
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000491s
+solve time: 0.000029s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003790s
+solve time: 0.008031s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008662s
+solve time: 4.499593s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.009064s
+solve time: 0.720544s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.012208s
+solve time: 4.527078s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002695s
+solve time: 0.003177s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000880s
+solve time: 1.660633s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000491s
+solve time: 3.391910s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000508s
+solve time: 6.968681s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000335s
+solve time: 0.003267s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009922s
+solve time: 0.406744s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005296s
+solve time: 0.064689s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009203s
+solve time: 0.937216s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005350s
+solve time: 0.065785s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010162s
+solve time: 2.183147s
+
+========== Avec -dlis =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.000482s
+
+
+ ////// bf0432-007.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009777s
+
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000499s
+solve time: 0.000029s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003751s
+solve time: 0.000475s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008583s
+solve time: 0.115593s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.010642s
+solve time: 0.062424s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011905s
+solve time: 0.041122s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002701s
+solve time: 0.000320s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000470s
+solve time: 1.556953s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000489s
+solve time: 3.195966s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000505s
+solve time: 6.626738s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000334s
+solve time: 0.001926s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008830s
+solve time: 0.091795s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005298s
+solve time: 0.017786s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008547s
+solve time: 0.207788s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005352s
+solve time: 0.019776s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010017s
+solve time: 0.498134s
+
+========== Avec -rand =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.000499s
+
+
+ ////// bf0432-007.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.008722s
+
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000496s
+solve time: 0.001321s
+
+ ////// comp1.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.003800s
+
+
+ ////// comp2.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009242s
+
+
+ ////// comp3.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009088s
+
+
+ ////// comp4.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.012281s
+
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002667s
+solve time: 0.394619s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000488s
+solve time: 1.933072s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000700s
+solve time: 4.045697s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000506s
+solve time: 7.986129s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000336s
+solve time: 0.002405s
+
+ ////// prime1.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.008319s
+
+
+ ////// prime2.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.005244s
+
+
+ ////// prime3.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009182s
+
+
+ ////// prime4.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.005515s
+
+
+ ////// prime5.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.010901s
+
+
+========== Avec -wl =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000469s
+solve time: 3.044116s
+
+ ////// bf0432-007.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.008751s
+
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000480s
+solve time: 0.000315s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003539s
+solve time: 0.003604s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.010494s
+solve time: 5.668728s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.013479s
+solve time: 0.379735s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.024501s
+solve time: 2.593516s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002593s
+solve time: 0.001435s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000455s
+solve time: 0.508606s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000475s
+solve time: 1.063715s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000497s
+solve time: 2.055053s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000339s
+solve time: 0.005410s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007268s
+solve time: 0.177085s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005150s
+solve time: 0.028208s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008347s
+solve time: 0.410624s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005181s
+solve time: 0.027346s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010020s
+solve time: 0.943670s
+
+========== Avec -cl =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000479s
+solve time: 0.000038s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010077s
+solve time: 1.786761s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000492s
+solve time: 0.000401s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003467s
+solve time: 0.007480s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008584s
+solve time: 0.045065s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008549s
+solve time: 3.293356s
+
+ ////// comp4.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.012237s
+
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.003143s
+solve time: 0.003514s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000500s
+solve time: 0.000092s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000506s
+solve time: 0.000156s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000578s
+solve time: 0.000109s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000347s
+solve time: 0.001298s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008720s
+solve time: 0.975314s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.006582s
+solve time: 0.083404s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009621s
+solve time: 6.574051s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005936s
+solve time: 0.100275s
+
+ ////// prime5.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.012041s
+
+
+========== Avec -wl -rand =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.000468s
+
+
+ ////// bf0432-007.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.008644s
+
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000481s
+solve time: 0.001227s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003698s
+solve time: 2.807854s
+
+ ////// comp2.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.008808s
+
+
+ ////// comp3.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009220s
+
+
+ ////// comp4.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.011857s
+
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002624s
+solve time: 0.112826s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000458s
+solve time: 1.876287s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000475s
+solve time: 4.010392s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000709s
+solve time: 7.890798s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000333s
+solve time: 0.001373s
+
+ ////// prime1.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.007586s
+
+
+ ////// prime2.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.005434s
+
+
+ ////// prime3.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.008903s
+
+
+ ////// prime4.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.005120s
+
+
+ ////// prime5.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.010462s
+
+
+========== Avec -cl -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000490s
+solve time: 0.000044s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010609s
+solve time: 1.126810s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000996s
+solve time: 0.000539s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.005203s
+solve time: 0.008328s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.010689s
+solve time: 0.059142s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.010643s
+solve time: 1.235547s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.012108s
+solve time: 7.252885s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002671s
+solve time: 0.003102s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000466s
+solve time: 0.000093s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000620s
+solve time: 0.000114s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000501s
+solve time: 0.000107s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000355s
+solve time: 0.004956s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007733s
+solve time: 0.553572s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005300s
+solve time: 0.083318s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008572s
+solve time: 1.430877s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005330s
+solve time: 0.082428s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010677s
+solve time: 3.614119s
+
+========== Avec -cl -moms =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000482s
+solve time: 0.000069s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008705s
+solve time: 0.221388s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000495s
+solve time: 0.000029s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003442s
+solve time: 0.010286s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008578s
+solve time: 1.438544s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.009273s
+solve time: 3.166780s
+
+ ////// comp4.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.012175s
+
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002677s
+solve time: 0.004646s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000470s
+solve time: 0.000138s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000540s
+solve time: 0.000157s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000504s
+solve time: 0.000161s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000343s
+solve time: 0.000826s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008373s
+solve time: 1.241516s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005287s
+solve time: 0.119813s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009088s
+solve time: 5.598830s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005443s
+solve time: 0.119330s
+
+ ////// prime5.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.010019s
+
+
+========== Avec -cl -moms -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000501s
+solve time: 0.000071s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008833s
+solve time: 0.230217s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000495s
+solve time: 0.000029s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003480s
+solve time: 0.010502s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008598s
+solve time: 0.896395s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.009184s
+solve time: 1.444342s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.012167s
+solve time: 8.182305s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002655s
+solve time: 0.004454s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000469s
+solve time: 0.000138s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000489s
+solve time: 0.000149s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000506s
+solve time: 0.000162s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000339s
+solve time: 0.001564s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007519s
+solve time: 0.763139s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005402s
+solve time: 0.119903s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008839s
+solve time: 2.558544s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005467s
+solve time: 0.121399s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010000s
+solve time: 4.835100s
+
+========== Avec -cl -dlis =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000483s
+solve time: 0.000135s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008475s
+solve time: 0.112974s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000497s
+solve time: 0.000028s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003466s
+solve time: 0.000446s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008690s
+solve time: 0.165611s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008747s
+solve time: 0.944824s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.012380s
+solve time: 1.876526s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.003821s
+solve time: 0.000695s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000842s
+solve time: 0.002186s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000515s
+solve time: 0.001417s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000530s
+solve time: 0.001544s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000343s
+solve time: 0.016053s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010160s
+solve time: 1.636044s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005514s
+solve time: 0.124074s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010100s
+solve time: 3.755014s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005506s
+solve time: 0.117892s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.015799s
+solve time: 5.055886s
+
+========== Avec -cl -dlis -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000478s
+solve time: 0.000137s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008850s
+solve time: 0.118111s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000498s
+solve time: 0.000029s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003468s
+solve time: 0.000450s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.009883s
+solve time: 0.171640s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.009001s
+solve time: 0.545971s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011291s
+solve time: 0.567452s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002683s
+solve time: 0.000393s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000463s
+solve time: 0.005334s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000487s
+solve time: 0.005171s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000504s
+solve time: 0.008362s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000339s
+solve time: 0.003909s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007536s
+solve time: 0.636151s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005262s
+solve time: 0.076339s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010199s
+solve time: 0.954012s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005281s
+solve time: 0.087445s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010045s
+solve time: 1.212110s
+
+========== Avec -cl -rand =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000498s
+solve time: 0.000095s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010010s
+solve time: 0.231578s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000498s
+solve time: 0.000191s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003445s
+solve time: 0.023651s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008666s
+solve time: 2.370888s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.009232s
+solve time: 2.933779s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.012256s
+solve time: 1.120981s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002670s
+solve time: 0.001811s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000473s
+solve time: 0.002140s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000488s
+solve time: 0.001020s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000813s
+solve time: 0.049445s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000354s
+solve time: 0.018304s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007450s
+solve time: 2.296588s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005361s
+solve time: 0.347796s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008597s
+solve time: 4.035279s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005274s
+solve time: 0.151577s
+
+ ////// prime5.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.009999s
+
+
+========== Avec -cl -rand -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000482s
+solve time: 0.000080s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009359s
+solve time: 0.739895s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000495s
+solve time: 0.000183s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003478s
+solve time: 0.048185s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.009419s
+solve time: 0.123840s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008692s
+solve time: 0.133164s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011329s
+solve time: 0.276021s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002688s
+solve time: 0.002269s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000471s
+solve time: 0.007384s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000485s
+solve time: 0.016804s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000504s
+solve time: 0.053544s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000336s
+solve time: 0.005515s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007829s
+solve time: 0.364601s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005356s
+solve time: 0.083027s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008965s
+solve time: 0.994103s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005361s
+solve time: 0.107385s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010075s
+solve time: 1.242111s
+
+========== Avec -cl -vsids =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000480s
+solve time: 0.000121s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008265s
+solve time: 0.016149s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000495s
+solve time: 0.000261s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003433s
+solve time: 0.023058s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008718s
+solve time: 0.229536s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.011452s
+solve time: 0.493099s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011317s
+solve time: 7.331382s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002689s
+solve time: 0.000996s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000475s
+solve time: 0.000720s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000501s
+solve time: 0.000520s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000751s
+solve time: 0.000600s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000337s
+solve time: 0.001593s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007607s
+solve time: 0.369400s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005374s
+solve time: 0.180211s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008634s
+solve time: 1.938032s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005347s
+solve time: 0.109965s
+
+ ////// prime5.cnf /////// 
+TIME LIMIT EXCEEDED
+parse time: 0.010382s
+
+
+========== Avec -cl -vsids -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000483s
+solve time: 0.000121s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009997s
+solve time: 0.018401s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000528s
+solve time: 0.000407s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.004356s
+solve time: 0.032410s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008778s
+solve time: 0.230188s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.009260s
+solve time: 0.514529s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.017223s
+solve time: 1.135581s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002684s
+solve time: 0.001002s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000475s
+solve time: 0.002672s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.001055s
+solve time: 0.002573s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000510s
+solve time: 0.003213s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000501s
+solve time: 0.007644s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008457s
+solve time: 0.212424s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005432s
+solve time: 0.096324s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008851s
+solve time: 0.915202s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005466s
+solve time: 0.086894s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010019s
+solve time: 1.233391s
+
+========== Avec -cl -wl =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000475s
+solve time: 0.000034s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008207s
+solve time: 0.320759s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000477s
+solve time: 0.000094s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003386s
+solve time: 0.004521s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008389s
+solve time: 0.009328s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008438s
+solve time: 0.522623s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.010975s
+solve time: 4.500947s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002609s
+solve time: 0.001899s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000500s
+solve time: 0.000156s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000494s
+solve time: 0.000090s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000500s
+solve time: 0.000116s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000462s
+solve time: 0.000828s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008316s
+solve time: 0.270617s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005079s
+solve time: 0.041004s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008405s
+solve time: 0.685839s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005266s
+solve time: 0.040442s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010037s
+solve time: 1.714128s
+
+========== Avec -cl -wl -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000467s
+solve time: 0.000034s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008952s
+solve time: 0.288399s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000477s
+solve time: 0.000093s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003370s
+solve time: 0.004451s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008372s
+solve time: 0.009303s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008364s
+solve time: 0.436762s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011012s
+solve time: 2.154319s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002593s
+solve time: 0.001908s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000460s
+solve time: 0.000092s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000490s
+solve time: 0.000092s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000564s
+solve time: 0.000123s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000367s
+solve time: 0.003286s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.011697s
+solve time: 0.248983s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005144s
+solve time: 0.043573s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008323s
+solve time: 0.569226s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005041s
+solve time: 0.040787s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010388s
+solve time: 1.233162s
+
+========== Avec -cl -wl -vsids =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000471s
+solve time: 0.000105s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.009155s
+solve time: 0.012825s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000547s
+solve time: 0.000288s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003538s
+solve time: 0.002845s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.009291s
+solve time: 0.029660s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008367s
+solve time: 0.013574s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.010960s
+solve time: 0.019006s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002595s
+solve time: 0.000584s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000456s
+solve time: 0.000381s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000476s
+solve time: 0.000388s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.001247s
+solve time: 0.000415s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000349s
+solve time: 0.001178s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007259s
+solve time: 0.028918s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005149s
+solve time: 0.011579s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008352s
+solve time: 0.060739s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005137s
+solve time: 0.016730s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010014s
+solve time: 0.361239s
+
+========== Avec -cl -wl -vsids -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000469s
+solve time: 0.000107s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008059s
+solve time: 0.009184s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000481s
+solve time: 0.000275s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003384s
+solve time: 0.002122s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008828s
+solve time: 0.028197s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008321s
+solve time: 0.013588s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.012943s
+solve time: 0.019516s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002642s
+solve time: 0.000582s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000456s
+solve time: 0.001027s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000472s
+solve time: 0.001700s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000495s
+solve time: 0.001866s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000332s
+solve time: 0.003709s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007300s
+solve time: 0.029418s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005146s
+solve time: 0.011059s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010030s
+solve time: 0.050406s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005256s
+solve time: 0.016254s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010032s
+solve time: 0.260416s
+
+========== Avec -cl -wl -rand =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000477s
+solve time: 0.000091s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008576s
+solve time: 0.066116s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000475s
+solve time: 0.000287s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003402s
+solve time: 0.002449s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.008446s
+solve time: 0.020500s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008431s
+solve time: 0.114112s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011162s
+solve time: 0.133556s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002614s
+solve time: 0.001508s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000460s
+solve time: 0.002308s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000499s
+solve time: 0.002511s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000501s
+solve time: 0.002570s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000338s
+solve time: 0.008934s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007779s
+solve time: 0.125781s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005148s
+solve time: 0.021895s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008386s
+solve time: 0.100406s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005156s
+solve time: 0.017630s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010299s
+solve time: 0.339895s
+
+========== Avec -cl -wl -rand -forget =============
+ ////// aim-100-1_6-no-1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000469s
+solve time: 0.000100s
+
+ ////// bf0432-007.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008407s
+solve time: 0.165661s
+
+ ////// bierre.cnf /////// 
+s SATISFIABLE
+parse time: 0.000510s
+solve time: 0.000593s
+
+ ////// comp1.cnf /////// 
+s SATISFIABLE
+parse time: 0.003335s
+solve time: 0.003338s
+
+ ////// comp2.cnf /////// 
+s SATISFIABLE
+parse time: 0.009184s
+solve time: 0.049443s
+
+ ////// comp3.cnf /////// 
+s SATISFIABLE
+parse time: 0.008307s
+solve time: 0.028384s
+
+ ////// comp4.cnf /////// 
+s SATISFIABLE
+parse time: 0.011067s
+solve time: 0.021644s
+
+ ////// comp5.cnf /////// 
+s SATISFIABLE
+parse time: 0.002615s
+solve time: 0.000901s
+
+ ////// dubois20.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000455s
+solve time: 0.005522s
+
+ ////// dubois21.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000483s
+solve time: 0.013023s
+
+ ////// dubois22.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000497s
+solve time: 0.008316s
+
+ ////// hole6.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.000339s
+solve time: 0.003125s
+
+ ////// prime1.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.007286s
+solve time: 0.073194s
+
+ ////// prime2.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005767s
+solve time: 0.028853s
+
+ ////// prime3.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.008405s
+solve time: 0.178083s
+
+ ////// prime4.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.005140s
+solve time: 0.018717s
+
+ ////// prime5.cnf /////// 
+s UNSATISFIABLE
+parse time: 0.010124s
+solve time: 0.249316s
+

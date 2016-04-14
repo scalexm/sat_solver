@@ -205,6 +205,8 @@ void solver::remove_learnt(size_t count) {
         }
 
         // remove clause
+        if (clause->satisfied_by() == -1)
+            --m_remaining_clauses;
         m_clauses.erase(it);
 
         return true;
@@ -288,11 +290,10 @@ valuation solver::solve() {
                 remove_learnt(m_learnt.size() / 2); // remove half of the learnt clauses
 
             if (m_options.guess == guess_mode::MOMS) {
-                m_min_clause = m_remaining_variables;
+                m_min_clause = 2 * m_remaining_variables;
                 for (auto && c : m_clauses) {
                     if (c.satisfied_by() != -1)
                         continue;
-
                     auto size = c.count();
                     if (size <= m_min_clause)
                         m_min_clause = size;

@@ -12,6 +12,7 @@
 #include <vector>
 #include <cstddef>
 #include <list>
+#include <cassert>
 
 namespace detail {
     enum class polarity;
@@ -62,6 +63,7 @@ namespace detail {
 
         void inc_reason() {
             ++m_reason_count;
+            assert(m_reason_count == 1);
         }
 
         void dec_reason() {

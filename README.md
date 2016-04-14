@@ -95,8 +95,8 @@ les commandes disponibles sont:
 * t pour sortir du mode interactif
 
 ## Fichiers de tests
-Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Il y a
-des traductions de problèmes de factorisation en problèmes SAT: les fichiers
+Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Tous ces fichiers sont associés
+à des problèmes concrets. Il y a des traductions de problèmes de factorisation en problèmes SAT: les fichiers
 `prime1.cnf` à `prime5.cnf` sont associés à des nombres premiers et sont non
 satisfiables tandis que les fichiers `comp1.cnf` à `comp5.cnf` sont associés à des nombres
 composés et sont satisfiables. Il y a également divers fichiers provenant du site
@@ -128,11 +128,22 @@ pour le résultat donné en sortie. Notons l'utilisation d'une `std::list` pour 
 (section Clause learning).
 
 ## Observations sur les performances
-Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. De même dans le dossier
-`scripts`, il y a plusieurs courbes de performance au format PNG sur un grand nombre d'instances 3-SAT générées aléatoirement.
+Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. Ces fichiers sont associés à des problèmes
+concrets. On note que les combinaisons d'heuristiques qui s'en sortent le mieux en moyenne sur l'ensemble des fichiers sont:
+* -cl -wl -rand
+* -cl -wl -rand -forget
+* -cl -wl -vsids
+* -cl -wl -vsids -forget
+
+De même dans le dossier `scripts`, il y a des courbes de performance au format PNG sur un grand nombre d'instances
+3-SAT générées aléatoirement. Les courbes couvrent l'ensemble des combinaisons d'heuristiques possibles.
+Ici, ce sont les combinaisons contenant les heuristiques `-moms` ou `-dlis` qui sont les plus efficaces.
+
 Les tests ont été effectués sur un MacBook Pro avec un processeur Intel Core i7 à 3.1 GHz.
 
-Notons que sur plusieurs problèmes, notre solveur tient tête à MiniSat.
+Notons que sur la plupart des problèmes concrets et à heuristiques égales (-cl -wl -vsids -forget),
+notre solveur tient tête à MiniSat. Cependant sur les problèmes 3-SAT générés aléatoirement, MiniSat
+est meilleur que toutes nos combinaisons d'heuristiques.
 
 ## Répartition du travail
 * parsing des expressions logiques: Alexandre
