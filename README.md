@@ -33,6 +33,14 @@ Toutes les options qui suivent peuvent être activées sur les exécutables `res
 À noter que pour l'instant, pour utiliser les options sur l'exécutable `tests`, il faut les écrire
 en majuscule.
 
+## Fichiers de tests
+Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Tous ces fichiers sont associés
+à des problèmes concrets. Il y a des traductions de problèmes de factorisation en problèmes SAT: les fichiers
+`prime1.cnf` à `prime5.cnf` sont associés à des nombres premiers et sont non
+satisfiables tandis que les fichiers `comp1.cnf` à `comp5.cnf` sont associés à des nombres
+composés et sont satisfiables. Il y a également divers fichiers provenant du site
+http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
+
 ## Heuristiques
 Les différentes heuristiques peuvent être activées via les options suivantes:
 * par défaut: LINEAR
@@ -60,9 +68,11 @@ pouvait invalider les pointeurs vers les clauses déjà existantes.
 Au début la construction se faisait avec des mariages successifs de la clause apprise courante avec
 la dernière clause "responsable" trouvée. Cette méthode entraînait beaucoup d'allocations et était
 peu performante, nous l'avons donc en quelques sortes "compactifiée": on part d'une clause vide
-qu'on fait grandir au fur et à mesure (en utilisant les mêmes règles que pour le mariage), et on
-s'arrête comme pour les mariages quand il n'y a plus qu'un littéral du niveau courant (l'UIP) dans
-la dernière clause responsable.
+qu'on fait grandir au fur et à mesure (en utilisant les mêmes règles que pour le mariage). En fait,
+on marque les littéraux du niveau courant rencontrés dans les clauses responsables mais sans les ajouter
+à la clause apprise. De cette façon, on ne supprime jamais de littéraux dans la clause apprise, elle
+ne fait que grandir (la technique naïve du mariage ajoute les littéraux du niveau courant mais les
+supprime plus tard après plusieurs mariages, jusqu'à ce qu'il n'y en ait plus qu'un).
 
 Nous visons le premier UIP comme demandé dans le bonus, en cherchant le littéral du niveau courant
 affecté le plus récemment lors de la résolution. Notons que ceci nous a finalement permis de simplifier
@@ -94,13 +104,8 @@ les commandes disponibles sont:
 * c pour passer au conflit suivant
 * t pour sortir du mode interactif
 
-## Fichiers de tests
-Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Tous ces fichiers sont associés
-à des problèmes concrets. Il y a des traductions de problèmes de factorisation en problèmes SAT: les fichiers
-`prime1.cnf` à `prime5.cnf` sont associés à des nombres premiers et sont non
-satisfiables tandis que les fichiers `comp1.cnf` à `comp5.cnf` sont associés à des nombres
-composés et sont satisfiables. Il y a également divers fichiers provenant du site
-http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
+Un bon fichier pour tester ce mode est `cnf_files/hole6.cnf` car les graphes générés ne sont pas trop
+gros et on distingue bien les relations entre les littéraux.
 
 ## Structuration du code
 * Le dossier `solver` constitue le coeur du projet.
