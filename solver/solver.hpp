@@ -42,6 +42,7 @@ private:
     void (solver::*m_backtrack_one)(int) = nullptr;
     detail::clause * (solver::*m_deduce_one)(int, int) = nullptr;
     int (solver::*m_guess)() = nullptr;
+
     bool m_first_propagation_round = true;
     options m_options;
 
@@ -116,7 +117,6 @@ private:
     void backtrack_one_default(int);
     int backtrack(int);
 
-    int guess(size_t min_clause = 0);
     int new_to_old_lit(int);
 
     double calculate_score(int);
