@@ -1,5 +1,5 @@
 /*
- *  expr/detail/logical_parser.ypp
+ *  expr/detail/parser.ypp
  *  solver
  *
  *  Created by Alexandre Martin on 03/02/2016.
@@ -11,23 +11,23 @@
 %require "3.0.2"
 %defines
 %define api.namespace { expr::detail }
-%define parser_class_name { logical_parser }
+%define parser_class_name { parser }
 
 %define api.token.constructor
 %define api.value.type variant
 
 %code requires {
     namespace expr { namespace detail {
-        class logical_driver;
+        class driver;
     } }
 }
 
-%param { expr::detail::logical_driver & driver }
+%param { expr::detail::driver & driver }
 %locations
 %define parse.error verbose
 
 %{
-#include "logical_driver.hpp"
+#include "driver.hpp"
 %}
 
 %define api.token.prefix {TOK_}
@@ -47,7 +47,7 @@
 ;
 
 %token <int> VARIABLE "variable"
-%type <expr::logical_expr> exp
+%type <expr::detail::generic_expr> exp
 
 // define left associativity AND priority (ordering is important)
 %left NEW_LINE
@@ -55,8 +55,8 @@
 %left IMPL
 %left OR XOR
 %left AND
-%left EQ
 %left NOT
+%left EQ
 
 %%
 %start unit;
@@ -64,20 +64,21 @@ unit: exp { driver.set_root(std::move($1)); }; // give back the result to the dr
 
 exp:
   ERROR { YYABORT; } // used when an invalid character is encountered
-| VARIABLE { $$ = expr::logical_expr { std::move($1) }; };
+| VARIABLE { $$ = expr::detail::generic_atom { std::move($1) }; }
+| VARIABLE EQ VARIABLE { $$ = expr::detail::generic_atom { expr::atom::equality { $1, $3 } }; }
 | LPAREN exp RPAREN { $$ = std::move($2); }
-| exp AND exp { $$ = expr::logical_and { std::move($1), std::move($3) }; }
-| exp NEW_LINE exp { $$ = expr::logical_and { std::move($1), std::move($3) }; }
-| exp OR exp { $$ = expr::logical_or { std::move($1), std::move($3) }; }
-| exp XOR exp { $$ = expr::logical_xor { std::move($1), std::move($3) }; }
-| exp IMPL exp { $$ = expr::logical_impl { std::move($1), std::move($3) }; }
-| exp EQUIV exp { $$ = expr::logical_equiv { std::move($1), std::move($3) }; }
-| NOT exp { $$ = expr::logical_not { std::move($2) }; }
+| exp AND exp { $$ = expr::detail::and_<generic_atom> { std::move($1), std::move($3) }; }
+| exp NEW_LINE exp { $$ = expr::detail::and_<generic_atom> { std::move($1), std::move($3) }; }
+| exp OR exp { $$ = expr::detail::or_<generic_atom> { std::move($1), std::move($3) }; }
+| exp XOR exp { $$ = expr::detail::xor_<generic_atom> { std::move($1), std::move($3) }; }
+| exp IMPL exp { $$ = expr::detail::impl_<generic_atom> { std::move($1), std::move($3) }; }
+| exp EQUIV exp { $$ = expr::detail::equiv_<generic_atom> { std::move($1), std::move($3) }; }
+| NOT exp { $$ = expr::detail::not_<generic_atom> { std::move($2) }; }
 %%
 
 /*
     report errors to the driver
 */
-void expr::detail::logical_parser::error(const location_type & l, const std::string & m) {
+void expr::detail::parser::error(const location_type & l, const std::string & m) {
     driver.error(l, m);
 }

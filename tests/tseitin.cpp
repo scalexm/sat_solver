@@ -8,10 +8,7 @@
 
 #include "../solver/expr/tseitin.hpp"
 #include "../solver/solver.hpp"
-#include <catch/catch.hpp>
-#include <iostream>
-
-expr::logical_expr unwrap(expr::result<expr::logical_expr>);
+#include "unwrap.hpp"
 
 extern options opt;
 

@@ -50,7 +50,7 @@ namespace expr { namespace detail {
     public:
         eval_visitor(const valuation & val) : m_val (val) { }
 
-        bool operator ()(const none_ &) const {
+        bool operator ()(const none &) const {
             return true;
         }
 
@@ -76,7 +76,7 @@ namespace expr { namespace detail {
 
     class simplify_visitor : public boost::static_visitor<logical_expr> {
     public:
-        logical_expr operator ()(none_ & exp) const {
+        logical_expr operator ()(none & exp) const {
             return std::move(exp);
         }
 

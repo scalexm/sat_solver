@@ -7,7 +7,7 @@
  *
  */
 
-#include "detail/logical_driver.hpp"
+#include "detail/driver.hpp"
 #include "detail/logical_expr.hpp"
 
 namespace expr {
@@ -16,8 +16,7 @@ namespace expr {
     }
 
     result<logical_expr> parse(const std::string & str) {
-        detail::logical_driver driver;
-        return driver.parse(str);
+        return detail::parse<atom::variable>(str);
     }
 
     logical_expr simplify(logical_expr exp) {

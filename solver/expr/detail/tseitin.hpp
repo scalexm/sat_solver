@@ -59,7 +59,7 @@ namespace expr { namespace detail {
     public:
         tseitin_visitor(atom::variable & cv, cnf & ret) : current_variable(cv), result(ret) { }
 
-        atom::variable operator ()(const none_ &) {
+        atom::variable operator ()(const none &) {
             return -1;
         }
 
@@ -100,7 +100,7 @@ namespace expr { namespace detail {
     public:
         find_max_variable() { }
 
-        atom::variable operator ()(const none_ &) const {
+        atom::variable operator ()(const none &) const {
             return 0;
         }
 

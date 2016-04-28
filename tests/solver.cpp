@@ -9,7 +9,6 @@
 #include "../solver/solver.hpp"
 #include "../solver/expr/logical_expr.hpp"
 #include <catch/catch.hpp>
-#include <iostream>
 
 extern options opt;
 

@@ -1,0 +1,60 @@
+/*
+ *  expr/detail/scanner.lpp
+ *  solver
+ *
+ *  Created by Alexandre Martin on 03/02/2016.
+ *  Copyright © 2016 scalexm. All rights reserved.
+ *
+ */
+
+%{
+    #include "driver.hpp"
+    #include <string>
+
+    static expr::detail::location loc; // used for location in error messages
+
+    
+    /*
+        a formula is terminated by EOF (or by '\0' if we parse a string, which will be the case)
+        ignore blank characters
+        any other character will trigger an error
+    */
+%}
+
+%option noyywrap nounput batch noinput nodefault
+
+%{
+    #define YY_USER_ACTION loc.columns(yyleng);
+%}
+
+%%
+
+%{
+    loc.step ();
+%}
+
+[ \t]+ loc.step();
+[\n] loc.lines(yyleng); loc.step(); return expr::detail::parser::make_NEW_LINE(loc);
+"(" return expr::detail::parser::make_LPAREN(loc);
+")" return expr::detail::parser::make_RPAREN(loc);
+"/\\" return expr::detail::parser::make_AND(loc);
+"\\/" return expr::detail::parser::make_OR(loc);
+"=>" return expr::detail::parser::make_IMPL(loc);
+"<=>" return expr::detail::parser::make_EQUIV(loc);
+"=" return expr::detail::parser::make_EQ(loc);
+"X" return expr::detail::parser::make_XOR(loc);
+"~" return expr::detail::parser::make_NOT(loc);
+-?[1-9][0-9]* return expr::detail::parser::make_VARIABLE(std::stoi(yytext), loc);
+. driver.error(loc, "invalid character"); return expr::detail::parser::make_ERROR(loc);
+<<EOF>> return expr::detail::parser::make_END(loc);
+%%
+
+namespace expr { namespace detail {
+    /*
+        initialize location and loads the string to parse into yyin
+    */
+    void driver::begin_scan(const std::string & str) {
+        loc = location { };
+        yy_scan_string(str.c_str());
+    }
+} }

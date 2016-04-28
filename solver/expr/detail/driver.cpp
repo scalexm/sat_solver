@@ -1,5 +1,5 @@
 /*
- *  expr/detail/logical_driver.cpp
+ *  expr/detail/driver.cpp
  *  solver
  *
  *  Created by Alexandre Martin on 03/02/2016.
@@ -7,14 +7,14 @@
  *
  */
 
-#include "logical_driver.hpp"
+#include "driver.hpp"
 #include <sstream>
 
 namespace expr { namespace detail {
-    result<logical_expr> logical_driver::parse(const std::string & str) {
+    result<generic_expr> driver::parse(const std::string & str) {
         begin_scan(str);
-        logical_parser parser(*this);
-        parser.parse();
+        parser p(*this);
+        p.parse();
         return std::move(m_root);
     }
 
@@ -22,9 +22,9 @@ namespace expr { namespace detail {
         if an error occurs, we want to use the string part of expr_result
         as a return value for parse()
     */
-    void logical_driver::error(const location & l, const std::string & m) {
+    void driver::error(const location & l, const std::string & m) {
         std::ostringstream ss;
         ss << l << ": " << m;
-        m_root = result<logical_expr> { ss.str() };
+        m_root = result<generic_expr> { ss.str() };
     }
 } }

@@ -7,15 +7,9 @@
 //
 
 #include "../solver/expr/logical_expr.hpp"
-#include <catch/catch.hpp>
+#include "unwrap.hpp"
 #include <sstream>
 #include <iostream>
-
-expr::logical_expr unwrap(expr::result<expr::logical_expr> res) {
-    if (auto err = boost::get<std::string>(&res))
-        FAIL(*err);
-    return boost::get<expr::logical_expr>(res);
-}
 
 TEST_CASE("Testing logical expressions parser", "[logical_expr]") {
     auto exp = expr::logical_expr { expr::none { } };
