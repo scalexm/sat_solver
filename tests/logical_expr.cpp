@@ -11,7 +11,7 @@
 #include <sstream>
 #include <iostream>
 
-expr::logical_expr unwrap(expr::expr_result res) {
+expr::logical_expr unwrap(expr::result<expr::logical_expr> res) {
     if (auto err = boost::get<std::string>(&res))
         FAIL(*err);
     return boost::get<expr::logical_expr>(res);
@@ -61,7 +61,7 @@ TEST_CASE("Testing logical expressions parser", "[logical_expr]") {
 
         exp = unwrap(expr::parse("3 <=> -5"));
         REQUIRE(exp == expr::make(
-            expr::logical_eq {
+            expr::logical_equiv {
                 expr::make(3),
                 expr::make(-5)
             }
@@ -69,7 +69,7 @@ TEST_CASE("Testing logical expressions parser", "[logical_expr]") {
 
         exp = unwrap(expr::parse("(-3 <=> 5)"));
         REQUIRE(exp == expr::make(
-            expr::logical_eq {
+            expr::logical_equiv {
                 expr::make(-3),
                 expr::make(5)
             }
@@ -139,7 +139,7 @@ TEST_CASE("Testing logical expressions parser", "[logical_expr]") {
 
         exp = unwrap(expr::parse("3 => 5 <=> 6 \\/ ~7 \\/ 8 X 9"));
         REQUIRE(exp == expr::make(
-            expr::logical_eq {
+            expr::logical_equiv {
                 expr::logical_impl {
                     expr::make(3),
                     expr::make(5)

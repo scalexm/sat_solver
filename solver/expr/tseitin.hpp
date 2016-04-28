@@ -14,8 +14,8 @@
 #include <utility>
 
 namespace expr {
-    std::pair<cnf, variable> tseitin_transform(const logical_expr &);
-    valuation remove_trailing_variables(valuation, variable);
+    std::pair<cnf, atom::variable> tseitin_transform(const logical_expr &);
+    valuation remove_trailing_variables(valuation, atom::variable);
 }
 
 #endif

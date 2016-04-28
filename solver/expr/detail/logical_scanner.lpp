@@ -40,7 +40,7 @@
 "/\\" return expr::detail::logical_parser::make_AND(loc);
 "\\/" return expr::detail::logical_parser::make_OR(loc);
 "=>" return expr::detail::logical_parser::make_IMPL(loc);
-"<=>" return expr::detail::logical_parser::make_EQ(loc);
+"<=>" return expr::detail::logical_parser::make_EQUIV(loc);
 "X" return expr::detail::logical_parser::make_XOR(loc);
 "~" return expr::detail::logical_parser::make_NOT(loc);
 -?[1-9][0-9]* return expr::detail::logical_parser::make_VARIABLE(std::stoi(yytext), loc);

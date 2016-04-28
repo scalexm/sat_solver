@@ -39,7 +39,7 @@ namespace expr { namespace detail {
     }
 
     template<>
-    inline bool eval_connector<eq_tag>(bool a, bool b) {
+    inline bool eval_connector<equiv_tag>(bool a, bool b) {
         return (!a || b) && (!b || a);
     }
 
@@ -50,25 +50,25 @@ namespace expr { namespace detail {
     public:
         eval_visitor(const valuation & val) : m_val (val) { }
 
-        bool operator ()(const none &) const {
+        bool operator ()(const none_ &) const {
             return true;
         }
 
-        template<class T>
-        bool operator ()(const logical_binary<T> & exp) const {
-            return eval_connector<T>(
+        template<class Tag>
+        bool operator ()(const logical_binary<Tag> & exp) const {
+            return eval_connector<Tag>(
                 boost::apply_visitor(eval_visitor { m_val }, exp.op_left),
                 boost::apply_visitor(eval_visitor { m_val }, exp.op_right)
             );
         }
 
-        bool operator ()(const variable & v) const {
+        bool operator ()(const atom::variable & v) const {
             auto it = m_val.find(std::abs(v));
             if (it == m_val.end())
                 return false;
             return v > 0 ? it->second : !it->second;
         }
-        
+
         bool operator ()(const logical_not & exp) const {
             return !boost::apply_visitor(eval_visitor { m_val }, exp.op);
         }
@@ -76,26 +76,26 @@ namespace expr { namespace detail {
 
     class simplify_visitor : public boost::static_visitor<logical_expr> {
     public:
-        logical_expr operator ()(none & exp) const {
+        logical_expr operator ()(none_ & exp) const {
             return std::move(exp);
         }
 
-        template<class T>
-        logical_expr operator ()(logical_binary<T> & exp) const {
+        template<class Tag>
+        logical_expr operator ()(logical_binary<Tag> & exp) const {
             exp.op_left = boost::apply_visitor(simplify_visitor { }, exp.op_left);
             exp.op_right = boost::apply_visitor(simplify_visitor { }, exp.op_right);
             return std::move(exp);
         }
 
-        logical_expr operator ()(variable & v) const {
+        logical_expr operator ()(atom::variable & v) const {
             return std::move(v);
         }
 
         logical_expr operator ()(logical_not & exp) const {
             exp.op = boost::apply_visitor(simplify_visitor { }, exp.op);
-            if (auto v = boost::get<int>(&exp.op)) { // ~v is -v
+            if (auto v = boost::get<int>(&exp.op)) // ~v is -v
                 return make(-*v);
-            } else if (auto e = boost::get<logical_not>(&exp.op)) { // ~~F is F
+            else if (auto e = boost::get<logical_not>(&exp.op)) { // ~~F is F
                 return std::move(e->op);
             }
             return std::move(exp);

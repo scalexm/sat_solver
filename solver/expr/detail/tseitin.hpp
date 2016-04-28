@@ -13,32 +13,32 @@
 #include "../logical_expr.hpp"
 
 namespace expr { namespace detail {
-    template<class T>
-    void de_morgan(variable, variable, variable, cnf &) { }
+    template<class Tag>
+    void de_morgan(atom::variable, atom::variable, atom::variable, cnf &) { }
 
     template<>
-    void de_morgan<and_tag>(variable x, variable a, variable b, cnf & t) {
+    void de_morgan<and_tag>(atom::variable x, atom::variable a, atom::variable b, cnf & t) {
         t.push_back({ -x, a });
         t.push_back({ -x, b });
         t.push_back({ x, -a, -b });
     }
 
     template<>
-    void de_morgan<or_tag>(variable x, variable a, variable b, cnf & t) {
+    void de_morgan<or_tag>(atom::variable x, atom::variable a, atom::variable b, cnf & t) {
         t.push_back({ -x, a, b });
         t.push_back({ x, -a });
         t.push_back({ x, -b });
     }
 
     template<>
-    void de_morgan<impl_tag>(variable x, variable a, variable b, cnf & t) {
+    void de_morgan<impl_tag>(atom::variable x, atom::variable a, atom::variable b, cnf & t) {
         t.push_back({ -x, -a, b });
         t.push_back({ x, a });
         t.push_back({ x, -b });
     }
 
     template<>
-    void de_morgan<xor_tag>(variable x, variable a, variable b, cnf & t) {
+    void de_morgan<xor_tag>(atom::variable x, atom::variable a, atom::variable b, cnf & t) {
         t.push_back({ -x, a, b });
         t.push_back({ -x, -a, -b });
         t.push_back({ x, -a, b });
@@ -46,30 +46,30 @@ namespace expr { namespace detail {
     }
 
     template<>
-    void de_morgan<eq_tag>(variable x, variable a, variable b, cnf & t) {
+    void de_morgan<equiv_tag>(atom::variable x, atom::variable a, atom::variable b, cnf & t) {
         de_morgan<impl_tag>(x, a, b, t);
         de_morgan<impl_tag>(x, b, a, t);
     }
 
-    class tseitin_visitor : public boost::static_visitor<variable> {
+    class tseitin_visitor : public boost::static_visitor<atom::variable> {
     private:
-        variable & current_variable; //name of the next fresh variable
+        atom::variable & current_variable; //name of the next fresh variable
         cnf & result;
 
     public:
-        tseitin_visitor(variable & cv, cnf & ret) : current_variable(cv), result(ret) { }
+        tseitin_visitor(atom::variable & cv, cnf & ret) : current_variable(cv), result(ret) { }
 
-        variable operator ()(const none &) {
+        atom::variable operator ()(const none_ &) {
             return -1;
         }
 
 
-        variable operator ()(const variable & v) {
+        atom::variable operator ()(const atom::variable & v) {
             return v;
         }
 
-        template<class T>
-        variable operator ()(const logical_binary<T> & ex) {
+        template<class Tag>
+        atom::variable operator ()(const logical_binary<Tag> & ex) {
             auto v_left = tseitin_visitor { current_variable, result };
             auto left = boost::apply_visitor(v_left, ex.op_left);
 
@@ -77,12 +77,12 @@ namespace expr { namespace detail {
             auto right = boost::apply_visitor(v_right, ex.op_right);
 
             auto fresh = current_variable;
-            de_morgan<T>(fresh, left, right, result);
+            de_morgan<Tag>(fresh, left, right, result);
             ++current_variable;
             return fresh;
         }
 
-        variable operator ()(const logical_not & ex){
+        atom::variable operator ()(const logical_not & ex){
             auto v = tseitin_visitor { current_variable, result };
             auto arg = boost::apply_visitor(v, ex.op);
 
@@ -96,27 +96,27 @@ namespace expr { namespace detail {
     };
 
    //looking for the first name of the fresh variable
-    class find_max_variable : public boost::static_visitor<variable> {
+    class find_max_variable : public boost::static_visitor<atom::variable> {
     public:
         find_max_variable() { }
 
-        variable operator ()(const none &) const {
+        atom::variable operator ()(const none_ &) const {
             return 0;
         }
 
-        variable operator ()(const variable & v) const {
+        atom::variable operator ()(const atom::variable & v) const {
             return std::abs(v);
         }
 
-        template<class T>
-        variable operator ()(const logical_binary<T> & ex) const {
+        template<class Tag>
+        atom::variable operator ()(const logical_binary<Tag> & ex) const {
             return std::max(
                 boost::apply_visitor(find_max_variable {}, ex.op_left),
                 boost::apply_visitor(find_max_variable {}, ex.op_right)
             );
         }
 
-        variable operator ()(const logical_not & ex) const {
+        atom::variable operator ()(const logical_not & ex) const {
             return boost::apply_visitor(find_max_variable { }, ex.op);
         }
     };

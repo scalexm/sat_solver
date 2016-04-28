@@ -11,7 +11,7 @@
 #include <catch/catch.hpp>
 #include <iostream>
 
-expr::logical_expr unwrap(expr::expr_result);
+expr::logical_expr unwrap(expr::result<expr::logical_expr>);
 
 extern options opt;
 

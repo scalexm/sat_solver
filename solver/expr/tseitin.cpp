@@ -12,7 +12,7 @@
 #include <list>
 
 namespace expr {
-    std::pair<cnf, variable> tseitin_transform(const logical_expr & ex) {
+    std::pair<cnf, atom::variable> tseitin_transform(const logical_expr & ex) {
         cnf result;
 
         auto simple_ex = expr::simplify(ex);
@@ -29,8 +29,8 @@ namespace expr {
         return std::make_pair(result, lowest_fresh);
     }
 
-    valuation remove_trailing_variables(valuation val, variable v) {
-        std::list<variable> to_remove;
+    valuation remove_trailing_variables(valuation val, atom::variable v) {
+        std::list<atom::variable> to_remove;
         for (auto && p : val) {
             if (p.first >= v)
                 to_remove.emplace_back(p.first);

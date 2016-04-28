@@ -8,8 +8,8 @@
 
 #include "../solver/solver.hpp"
 #include "../solver/expr/tseitin.hpp"
-#include <iostream>
 #include "../solver/command_line.hpp"
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>

@@ -15,7 +15,7 @@ namespace expr {
         return boost::apply_visitor(detail::eval_visitor { val }, exp);
     }
 
-    expr_result parse(const std::string & str) {
+    result<logical_expr> parse(const std::string & str) {
         detail::logical_driver driver;
         return driver.parse(str);
     }

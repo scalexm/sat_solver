@@ -38,7 +38,8 @@
     OR "\\/"
     XOR "X"
     IMPL "=>"
-    EQ "<=>"
+    EQUIV "<=>"
+    EQ "="
     LPAREN "("
     RPAREN ")"
     ERROR "error"
@@ -50,10 +51,11 @@
 
 // define left associativity AND priority (ordering is important)
 %left NEW_LINE
-%left EQ
+%left EQUIV
 %left IMPL
 %left OR XOR
 %left AND
+%left EQ
 %left NOT
 
 %%
@@ -69,7 +71,7 @@ exp:
 | exp OR exp { $$ = expr::logical_or { std::move($1), std::move($3) }; }
 | exp XOR exp { $$ = expr::logical_xor { std::move($1), std::move($3) }; }
 | exp IMPL exp { $$ = expr::logical_impl { std::move($1), std::move($3) }; }
-| exp EQ exp { $$ = expr::logical_eq { std::move($1), std::move($3) }; }
+| exp EQUIV exp { $$ = expr::logical_equiv { std::move($1), std::move($3) }; }
 | NOT exp { $$ = expr::logical_not { std::move($2) }; }
 %%
 

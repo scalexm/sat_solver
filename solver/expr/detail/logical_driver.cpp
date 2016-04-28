@@ -11,7 +11,7 @@
 #include <sstream>
 
 namespace expr { namespace detail {
-    expr_result logical_driver::parse(const std::string & str) {
+    result<logical_expr> logical_driver::parse(const std::string & str) {
         begin_scan(str);
         logical_parser parser(*this);
         parser.parse();
@@ -25,6 +25,6 @@ namespace expr { namespace detail {
     void logical_driver::error(const location & l, const std::string & m) {
         std::ostringstream ss;
         ss << l << ": " << m;
-        m_root = expr_result { ss.str() };
+        m_root = result<logical_expr> { ss.str() };
     }
 } }
