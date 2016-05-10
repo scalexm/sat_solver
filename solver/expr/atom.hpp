@@ -10,6 +10,8 @@
 #define ATOM_HPP
 
 #include <ostream>
+#include <boost/variant.hpp>
+#include <vector>
 
 namespace expr { namespace atom {
     using variable = int;
@@ -23,6 +25,45 @@ namespace expr { namespace atom {
     }
 
     inline std::ostream & operator <<(std::ostream & stream, const equality & exp) {
+        return stream << exp.left << " = " << exp.right;
+    }
+
+    struct fun;
+
+    using term = boost::variant<variable, fun>;
+
+    struct fun {
+        char name;
+        std::vector<term> args;
+    };
+
+    inline bool operator ==(const fun & a, const fun & b) {
+        return a.name == b.name && a.args == b.args;
+    }
+
+    inline std::ostream & operator <<(std::ostream & stream, const fun & f) {
+        stream << f.name;
+        if (f.args.size() > 0) {
+            stream << '(';
+            for (auto i = 0; i < f.args.size(); ++i) {
+                if (i != 0)
+                    stream << ", ";
+                stream << f.args[i];
+            }
+            stream << ')';
+        }
+        return stream;
+    }
+
+    struct congruence_equality {
+        term left, right;
+    };
+
+    inline bool operator ==(const congruence_equality & a, const congruence_equality & b) {
+        return a.left == b.left && a.right == b.right;
+    }
+
+    inline std::ostream & operator <<(std::ostream & stream, const congruence_equality & exp) {
         return stream << exp.left << " = " << exp.right;
     }
 } }

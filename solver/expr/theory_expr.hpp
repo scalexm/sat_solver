@@ -20,6 +20,14 @@ namespace expr { namespace detail {
             return stream << at->left << " != " << at->right;
         return stream << "~(" << exp.op << ")";
     }
+
+    template<>
+    inline std::ostream & operator <<(std::ostream & stream,
+                                      const not_<atom::congruence_equality> & exp) {
+        if (auto at = boost::get<atom::congruence_equality>(&exp.op))
+            return stream << at->left << " != " << at->right;
+        return stream << "~(" << exp.op << ")";
+    }
     
 } }
 
@@ -38,6 +46,21 @@ namespace expr {
     }
 
     result<equality_expr> parse_equality(const std::string &);
+
+    using congruence_or = detail::or_<atom::congruence_equality>;
+    using congruence_and = detail::and_<atom::congruence_equality>;
+    using congruence_xor = detail::xor_<atom::congruence_equality>;
+    using congruence_not = detail::not_<atom::congruence_equality>;
+    using congruence_impl = detail::impl_<atom::congruence_equality>;
+    using congruence_equiv = detail::equiv_<atom::congruence_equality>;
+    using congruence_expr = detail::expr_<atom::congruence_equality>;
+
+    template<class T>
+    inline congruence_expr make_congruence(T exp) {
+        return congruence_expr { std::move(exp) };
+    }
+
+    result<congruence_expr> parse_congruence(const std::string &);
 }
 
 #endif

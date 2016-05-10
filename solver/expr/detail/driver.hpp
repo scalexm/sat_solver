@@ -18,7 +18,8 @@ namespace expr { namespace detail {
        with Bison and Flex */
     using generic_atom = boost::variant<
         atom::variable,
-        atom::equality
+        atom::equality,
+        atom::congruence_equality
     >;
 
     using generic_expr = expr_<generic_atom>;
@@ -68,13 +69,20 @@ namespace expr { namespace detail {
         }
     };
 
+    enum class theory {
+        DEFAULT,
+        EQUALITY,
+        CONGRUENCE,
+    };
+
     class driver {
     private:
         result<generic_expr> m_root;
+        theory m_theory;
 
         void begin_scan(const std::string &); // in logical_scanner.lpp
     public:
-        driver() = default;
+        driver(theory th) : m_theory { th } { }
         result<generic_expr> parse(const std::string &);
         void error(const location &, const std::string &);
 
@@ -84,11 +92,15 @@ namespace expr { namespace detail {
         void set_root(generic_expr root) {
             m_root = { std::move(root) };
         }
+
+        theory th() const {
+            return m_theory;
+        }
     };
 
     template<class Atom>
-    result<expr_<Atom>> parse(const std::string & str) {
-        detail::driver driver;
+    result<expr_<Atom>> parse(const std::string & str, theory th = theory::DEFAULT) {
+        detail::driver driver { th };
         auto res = driver.parse(str);
         if (auto err = boost::get<std::string>(&res))
             return std::move(*err);

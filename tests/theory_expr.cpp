@@ -49,3 +49,46 @@ TEST_CASE("Testing equality expressions parser", "[equality_expr]") {
         REQUIRE(s.str() == "(3 = 2 => (1 = 3 X 2 != 3))");
     }
 }
+
+TEST_CASE("Testing congruence expressions parser", "[congruence_expr]") {
+    auto exp = expr::congruence_expr { expr::none { } };
+
+    SECTION("parsing basic equality expressions") {
+        exp = unwrap(expr::parse_congruence("f(1, 2) = a => g(1) = f(3, 4)"));
+        REQUIRE(exp == expr::make_congruence(
+            expr::congruence_impl {
+                expr::atom::congruence_equality {
+                    expr::atom::fun { 'f', { 1, 2 } },
+                    expr::atom::fun { 'a', { } }
+                },
+                expr::atom::congruence_equality {
+                    expr::atom::fun { 'g', { 1 } },
+                    expr::atom::fun { 'f', { 3, 4 } }
+                }
+            }
+        ));
+
+        exp = unwrap(expr::parse_congruence("f(f(1, 2), c) = g(f(3, 4))"));
+        REQUIRE(exp == expr::make_congruence(
+            expr::atom::congruence_equality {
+                expr::atom::fun {
+                    'f',
+                    { expr::atom::fun { 'f', { 1, 2 } }, expr::atom::fun { 'c', { } } }
+                },
+                expr::atom::fun {
+                    'g',
+                    { expr::atom::fun { 'f', { 3, 4 } } }
+                }
+            }
+        ));
+    }
+
+    SECTION("testing textual representation") {
+        std::ostringstream s;
+        s << unwrap(expr::parse_congruence("f(1,2) !=a => g(1) =f(3, 4)"));
+        REQUIRE(s.str() == "(f(1, 2) != a => g(1) = f(3, 4))");
+
+        s.str("");
+        s << unwrap(expr::parse_congruence("a = bX z =f(1, g(3,4)) /\\ 1 = g(2,4)"));
+    }
+}

@@ -28,6 +28,7 @@
 
 %{
 #include "driver.hpp"
+#include <iostream>
 %}
 
 %define api.token.prefix {TOK_}
@@ -45,10 +46,14 @@
     RPAREN ")"
     ERROR "error"
     NEW_LINE "new line"
+    COMMA ","
 ;
 
 %token <int> VARIABLE "variable"
+%token <char> FUN_NAME "fun_name"
 %type <expr::detail::generic_expr> exp
+%type <expr::atom::term> term
+%type <std::vector<expr::atom::term>> args
 
 // define left associativity AND priority (ordering is important)
 %left NEW_LINE
@@ -64,12 +69,39 @@
 %start unit;
 unit: exp { driver.set_root(std::move($1)); }; // give back the result to the driver
 
+args:
+  ERROR { YYABORT; }
+| args ERROR { YYABORT; }
+| term { $$.emplace_back(std::move($1)); }
+| args COMMA term { $1.emplace_back(std::move($3)); $$ = std::move($1); }
+
+term:
+  ERROR { YYABORT; }
+| term ERROR { YYABORT; }
+| VARIABLE { $$ = std::move($1); }
+| FUN_NAME LPAREN args RPAREN { $$ = expr::atom::fun { $1, std::move($3) }; }
+| FUN_NAME { $$ = expr::atom::fun { $1, { } }; }
+
 exp:
-  ERROR { YYABORT; } // used when an invalid character is encountered
-| VARIABLE { $$ = expr::detail::generic_atom { std::move($1) }; }
-| VARIABLE EQ VARIABLE { $$ = expr::detail::generic_atom { expr::atom::equality { $1, $3 } }; }
+  ERROR { YYABORT; }
+| exp ERROR { YYABORT; } // used when an invalid character is encountered
+| VARIABLE { $$ = expr::detail::generic_atom { $1 }; }
+| VARIABLE EQ VARIABLE {
+    if (driver.th() != expr::detail::theory::CONGRUENCE)
+        $$ = expr::detail::generic_atom { expr::atom::equality { $1, $3 } };
+    else
+        $$ = expr::detail::generic_atom { expr::atom::congruence_equality { $1, $3 } };
+}
 | VARIABLE NEQ VARIABLE {
-    $$ = expr::detail::not_<generic_atom> { expr::atom::equality { $1, $3 } };
+    if (driver.th() != expr::detail::theory::CONGRUENCE)
+        $$ = expr::detail::not_<generic_atom> { expr::atom::equality { $1, $3 } };
+    else
+        $$ = expr::detail::not_<generic_atom> { expr::atom::congruence_equality { $1, $3 } };
+
+}
+| term EQ term { $$ = expr::detail::generic_atom { expr::atom::congruence_equality { $1, $3 } }; }
+| term NEQ term {
+    $$ = expr::detail::not_<generic_atom> { expr::atom::congruence_equality { $1, $3 } };
 }
 | LPAREN exp RPAREN { $$ = std::move($2); }
 | exp AND exp { $$ = expr::detail::and_<generic_atom> { std::move($1), std::move($3) }; }
@@ -79,6 +111,7 @@ exp:
 | exp IMPL exp { $$ = expr::detail::impl_<generic_atom> { std::move($1), std::move($3) }; }
 | exp EQUIV exp { $$ = expr::detail::equiv_<generic_atom> { std::move($1), std::move($3) }; }
 | NOT exp { $$ = expr::detail::not_<generic_atom> { std::move($2) }; }
+
 %%
 
 /*

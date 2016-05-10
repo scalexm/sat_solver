@@ -11,6 +11,10 @@
 
 namespace expr {
     result<equality_expr> parse_equality(const std::string & str) {
-        return detail::parse<atom::equality>(str);
+        return detail::parse<atom::equality>(str, expr::detail::theory::EQUALITY);
+    }
+
+    result<congruence_expr> parse_congruence(const std::string & str) {
+        return detail::parse<atom::congruence_equality>(str, expr::detail::theory::CONGRUENCE);
     }
 }

@@ -41,8 +41,34 @@
 "\\/" return expr::detail::parser::make_OR(loc);
 "=>" return expr::detail::parser::make_IMPL(loc);
 "<=>" return expr::detail::parser::make_EQUIV(loc);
-"=" return expr::detail::parser::make_EQ(loc);
-"!=" return expr::detail::parser::make_NEQ(loc);
+"=" {
+    if (driver.th() == expr::detail::theory::DEFAULT) {
+        driver.error(loc, "invalid character");
+        return expr::detail::parser::make_ERROR(loc);
+    }
+    return expr::detail::parser::make_EQ(loc);
+}
+"!=" {
+    if (driver.th() == expr::detail::theory::DEFAULT) {
+        driver.error(loc, "invalid character");
+        return expr::detail::parser::make_ERROR(loc);
+    }
+    return expr::detail::parser::make_NEQ(loc);
+}
+"," {
+    if (driver.th() != expr::detail::theory::CONGRUENCE) {
+        driver.error(loc, "invalid character");
+        return expr::detail::parser::make_ERROR(loc);
+    }
+    return expr::detail::parser::make_COMMA(loc);
+}
+[a-z] {
+    if (driver.th() != expr::detail::theory::CONGRUENCE) {
+        driver.error(loc, "invalid character");
+        return expr::detail::parser::make_ERROR(loc);
+    }
+    return expr::detail::parser::make_FUN_NAME(yytext[0], loc);
+}
 "X" return expr::detail::parser::make_XOR(loc);
 "~" return expr::detail::parser::make_NOT(loc);
 -?[1-9][0-9]* return expr::detail::parser::make_VARIABLE(std::stoi(yytext), loc);
