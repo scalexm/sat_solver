@@ -19,19 +19,19 @@ fast : CPP = clang++
 fast : all
 
 
-./bin/resol: ./solver/*.cpp ./sat/main.cpp  ./solver/expr/tseitin.cpp ./solver/expr/logical_expr.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/y.tab.c ./solver/expr/detail/logical_scanner.tab.cpp ./solver/detail/clause.cpp
+./bin/resol: ./solver/*.cpp ./sat/main.cpp  ./solver/expr/tseitin.cpp ./solver/expr/logical_expr.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/y.tab.c ./solver/expr/detail/scanner.tab.cpp ./solver/detail/clause.cpp
 	$(CPP) $(CXXFLAGS) -o $@ $^
 
-./bin/tests: ./solver/*.cpp ./solver/expr/*.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/y.tab.c ./tests/*.cpp ./solver/expr/detail/logical_scanner.tab.cpp ./solver/detail/clause.cpp
+./bin/tests: ./solver/*.cpp ./solver/expr/*.cpp ./solver/expr/detail/*.cpp ./solver/expr/detail/y.tab.c ./tests/*.cpp ./solver/expr/detail/scanner.tab.cpp ./solver/detail/clause.cpp
 	$(CPP) $(CXXFLAGS) -o $@ $^
 
 
-detail:  ./solver/expr/detail/logical_scanner.tab.cpp ./solver/expr/detail/y.tab.c
+detail:  ./solver/expr/detail/scanner.tab.cpp ./solver/expr/detail/y.tab.c
 
-./solver/expr/detail/logical_scanner.tab.cpp: ./solver/expr/detail/logical_scanner.lpp
+./solver/expr/detail/scanner.tab.cpp: ./solver/expr/detail/scanner.lpp
 	$(LEX) -o $@ $^
 
-./solver/expr/detail/y.tab.c: ./solver/expr/detail/logical_parser.ypp
+./solver/expr/detail/y.tab.c: ./solver/expr/detail/parser.ypp
 	$(YACC) -o $@ $^
 
 clean :
