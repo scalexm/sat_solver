@@ -43,6 +43,8 @@
 "<=>" return expr::detail::parser::make_EQUIV(loc);
 "=" return expr::detail::parser::make_EQ(loc);
 "!=" return expr::detail::parser::make_NEQ(loc);
+"," return expr::detail::parser::make_COMMA(loc);
+[a-z] return expr::detail::parser::make_FUN_NAME(yytext[0], loc);
 "X" return expr::detail::parser::make_XOR(loc);
 "~" return expr::detail::parser::make_NOT(loc);
 -?[1-9][0-9]* return expr::detail::parser::make_VARIABLE(std::stoi(yytext), loc);
