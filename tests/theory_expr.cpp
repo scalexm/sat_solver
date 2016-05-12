@@ -39,7 +39,7 @@ TEST_CASE("Testing equality expressions parser", "[equality_expr]") {
         ));
     }
 
-    SECTION("testing textual representation") {
+    SECTION("testing textual representation for equality") {
         std::ostringstream s;
         s << unwrap(expr::parse_equality("3=5 /\\ ~4= 2"));
         REQUIRE(s.str() == "(3 = 5 /\\ 4 != 2)");
@@ -79,7 +79,7 @@ TEST_CASE("Testing equality expressions parser", "[equality_expr]") {
         ));
     }
 
-    SECTION("testing textual representation") {
+    SECTION("testing textual representation for congruence") {
         std::ostringstream s;
         s << unwrap(expr::parse_equality("f(1,2) !=a => g(1) =f(3, 4)"));
         REQUIRE(s.str() == "(f(1, 2) != a => g(1) = f(3, 4))");

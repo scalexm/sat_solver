@@ -17,6 +17,7 @@
 #include <chrono>
 #include <iomanip>
 #include <boost/heap/fibonacci_heap.hpp>
+#include "../solver/curry.hpp"
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
@@ -95,6 +96,18 @@ int main(int argc, const char ** argv) {
     options opt;
     auto tseitin = false;
     std::string file_name;
+
+    expr::atom::fun f1 {
+                    'f',
+                    { expr::atom::fun { 'f', { 1, 2 } }, expr::atom::fun { 'c', { } } }
+                };
+
+    expr::atom::fun f2 {
+                    'g',
+                    { expr::atom::fun { 'f', { 1, 1 } } }
+                };
+    std::cout << currify(f1) << std::endl;
+    std::cout << currify(f2) << std::endl;
 
     parse_command_line(argc, argv, file_name, opt, tseitin);
 

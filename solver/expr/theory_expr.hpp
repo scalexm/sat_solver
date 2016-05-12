@@ -11,6 +11,7 @@
 
 #include "expr.hpp"
 #include "atom.hpp"
+#include "../cnf.hpp"
 
 namespace expr { namespace detail {
     // specialization for not_<equality> with atomic formula
