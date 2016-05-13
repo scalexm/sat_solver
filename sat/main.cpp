@@ -8,6 +8,7 @@
 
 #include "../solver/solver.hpp"
 #include "../solver/expr/tseitin.hpp"
+#include "../solver/curry.hpp"
 #include "../solver/command_line.hpp"
 #include <iostream>
 #include <fstream>
@@ -17,7 +18,6 @@
 #include <chrono>
 #include <iomanip>
 #include <boost/heap/fibonacci_heap.hpp>
-#include "../solver/curry.hpp"
 
 #define MAKE_WARNING(lno, mess) ("warning line " + std::to_string(lno) + ": " + (mess))
 
@@ -97,17 +97,18 @@ int main(int argc, const char ** argv) {
     auto tseitin = false;
     std::string file_name;
 
-    expr::atom::fun f1 {
-                    'f',
-                    { expr::atom::fun { 'f', { 1, 2 } }, expr::atom::fun { 'c', { } } }
-                };
+    auto exp = boost::get<expr::equality_expr>(expr::parse_equality("f(1) = 2 /\\ 2 != 1"));
+    auto env = curry_transform(exp);
+    for (auto && c : env.clauses) {
+        for (auto && v : c)
+            std::cout << v << " ";
+        std::cout << std::endl;
+    }
 
-    expr::atom::fun f2 {
-                    'g',
-                    { expr::atom::fun { 'f', { 1, 1 } } }
-                };
-    std::cout << currify(f1) << std::endl;
-    std::cout << currify(f2) << std::endl;
+    std::cout << "tseitin_offset: " << env.tseitin_offset << std::endl;
+
+    for (auto && a : env.atoms)
+        std::cout << a << std::endl;
 
     parse_command_line(argc, argv, file_name, opt, tseitin);
 

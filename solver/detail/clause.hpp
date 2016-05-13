@@ -6,8 +6,8 @@
 //  Copyright © 2016 scalexm. All rights reserved.
 //
 
-#ifndef CLAUSE_HPP
-#define CLAUSE_HPP
+#ifndef DETAIL_CLAUSE_HPP
+#define DETAIL_CLAUSE_HPP
 
 #include <vector>
 #include <cstddef>

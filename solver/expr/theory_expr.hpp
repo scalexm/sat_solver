@@ -25,6 +25,9 @@ namespace expr { namespace detail {
 } }
 
 namespace expr {
+    template<class Tag>
+    using equality_binary = detail::binary_<Tag, atom::equality>;
+
     using equality_or = detail::or_<atom::equality>;
     using equality_and = detail::and_<atom::equality>;
     using equality_xor = detail::xor_<atom::equality>;

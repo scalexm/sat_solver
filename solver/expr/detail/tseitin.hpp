@@ -70,11 +70,9 @@ namespace expr { namespace detail {
 
         template<class Tag>
         atom::variable operator ()(const logical_binary<Tag> & ex) {
-            auto v_left = tseitin_visitor { current_variable, result };
-            auto left = boost::apply_visitor(v_left, ex.op_left);
-
-            auto v_right = tseitin_visitor { current_variable, result };
-            auto right = boost::apply_visitor(v_right, ex.op_right);
+            auto v = tseitin_visitor { current_variable, result };
+            auto left = boost::apply_visitor(v, ex.op_left);
+            auto right = boost::apply_visitor(v, ex.op_right);
 
             auto fresh = current_variable;
             de_morgan<Tag>(fresh, left, right, result);

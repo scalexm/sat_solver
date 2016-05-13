@@ -12,7 +12,7 @@
 #include <list>
 
 namespace expr {
-    std::pair<cnf, atom::variable> tseitin_transform(const logical_expr & ex) {
+    std::pair<cnf, atom::variable> tseitin_transform(const logical_expr & ex, int offset) {
         cnf result;
 
         auto simple_ex = expr::simplify(ex);
@@ -21,9 +21,10 @@ namespace expr {
             simple_ex
         );
 
-        auto lowest_fresh = current_variable + 1;
+        auto lowest_fresh = current_variable + 1 + offset;
+        current_variable = lowest_fresh;
 
-        auto tv = detail::tseitin_visitor { lowest_fresh, result };
+        auto tv = detail::tseitin_visitor { current_variable, result };
         current_variable = boost::apply_visitor(tv, simple_ex);
         result.push_back({ current_variable });
         return std::make_pair(result, lowest_fresh);

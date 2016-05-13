@@ -16,20 +16,18 @@
 
 namespace detail {
 
-    constexpr char CURRY_SYMBOL = '$';
-
-    class currying_visitor : public boost::static_visitor<expr::atom::term> {
+    class term_currying_visitor : public boost::static_visitor<expr::atom::term> {
     private:
         std::unordered_map<char, int> & m_fun_seen;
         std::unordered_map<int, int> & m_var_seen;
         int & m_current_index;
 
     public:
-        currying_visitor(std::unordered_map<char, int> & fun_seen,
-                        std::unordered_map<int, int> & var_seen,
-                        int & current_index) : m_fun_seen(fun_seen),
-                                               m_var_seen(var_seen),
-                                               m_current_index(current_index) { }
+        term_currying_visitor(std::unordered_map<char, int> & fun_seen,
+                              std::unordered_map<int, int> & var_seen,
+                              int & current_index) : m_fun_seen(fun_seen),
+                                                     m_var_seen(var_seen),
+                                                     m_current_index(current_index) { }
 
         expr::atom::term operator ()(const expr::atom::fun & f) {
             auto it = m_fun_seen.find(f.name);
@@ -46,8 +44,8 @@ namespace detail {
             else {
                 auto i = 0;
                 expr::atom::fun curry;
+                term_currying_visitor v { m_fun_seen, m_var_seen, m_current_index };
                 do {
-                    currying_visitor v { m_fun_seen, m_var_seen, m_current_index };
                     auto curry_arg = boost::apply_visitor(v, f.args[i]);
                     curry.name = CURRY_SYMBOL;
                     curry.args = {
@@ -73,7 +71,44 @@ namespace detail {
         }
     };
 
-    class flatten_visitor : public boost::static_visitor<expr::detail::expr_<curry_atom>> {
+    class currying_visitor : public boost::static_visitor<expr::equality_expr> {
+    private:
+        std::unordered_map<char, int> & m_fun_seen;
+        std::unordered_map<int, int> & m_var_seen;
+        int & m_current_index;
+
+    public:
+        currying_visitor(std::unordered_map<char, int> & fun_seen,
+                         std::unordered_map<int, int> & var_seen,
+                         int & current_index) : m_fun_seen(fun_seen),
+                                                m_var_seen(var_seen),
+                                                m_current_index(current_index) { }
+
+        expr::equality_expr operator ()(const expr::none &) {
+            return expr::none { };
+        }
+
+        expr::equality_expr operator ()(const expr::atom::equality & e) {
+            term_currying_visitor v { m_fun_seen, m_var_seen, m_current_index };
+            return expr::atom::equality {
+                boost::apply_visitor(v, e.left),
+                boost::apply_visitor(v, e.right)
+            };
+        }
+
+        template<class Tag>
+        expr::equality_expr operator ()(const expr::equality_binary<Tag> & exp) {
+            currying_visitor v { m_fun_seen, m_var_seen, m_current_index };
+            return expr::detail::binary_<Tag, expr::atom::equality> {
+                boost::apply_visitor(v, exp.op_left),
+                boost::apply_visitor(v, exp.op_right)
+            };
+        }
+
+        expr::equality_expr operator ()(const expr::equality_not & exp) {
+            currying_visitor v { m_fun_seen, m_var_seen, m_current_index };
+            return expr::equality_not { boost::apply_visitor(v, exp.op) };
+        }
     };
 
     class curry_to_logical_visitor : public boost::static_visitor<expr::logical_expr> {
@@ -92,11 +127,9 @@ namespace detail {
 
         template<class Tag>
         expr::logical_expr operator ()(const expr::detail::binary_<Tag, curry_atom> & exp) {
-            curry_to_logical_visitor v_left { m_seen, m_atoms };
-            auto left = boost::apply_visitor(v_left, exp.op_left);
-
-            curry_to_logical_visitor v_right { m_seen, m_atoms };
-            auto right = boost::apply_visitor(v_right, exp.op_right);
+            curry_to_logical_visitor v { m_seen, m_atoms };
+            auto left = boost::apply_visitor(v, exp.op_left);
+            auto right = boost::apply_visitor(v, exp.op_right);
 
             return expr::logical_binary<Tag> { std::move(left), std::move(right) };
         }
@@ -113,8 +146,8 @@ namespace detail {
             auto it = m_seen.find(str_repr);
             int ind;
             if (it == m_seen.end()) {
-                ind = m_atoms.size();
                 m_atoms.emplace_back(at);
+                ind = m_atoms.size();
                 m_seen.emplace(std::move(str_repr), ind);
             } else
                 ind = it->second;
