@@ -12,6 +12,6 @@
 #include <string>
 class options;
 
-void parse_command_line(int, const char **, std::string &, options &, bool &);
+void parse_command_line(int, const char **, std::string &, options &, bool &, bool &);
 
 #endif

@@ -249,7 +249,7 @@ valuation solver::solve() {
             auto old_level = level;
 
             detail::clause learnt;
-            if (can_learn()) {
+            if (conflict != &m_dummy_clause && can_learn()) {
                 auto knowledge = learn(conflict, level);
                 level = knowledge.second + 1;
                 learnt = std::move(knowledge.first);
@@ -260,7 +260,7 @@ valuation solver::solve() {
                     v.first /= 2.0;
             }
 
-            if (m_options.cdcl == cdcl_mode::INTERACTIVE)
+            if (conflict != &m_dummy_clause && m_options.cdcl == cdcl_mode::INTERACTIVE)
                 interac(conflict, old_level, learnt.watch_0());
 
             auto lit = backtrack(level);
@@ -269,7 +269,7 @@ valuation solver::solve() {
             std::cout << "go back to level " << level << std::endl;
 #endif
 
-            if (can_learn()) {
+            if (conflict != &m_dummy_clause && can_learn()) {
                 lit = learnt.watch_0();
                 auto reason = learnt.litterals().size() != 1 ?
                     add_clause(std::move(learnt)) : nullptr;

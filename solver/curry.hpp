@@ -36,15 +36,10 @@ using curry_atom = boost::variant<const_equality, curry_equality>;
 
 struct curry_env {
     cnf clauses;
+    int max_constant;
     int tseitin_offset;
     std::vector<curry_atom> atoms; // offset + 1 <-> curry_atom
 };
-
-/*expr::atom::term curry(const expr::atom::term &);
-std::pair<
-    expr::detail::expr_<curry_atom>,
-    std::vector<curry_atom>
-> curry_and_flatten(const expr::equality_expr &);*/
 
 curry_env curry_transform(const expr::equality_expr &);
 

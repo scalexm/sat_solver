@@ -30,11 +30,14 @@ enum class cdcl_mode {
     INTERACTIVE,
 };
 
+class equality_solver;
+
 struct options {
     guess_mode guess = guess_mode::LINEAR;
     cdcl_mode cdcl = cdcl_mode::NONE;
     bool wl = false;
     bool forget = false;
+    equality_solver * eq_solver = nullptr;
 };
 
 class solver {
@@ -85,6 +88,7 @@ private:
 
     size_t m_remaining_variables;
 
+    detail::clause m_dummy_clause;
     std::list<detail::clause> m_clauses;
     guess_mode m_guess_mode;
     cdcl_mode m_cdcl;

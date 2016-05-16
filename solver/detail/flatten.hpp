@@ -1,5 +1,5 @@
 //
-//  flatten.hpp
+//  detail/flatten.hpp
 //  solver
 //
 //  Created by Alexandre Martin on 13/05/2016.

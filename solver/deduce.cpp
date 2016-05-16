@@ -8,6 +8,7 @@
 
 #include "solver.hpp"
 #include "detail/solver.hpp"
+#include "equality.hpp"
 #include <iostream>
 
 /* deduce for one litteral in default mode */
@@ -103,6 +104,16 @@ detail::clause * solver::deduce(int level) {
             auto c = (this->*m_deduce_one)(m_valuation[top], level);
             if (c != nullptr)
                 conflict = c;
+
+            if (m_options.eq_solver != nullptr) {
+                auto res = m_options.eq_solver->set_true(new_to_old_lit(m_valuation[top]));
+                if (res.second) { // conflict
+                    conflict = &m_dummy_clause;
+#ifdef DEBUG
+                    std::cout << "conflict from equality_solver" << std::endl;
+#endif
+                }
+            }
             ++top;
         }
     }

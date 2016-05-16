@@ -1,5 +1,5 @@
 //
-//  curry.hpp
+//  detail/curry.hpp
 //  solver
 //
 //  Created by Alexandre Martin on 11/05/2016.

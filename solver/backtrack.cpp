@@ -8,6 +8,7 @@
 
 #include "solver.hpp"
 #include "detail/solver.hpp"
+#include "equality.hpp"
 #include <iostream>
 
 /* backtrack in default mode */
@@ -46,6 +47,8 @@ int solver::backtrack(int level) {
     while (!m_valuation.empty() && m_assignment[detail::var(m_valuation.back())].level >= level) {
         lit = dequeue();
         (this->*m_backtrack_one)(lit);
+        if (m_options.eq_solver != nullptr)
+            m_options.eq_solver->backtrack_one();
     }
     return lit;
 }

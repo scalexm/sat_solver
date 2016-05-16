@@ -12,7 +12,7 @@
 #include <algorithm>
 
 void parse_command_line(int argc, const char ** argv, std::string & file_name, options & opt,
-                        bool & tseitin) {
+                        bool & tseitin, bool & eq) {
     for (auto i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
             auto arg = std::string(argv[i]);
@@ -35,6 +35,10 @@ void parse_command_line(int argc, const char ** argv, std::string & file_name, o
                 opt.cdcl = cdcl_mode::INTERACTIVE;
             else if (arg == "-cl")
                 opt.cdcl = cdcl_mode::NORMAL;
+            else if (arg == "-smte")
+                eq = true;
+            else if (arg == "-smtc")
+                eq = true;
             else
                 std::cout << "unkown option `" << arg << "`" << std::endl;
         } else

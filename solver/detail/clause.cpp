@@ -1,5 +1,5 @@
 //
-//  clause.cpp
+//  detail/clause.cpp
 //  solver
 //
 //  Created by Alexandre Martin on 03/04/2016.

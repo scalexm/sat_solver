@@ -9,6 +9,7 @@
 #include "../solver/solver.hpp"
 #include "../solver/expr/tseitin.hpp"
 #include "../solver/curry.hpp"
+#include "../solver/equality.hpp"
 #include "../solver/command_line.hpp"
 #include <iostream>
 #include <fstream>
@@ -95,22 +96,10 @@ void trim_expr(std::string & exp) {
 int main(int argc, const char ** argv) {
     options opt;
     auto tseitin = false;
+    bool eq = false;
     std::string file_name;
 
-    auto exp = boost::get<expr::equality_expr>(expr::parse_equality("f(1) = 2 /\\ 2 != 1"));
-    auto env = curry_transform(exp);
-    for (auto && c : env.clauses) {
-        for (auto && v : c)
-            std::cout << v << " ";
-        std::cout << std::endl;
-    }
-
-    std::cout << "tseitin_offset: " << env.tseitin_offset << std::endl;
-
-    for (auto && a : env.atoms)
-        std::cout << a << std::endl;
-
-    parse_command_line(argc, argv, file_name, opt, tseitin);
+    parse_command_line(argc, argv, file_name, opt, tseitin, eq);
 
     if (file_name.empty()) {
         std::cerr << "no input" << std::endl;
@@ -156,6 +145,37 @@ int main(int argc, const char ** argv) {
         std::cout << "solve time: " << duration.count() / 1000000. << "s" << std::endl;
 
         sat = s.satisfiable();
+    } else if (eq) {
+        auto tp = std::chrono::system_clock::now();
+        std::ostringstream ss;
+        ss << f.rdbuf();
+        auto exp = ss.str();
+        trim_expr(exp);
+
+        auto res = expr::parse_equality(exp);
+        if (auto err = boost::get<std::string>(&res)) {
+            std::cerr << *err << std::endl;
+            return 1;
+        }
+
+        auto env = curry_transform(*boost::get<expr::equality_expr>(&res));
+        equality_solver eq_s { env.max_constant, std::move(env.atoms) };
+        options local_opt = opt;
+        local_opt.eq_solver = &eq_s;
+        solver s { std::move(env.clauses), local_opt };
+
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::system_clock::now() - tp
+        );
+        std::cout << "parse time: " << duration.count() / 1000000. << "s" << std::endl;
+
+        tp = std::chrono::system_clock::now();
+        sat = s.satisfiable();
+
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::system_clock::now() - tp
+        );
+        std::cout << "solve time: " << duration.count() / 1000000. << "s" << std::endl;
     } else {
         auto tp = std::chrono::system_clock::now();
         auto s = parse(f, opt);
