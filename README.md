@@ -18,6 +18,7 @@ VSIDS
 * parsing de formules logiques sous forme générale
 * transformation de Tseitin
 * traduction de problèmes de factorisation d'entiers en problèmes SAT
+* SMT (égalité, congruence)
 
 ## Remarques générales
 Nous avons décidé de supprimer définitivement les deux pratiques suivantes:
@@ -25,7 +26,7 @@ Nous avons décidé de supprimer définitivement les deux pratiques suivantes:
 * polarité unique
 
 En effet, aucune de ces deux pratiques n'apportaient un gain significatif en termes
-d'efficacité (en fait c'était même pire dans tous les cas, sans réelle possibilité d'optimiser).
+d'efficacité (en fait c'était même pire dans la plupart des cas, sans réelle possibilité d'optimiser).
 Dans un souci de simplicité, nous avons donc décidé de les supprimer.
 
 ## Options de la ligne de commande
@@ -40,6 +41,8 @@ Des fichiers CNF de tests se trouvent dans le dossier `cnf_files`. Tous ces fich
 satisfiables tandis que les fichiers `comp1.cnf` à `comp5.cnf` sont associés à des nombres
 composés et sont satisfiables. Il y a également divers fichiers provenant du site
 http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html.
+
+Des fichiers de tests pour SMT se trouvent dans le dossier `smt_files`.
 
 ## Heuristiques
 Les différentes heuristiques peuvent être activées via les options suivantes:
@@ -114,9 +117,14 @@ gros et on distingue bien les relations entre les littéraux.
     `detail/solver.hpp`, `solver.hpp`, `solver.cpp`, `guess.cpp`, `deduce.cpp`,
     `backtrack.cpp`, `learn.cpp` et `interac.cpp`.
 
-    Le sous-dossier `expr` contient le code relatif au traitement des formules logiques conviviales. La structure des expressions et les opérations sur celles-ci sont contenues dans les fichiers `expr/detail/logical_expr.hpp`, `expr/logical_expr.hpp`, `expr/logical_expr.cpp`, `expr/detail/tseitin.hpp`, `expr/tseitin.hpp` et `expr/tseitin.cpp`.
+    Le code relatif à SMT est contenu dans `detail/flatten.hpp`, `detail/curry.hpp`, `curry.hpp`, `curry.cpp`,
+    `equality.hpp` et `equality.cpp`.
 
-    Le code pour parser des expressions avec Flex et Bison se trouve dans les fichiers `expr/detail/logical_parser.ypp`, `expr/detail/logical_scanner.lpp`, `expr/detail/logical_driver.hpp` et `expr/detail/logical_driver.cpp`.
+    Le sous-dossier `expr` contient le code relatif au traitement des formules logiques conviviales. La structure des expressions et les opérations sur celles-ci sont contenues dans les fichiers `expr/atom.hpp`, `expr/detail/expr.hpp`, `expr/expr.hpp`,
+    `expr/detail/logical_expr.hpp`, `expr/logical_expr.hpp`, `expr/logical_expr.cpp`, `expr/detail/tseitin.hpp`,
+    `expr/tseitin.hpp`, `expr/tseitin.cpp`, `expr/theory_expr.hpp` et `expr/theory_expr.cpp`.
+
+    Le code pour parser des expressions avec Flex et Bison se trouve dans les fichiers `expr/detail/parser.ypp`, `expr/detail/scanner.lpp`, `expr/detail/driver.hpp` et `expr/detail/driver.cpp`.
 
     Nous avons choisi une solution basée sur `boost::variant` pour représenter les expressions sous forme arborescente plutôt qu'une solution basée sur le polymorphisme virtuel qui est lent et source de nombreuses erreurs.
 
@@ -132,7 +140,7 @@ consécutifs, nous avons donc une table de conversion "anciennes variables" <-> 
 pour le résultat donné en sortie. Notons l'utilisation d'une `std::list` pour les clauses comme expliqué plus haut
 (section Clause learning).
 
-## Observations sur les performances
+## Observations sur les performances (DPLL uniquement)
 Nous avons inclus dans le dossier `cnf_files` un rapport de performances sur les différents fichiers. Ces fichiers sont associés à des problèmes
 concrets. On note que les combinaisons d'heuristiques qui s'en sortent le mieux en moyenne sur l'ensemble des fichiers sont:
 * -cl -wl -rand
@@ -147,10 +155,44 @@ Ici, ce sont les combinaisons contenant les heuristiques `-moms` ou `-dlis` qui 
 Les tests ont été effectués sur un MacBook Pro avec un processeur Intel Core i7 à 3.1 GHz.
 
 Notons que sur la plupart des problèmes concrets et à heuristiques égales (-cl -wl -vsids -forget),
-notre solveur tient tête à MiniSat. Cependant sur les problèmes 3-SAT générés aléatoirement, MiniSat
-est meilleur que toutes nos combinaisons d'heuristiques.
+notre solveur tient tête à MiniSat. En combinant certaines heuristiques qui ne sont
+pas présentes sur MiniSat, il arrive même que notre solveur performe mieux que MiniSat.
+Cependant sur les problèmes 3-SAT générés aléatoirement, MiniSat est meilleur que toutes nos
+combinaisons d'heuristiques.
+
+## SMT et DPLL(T)
+Nous avons traité SMT pour la théorie de l'égalité et de la congruence (EUF). Nous avons essayé
+d'implémenter les algorithmes décrits ici: https://www.cs.upc.edu/~oliveras/espai/papers/rta05.pdf,
+qui s'appliquent aux deux théories.
+
+Étant donné une expression dans la théorie EUF, on commence par curryfier les termes qui apparaissent
+dans l'expression, c'est-à-dire qu'on ajoute un symbole de fonction `$` qui correspond à l'application
+de fonction, et tous les autre symboles sont transformés en constantes. Ainsi, le terme
+`g(a, h(b), b)` devient `$($($(g, a), $(h, b)), b)`. Après la curryfication, il n'y a donc plus que
+des constantes et des termes de la forme `$(t_1, t_2)` où `t_1` et `t_2` sont des termes.
+
+Ensuite, chacun des termes `$(t_1, t_2)` est aplati: on donne en quelques sortes un nom
+à ces termes et ce de manière récursive, par exemple l'équation `$($($(g, a), $(h, b)), b) = b`
+est remplacée par les quatre équations `f(g, a) = c`, `f(h, b) = d`, `f(c, d) = e` et `f(e, b) = b`.
+Après l'aplatissement, il n'y a donc plus que des égalités de la forme `a = b` ou `f(a, b) = c`.
+
+On peut montrer que des ceux opérations donnent bien une expression équi-satisfiable, et elles n'augmentent
+que linéairement la taille de l'entrée. La complexité de ces pré-traitements est elle aussi linéaire en la taille
+de l'entrée.
+
+Ces pré-traitements sont obligatoires pour mettre en pratique les algorithmes décrits dans le papier cité plus haut.
+Nous avons toutefois rencontré des difficultés pour les implémenter en pratique, car tout n'est pas détaillé, et
+actuellement, bien que notre solveur pour EUF marche sur de petits tests unitaires, il y a un bug qui apparaît
+parfois sur de plus gros fichiers que nous n'avons pas réussi à résoudre.
+
+Les tests unitaires utilisés et qui passent sont dans le fichier `tests/equality.cpp`.
+
+Le fonctionnement de DPLL(T) est bien un fonctionnement "en ligne": le solveur de la théorie "suit" les propagations
+et les backtracks de DPLL. Cependant nous n'avons pas réussi à obtenir
+une version fonctionnelle de l'algorithme décrit dans le papier ci-dessus pour l'analyse de conflits côté théorie.
 
 ## Répartition du travail
+* Makefile: Nicolas
 * parsing des expressions logiques: Alexandre
 * transformation de Tseitin: Nicolas
 * tests unitaires: Alexandre
@@ -162,3 +204,7 @@ est meilleur que toutes nos combinaisons d'heuristiques.
 * clause learning: Alexandre
 * mode interactif du clause learning: Nicolas
 * heuristiques VSIDS et Oubli: Alexandre
+* parsing des expressions avec égalités et termes: Alexandre
+* curryfication et aplatissement: Alexandre
+* solveur pour égalité/EUF: Alexandre et Nicolas
+* DPLL(T): Alexandre
