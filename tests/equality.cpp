@@ -25,6 +25,7 @@ bool satisfiable(const std::string & str) {
 }
 
 TEST_CASE("Testing equality solver", "[equality_solver]") {
+    REQUIRE(!satisfiable("a != a"));
     REQUIRE(satisfiable("a = b"));
     REQUIRE(satisfiable("a = b /\\ b = c"));
     REQUIRE(!satisfiable("a = b /\\ b = c /\\ c != a"));
@@ -36,4 +37,5 @@ TEST_CASE("Testing equality solver", "[equality_solver]") {
     REQUIRE(satisfiable("a = b => f(a) = f(b)"));
     REQUIRE(satisfiable("f(a) != f(b) => a != b"));
     REQUIRE(!satisfiable(("f(f(a, b), b) = c /\\ f(a, b) = c /\\ c = d /\\ f(d, b) != c")));
+    REQUIRE(satisfiable("(a = b => c = d) /\\ a != b"));
 }

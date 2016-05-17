@@ -89,6 +89,8 @@ private:
     size_t m_remaining_variables;
 
     detail::clause m_dummy_clause;
+    bool m_first = true;
+
     std::list<detail::clause> m_clauses;
     guess_mode m_guess_mode;
     cdcl_mode m_cdcl;
@@ -146,7 +148,7 @@ public:
     valuation solve();
 
     bool satisfiable() {
-        if (m_remaining_clauses > 0)
+        if (m_first || m_remaining_clauses > 0)
             solve();
         return m_remaining_clauses != -1;
     }

@@ -38,6 +38,8 @@ private:
                                 use_lists(max_const),
                                 disequalities(max_const),
                                 proof_forest(max_const, std::make_pair(-1, dummy { })) { }
+
+        record(const record &) = default;
     };
 
     std::vector<edge> m_pending;
@@ -49,7 +51,7 @@ public:
     equality_solver(int, std::vector<curry_atom>);
 
     std::pair<std::vector<int>, bool> set_true(int);
-    void backtrack_one();
+    void backtrack_one(int);
 };
 
 #endif

@@ -19,6 +19,8 @@ equality_solver::equality_solver(int max_const,
     }
 }
 
+#include <iostream>
+
 bool equality_solver::propagate(std::vector<int> & consequences) {
     bool conflict = false;
     auto && db = m_db.back();
@@ -45,6 +47,7 @@ bool equality_solver::propagate(std::vector<int> & consequences) {
                 std::swap(a, b);
                 std::swap(repr_a, repr_b);
             }
+            std::cout << "merge " << repr_a << " into " << repr_b << std::endl;
 
             auto old_repr_a = repr_a;
             db.proof_forest[a] = std::make_pair(b, E);
@@ -66,6 +69,18 @@ bool equality_solver::propagate(std::vector<int> & consequences) {
                 }
             }
             db.use_lists[old_repr_a].clear();
+
+            for (auto && c : db.disequalities[old_repr_a]) {
+                db.disequalities[repr_b].insert(c);
+                db.disequalities[c].erase(db.disequalities[c].find(old_repr_a));
+                db.disequalities[c].insert(repr_b);
+            }
+            db.disequalities[old_repr_a].clear();
+
+            
+            if (old_repr_a == 9) {
+                ;
+            }
         }
     }
     return conflict;
@@ -101,7 +116,7 @@ std::pair<std::vector<int>, bool> equality_solver::set_true(int lit) {
     } else {
         auto eq = boost::get<const_equality>(&m_atoms[-lit - 1]);
         assert(eq != nullptr);
-        auto repr_a = db.representative[eq->left], repr_b = db.representative[eq->left];
+        auto repr_a = db.representative[eq->left], repr_b = db.representative[eq->right];
         if (repr_a == repr_b)
             conflict = true;
         db.disequalities[repr_a].insert(repr_b);
@@ -111,6 +126,9 @@ std::pair<std::vector<int>, bool> equality_solver::set_true(int lit) {
     return std::make_pair(std::move(consequences), conflict);
 }
 
-void equality_solver::backtrack_one() {
+void equality_solver::backtrack_one(int lit) {
+    if (std::abs(lit) > m_atoms.size())
+        return;
+
     m_db.pop_back();
 }

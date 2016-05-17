@@ -32,8 +32,9 @@ int main(int argc, const char ** argv) {
 
     auto tseitin = false;
     std::string file_name;
+    bool eq = false;
 
-    parse_command_line(argc, argv, file_name, opt, tseitin);
+    parse_command_line(argc, argv, file_name, opt, tseitin, eq);
 
     Catch::Session session;
 

@@ -233,7 +233,8 @@ valuation solver::solve() {
     auto conflict_nb = 0;
     auto max_learnt = m_clauses.size() / 3;
 
-    while (m_remaining_clauses > 0) {
+    while (m_first || m_remaining_clauses > 0) {
+        m_first = false;
         auto conflict = deduce(level);
         if (conflict != nullptr) {
 #ifdef DEBUG

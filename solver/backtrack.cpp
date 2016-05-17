@@ -48,7 +48,7 @@ int solver::backtrack(int level) {
         lit = dequeue();
         (this->*m_backtrack_one)(lit);
         if (m_options.eq_solver != nullptr)
-            m_options.eq_solver->backtrack_one();
+            m_options.eq_solver->backtrack_one(new_to_old_lit(lit));
     }
     return lit;
 }
