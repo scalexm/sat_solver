@@ -9,7 +9,7 @@
 #include "equality.hpp"
 
 equality_solver::equality_solver(int max_const,
-                                 std::vector<curry_atom> atoms) : m_atoms { std::move(atoms) } {
+                                 std::vector<curry_atom> atoms) : m_atoms(std::move(atoms)) {
     m_db.emplace_back(max_const);
     auto && db = m_db.back();
 
@@ -18,8 +18,6 @@ equality_solver::equality_solver(int max_const,
         db.class_lists[i].emplace_back(i);
     }
 }
-
-#include <iostream>
 
 bool equality_solver::propagate(std::vector<int> & consequences) {
     bool conflict = false;
@@ -47,7 +45,6 @@ bool equality_solver::propagate(std::vector<int> & consequences) {
                 std::swap(a, b);
                 std::swap(repr_a, repr_b);
             }
-            std::cout << "merge " << repr_a << " into " << repr_b << std::endl;
 
             auto old_repr_a = repr_a;
             db.proof_forest[a] = std::make_pair(b, E);
@@ -76,11 +73,6 @@ bool equality_solver::propagate(std::vector<int> & consequences) {
                 db.disequalities[c].insert(repr_b);
             }
             db.disequalities[old_repr_a].clear();
-
-            
-            if (old_repr_a == 9) {
-                ;
-            }
         }
     }
     return conflict;
