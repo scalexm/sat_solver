@@ -173,15 +173,15 @@ des constantes et des termes de la forme `$(t_1, t_2)` où `t_1` et `t_2` sont d
 
 Ensuite, chacun des termes `$(t_1, t_2)` est aplati: on donne en quelques sortes un nom
 à ces termes et ce de manière récursive, par exemple l'équation `$($($(g, a), $(h, b)), b) = b`
-est remplacée par les quatre équations `f(g, a) = c`, `f(h, b) = d`, `f(c, d) = e` et `f(e, b) = b`.
-Après l'aplatissement, il n'y a donc plus que des égalités de la forme `a = b` ou `f(a, b) = c`.
+est remplacée par les quatre équations `$(g, a) = c`, `$(h, b) = d`, `$(c, d) = e` et `$(e, b) = b`.
+Après l'aplatissement, il n'y a donc plus que des égalités de la forme `a = b` ou `$(a, b) = c`.
 
 On peut montrer que des ceux opérations donnent bien une expression équi-satisfiable, et elles n'augmentent
 que linéairement la taille de l'entrée. La complexité de ces pré-traitements est elle aussi linéaire en la taille
 de l'entrée.
 
 Ces pré-traitements sont obligatoires pour mettre en pratique les algorithmes décrits dans le papier cité plus haut.
-Nous avons toutefois rencontré des difficultés pour les implémenter en pratique, car tout n'est pas détaillé, et
+Nous avons toutefois rencontré des difficultés pour les implémenter, car tout n'est pas détaillé, et
 actuellement, bien que notre solveur pour EUF marche sur de petits tests unitaires, il y a un bug qui apparaît
 parfois sur de plus gros fichiers que nous n'avons pas réussi à résoudre.
 
